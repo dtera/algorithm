@@ -63,13 +63,13 @@ public class Dungeon {
                 dys[i] = sc.nextInt();
             }
 
-            int max = dungeonEscape(dungeon, x0, y0, k, dxs, dys);
+            int max = dungeonEscape(dungeon, x0, y0, dxs, dys);
             System.out.println(max);
         }
     }
 
-    private static int dungeonEscape(char[][] dungeon, int x0, int y0, int k, int[] dxs, int[] dys) {
-        int n = dungeon.length, m = dungeon[0].length, max = 0;
+    private static int dungeonEscape(char[][] dungeon, int x0, int y0, int[] dxs, int[] dys) {
+        int n = dungeon.length, m = dungeon[0].length, k = dxs.length, max = 0;
         int[][] accFlags = new int[n][m];
         Queue<Integer> qx = new LinkedList<>();
         Queue<Integer> qy = new LinkedList<>();
@@ -82,7 +82,7 @@ public class Dungeon {
             x0 = qx.remove();
             y0 = qy.remove();
             for (int i = 0; i < k; i++) {
-                if (x0 + dxs[i] < n && x0 + dxs[i] >= 0 && y0 + dys[i] < m && y0 + dys[i] >= 0 //不出界
+                if (x0 + dxs[i] < n && x0 + dxs[i] >= 0 && y0 + dys[i] < m && y0 + dys[i] >= 0
                         && accFlags[x0 + dxs[i]][y0 + dys[i]] == 0)
                     if (dungeon[x0 + dxs[i]][y0 + dys[i]] == '.') {
                         accFlags[x0 + dxs[i]][y0 + dys[i]] = accFlags[x0][y0] + 1;
