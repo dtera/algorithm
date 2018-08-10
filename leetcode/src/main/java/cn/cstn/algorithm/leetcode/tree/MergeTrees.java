@@ -1,4 +1,4 @@
-package cn.cstn.leetcode.tree;
+package cn.cstn.algorithm.leetcode.tree;
 
 /**
  * 617              Merge Two Binary Trees

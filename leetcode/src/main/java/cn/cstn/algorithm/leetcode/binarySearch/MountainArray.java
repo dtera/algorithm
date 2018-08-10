@@ -1,4 +1,4 @@
-package cn.cstn.leetcode.binarySearch;
+package cn.cstn.algorithm.leetcode.binarySearch;
 
 /**
  * 852               Peak Index in a Mountain Array

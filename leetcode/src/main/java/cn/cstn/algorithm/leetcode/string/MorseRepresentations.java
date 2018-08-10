@@ -1,4 +1,4 @@
-package cn.cstn.leetcode.string;
+package cn.cstn.algorithm.leetcode.string;
 
 import java.util.HashSet;
 import java.util.Set;

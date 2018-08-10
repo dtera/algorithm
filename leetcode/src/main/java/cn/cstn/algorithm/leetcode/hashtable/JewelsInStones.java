@@ -1,4 +1,4 @@
-package cn.cstn.leetcode.hashtable;
+package cn.cstn.algorithm.leetcode.hashtable;
 
 import java.util.HashMap;
 

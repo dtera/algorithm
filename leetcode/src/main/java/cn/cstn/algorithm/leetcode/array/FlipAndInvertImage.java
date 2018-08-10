@@ -1,6 +1,6 @@
-package cn.cstn.leetcode.array;
+package cn.cstn.algorithm.leetcode.array;
 
-import cn.cstn.leetcode.util.ArrayHelper;
+import cn.cstn.algorithm.leetcode.util.ArrayHelper;
 
 import java.util.Arrays;
 

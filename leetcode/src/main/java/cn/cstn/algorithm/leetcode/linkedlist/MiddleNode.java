@@ -1,4 +1,4 @@
-package cn.cstn.leetcode.linkedlist;
+package cn.cstn.algorithm.leetcode.linkedlist;
 
 /**
  * 876                  Middle of the Linked List

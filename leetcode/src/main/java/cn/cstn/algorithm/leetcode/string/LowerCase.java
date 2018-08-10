@@ -1,4 +1,4 @@
-package cn.cstn.leetcode.string;
+package cn.cstn.algorithm.leetcode.string;
 
 /**
  * 709               To Lower Case

@@ -1,4 +1,4 @@
-package cn.cstn.leetcode.bitmanipulation;
+package cn.cstn.algorithm.leetcode.bitmanipulation;
 
 /**
  * 461               Hamming Distance

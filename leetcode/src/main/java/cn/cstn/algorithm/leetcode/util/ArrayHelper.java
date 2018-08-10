@@ -1,4 +1,4 @@
-package cn.cstn.leetcode.util;
+package cn.cstn.algorithm.leetcode.util;
 
 /**
  * description :     ArrayHelper

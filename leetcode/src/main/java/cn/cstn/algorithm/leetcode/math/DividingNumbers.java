@@ -1,4 +1,4 @@
-package cn.cstn.leetcode.math;
+package cn.cstn.algorithm.leetcode.math;
 
 import java.util.ArrayList;
 import java.util.List;
