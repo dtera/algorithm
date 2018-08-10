@@ -35,35 +35,35 @@ public class Xor {
         System.out.println(_xor(arr, m));
     }
 
-    private static int _xor(int[] arr, int m) {
-        int count = 0, i = 31;
-        TrieNode root = buildTrieTree(arr);
-        System.out.println("root.count: " + root.count);
+    private static long _xor(int[] arr, int m) {
+        long count = 0;
+        TrieNode trie = buildTrieTree(arr);
+        System.out.println("root.count: " + trie.count);
         for (int a : arr)
-            count += findGreaterThanM(root, a, m, i);
+            count += queryTrieTree(trie, a, m, 31);
 
         return count / 2;
     }
 
-    private static int findGreaterThanM(TrieNode root, int a, int m, int i) {
-        if (root == null) return 0;
+    private static long queryTrieTree(TrieNode trie, int a, int m, int k) {
+        if (trie == null) return 0;
 
-        TrieNode cur = root;
-        for (int j = i; j >= 0; j--) {
-            int dij = (a >> j) & 1;
-            int mj = (m >> j) & 1;
-            if (dij == 1 && mj == 1) {
+        TrieNode cur = trie;
+        for (int i = k; i >= 0; i--) {
+            int ad = (a >> i) & 1;
+            int md = (m >> i) & 1;
+            if (ad == 1 && md == 1) {
                 if (cur.children[0] == null) return 0;
                 cur = cur.children[0];
-            } else if (dij == 1 && mj == 0) {
+            } else if (ad == 1 && md == 0) {
                 int p = cur.children[0] == null ? 0 : cur.children[0].count;
-                return p + findGreaterThanM(cur.children[1], a, m, i - 1);
-            } else if (dij == 0 && mj == 1) {
+                return p + queryTrieTree(cur.children[1], a, m, i - 1);
+            } else if (ad == 0 && md == 1) {
                 if (cur.children[1] == null) return 0;
                 cur = cur.children[1];
-            } else if (dij == 0 && mj == 0) {
+            } else if (ad == 0 && md == 0) {
                 int q = cur.children[1] == null ? 0 : cur.children[1].count;
-                return findGreaterThanM(cur.children[0], a, m, i - 1) + q;
+                return queryTrieTree(cur.children[0], a, m, i - 1) + q;
             }
         }
         return 0;
@@ -73,11 +73,11 @@ public class Xor {
         TrieNode root = new TrieNode();
         for (int a : arr) {
             TrieNode cur = root;
-            for (int j = 31; j >= 0; j--) {
-                int dij = (a >> j) & 1;
-                if (cur.children[dij] == null) cur.children[dij] = new TrieNode();
-                cur.children[dij].count++;
-                cur = cur.children[dij];
+            for (int i = 31; i >= 0; i--) {
+                int d = (a >> i) & 1;
+                if (cur.children[d] == null) cur.children[d] = new TrieNode();
+                cur.children[d].count++;
+                cur = cur.children[d];
             }
         }
 
@@ -92,7 +92,7 @@ public class Xor {
         return root;
     }
 
-    static class TrieNode {
+    private static class TrieNode {
         TrieNode[] children = new TrieNode[2];
         int count = 0;
     }
