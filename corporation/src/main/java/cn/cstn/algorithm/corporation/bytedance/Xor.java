@@ -97,8 +97,9 @@ public class Xor {
         int count = 0;
     }
 
-    private static int xor(int[] arr, int m) {
-        int count = 0, n = arr.length;
+    private static long xor(int[] arr, int m) {
+        long count = 0;
+        int n = arr.length;
         for (int i = 0; i < n - 1; i++)
             for (int j = i + 1; j < n; j++)
                 if ((arr[i] ^ arr[j]) > m) count++;
