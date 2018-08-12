@@ -9,13 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>corporation</artifactId>
+    <artifactId>commons</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>cn.cstn.algorithm</groupId>
-            <artifactId>commons</artifactId>
-        </dependency>
-    </dependencies>
 
 </project>

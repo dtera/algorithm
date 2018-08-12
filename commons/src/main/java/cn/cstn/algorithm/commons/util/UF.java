@@ -1,4 +1,4 @@
-package cn.cstn.algorithm.leetcode.util;
+package cn.cstn.algorithm.commons.util;
 
 /**
  * description :        union find

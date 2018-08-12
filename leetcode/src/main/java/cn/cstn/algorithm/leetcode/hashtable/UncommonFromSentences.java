@@ -1,8 +1,11 @@
 package cn.cstn.algorithm.leetcode.hashtable;
 
-import cn.cstn.algorithm.leetcode.util.ArrayHelper;
+import cn.cstn.algorithm.commons.util.ArrayHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 888                  Uncommon Words from Two Sentences

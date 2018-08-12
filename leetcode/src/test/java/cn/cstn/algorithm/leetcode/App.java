@@ -1,7 +1,7 @@
 package cn.cstn.algorithm.leetcode;
 
-import cn.cstn.algorithm.leetcode.util.ArrayHelper;
-import cn.cstn.algorithm.leetcode.util.UF;
+import cn.cstn.algorithm.commons.util.ArrayHelper;
+import cn.cstn.algorithm.commons.util.UF;
 import org.junit.Test;
 
 public class App {

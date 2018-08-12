@@ -12,6 +12,7 @@
     <modules>
         <module>leetcode</module>
         <module>corporation</module>
+        <module>commons</module>
     </modules>
 
     <dependencies>
