@@ -1,2 +1,2 @@
-# leetcode
-## Algorithm implement of leetcode
+# @author zhaohq
+## Algorithm implement
