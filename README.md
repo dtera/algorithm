@@ -14,7 +14,7 @@
 * [Union Find](https://github.com/zhaohuiqiang/algorithm/blob/master/commons/src/main/java/cn/cstn/algorithm/commons/util/UF.java)
 
 
-## [Corporation Algorithm](https://github.com/zhaohuiqiang/algorithm#corporation-algorithm) 
+## [Corporation Algorithm](https://github.com/zhaohuiqiang/algorithm#corporation) 
 > This is corporation interview algorithm implement, such as alibaba, tencent, baidu and etc.
 
 * [Alibaba](https://github.com/zhaohuiqiang/algorithm#alibaba)
@@ -23,7 +23,7 @@
 * [Huawei](https://github.com/zhaohuiqiang/algorithm#huawei)
 * [Jingdong](https://github.com/zhaohuiqiang/algorithm#jingdong)
 * [Netease](https://github.com/zhaohuiqiang/algorithm#netease)
-* [Toutiao](https://github.com/zhaohuiqiang/algorithm#toutiao)
+* [Bytedance](https://github.com/zhaohuiqiang/algorithm#bytedance)
 
 ## [LeetCode Algorithm](https://leetcode.com/problemset/algorithms/) 
 >The number of LeetCode questions is increasing every week.
@@ -57,6 +57,8 @@ I'll keep updating for full summary and better solutions. Stay tuned for updates
 * [SQL](https://github.com/zhaohuiqiang/algorithm#sql)
 * [Shell Script](https://github.com/zhaohuiqiang/algorithm#shell-script)
 
+## [Corporation](https://github.com/zhaohuiqiang/algorithm#corporation)
+
 ### Alibaba
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
@@ -81,9 +83,11 @@ I'll keep updating for full summary and better solutions. Stay tuned for updates
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Toutiao
+### Bytedance
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
+
+## [LeetCode](https://github.com/zhaohuiqiang/algorithm#leetCode-algorithm)
 
 ### Bit Manipulation
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note| 
