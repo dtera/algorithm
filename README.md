@@ -57,6 +57,7 @@ I'll keep updating for full summary and better solutions. Stay tuned for updates
 * [SQL](https://github.com/zhaohuiqiang/algorithm#sql)
 * [Shell Script](https://github.com/zhaohuiqiang/algorithm#shell-script)
 
+
 ## [Corporation](https://github.com/zhaohuiqiang/algorithm#corporation)
 
 ### Alibaba
@@ -87,7 +88,8 @@ I'll keep updating for full summary and better solutions. Stay tuned for updates
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-## [LeetCode](https://github.com/zhaohuiqiang/algorithm#leetCode-algorithm)
+
+## [LeetCode](https://github.com/zhaohuiqiang/algorithm#leetcode-algorithm)
 
 ### Bit Manipulation
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note| 
