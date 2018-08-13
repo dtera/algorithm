@@ -9,9 +9,9 @@
 ## [Commons Algorithm](https://github.com/zhaohuiqiang/algorithm#commons-algorithm) 
 > This is commons algorithm implement, such as sort, find and etc.
 
-* [Sort](https://github.com/zhaohuiqiang/algorithm/blob/master/commons/src/main/java/cn/cstn/algorithm/commons/util/Sort.java)
-* [Search](https://github.com/zhaohuiqiang/algorithm/blob/master/commons/src/main/java/cn/cstn/algorithm/commons/util/Search.java)
-* [Union Find](https://github.com/zhaohuiqiang/algorithm/blob/master/commons/src/main/java/cn/cstn/algorithm/commons/util/UF.java)
+* [Sort](./commons/src/main/java/cn/cstn/algorithm/commons/util/Sort.java)
+* [Search](./commons/src/main/java/cn/cstn/algorithm/commons/util/Search.java)
+* [Union Find](./commons/src/main/java/cn/cstn/algorithm/commons/util/UF.java)
 
 
 ## [Corporation Algorithm](https://github.com/zhaohuiqiang/algorithm#corporation) 
@@ -94,24 +94,26 @@ I'll keep updating for full summary and better solutions. Stay tuned for updates
 ### Bit Manipulation
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note| 
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
-136 | [Single Number](https://leetcode.com/problems/single-number/) | [C++](./C++/single-number.cpp) [Python](./Python/single-number.py) | _O(n)_       | _O(1)_          | Easy         |||
-137 | [Single Number II](https://leetcode.com/problems/single-number-ii/) | [C++](./C++/single-number-ii.cpp) [Python](./Python/single-number-ii.py) | _O(n)_ | _O(1)_          | Medium         |||
-190 | [Reverse Bits](https://leetcode.com/problems/reverse-bits/)  | [C++](./C++/reverse-bits.cpp) [Python](./Python/reverse-bits.py) | _O(1)_        | _O(1)_          | Easy           |||
+461 | [Hamming Distance](https://leetcode.com/problems/hamming-distance/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/bitmanipulation/HammingDistance.java)| _O(n)_       | _O(1)_          | Easy         |||
 
 ### Array
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note| 
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
-015 | [3 Sum](https://leetcode.com/problems/3sum/)         | [C++](./C++/3sum.cpp) [Python](./Python/3sum.py)       | _O(n^2)_        | _O(1)_          | Medium         || Two Pointers
-016 | [3 Sum Closest](https://leetcode.com/problems/3sum-closest/) | [C++](./C++/3sum-closest.cpp) [Python](./Python/3sum-closest.py) | _O(n^2)_       | _O(1)_          | Medium         || Two Pointers
-018| [4 Sum](https://leetcode.com/problems/4sum/)         | [C++](./C++/4sum.cpp) [Python](./Python/4sum.py)        | _O(n^3)_    | _O(1)_    | Medium         || Two Pointers
+561 | [Array Partition I](https://leetcode.com/problems/array-partition-i/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/array/ArrayPartitionI.java)| _O(n)_       | _O(1)_          | Easy         |||
+832 | [Flipping an Image](https://leetcode.com/problems/flipping-an-image/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/array/FlipAndInvertImage.java)| _O(n)_       | _O(1)_          | Easy         |||
+867 | [Transpose Matrix](https://leetcode.com/problems/transpose-matrix/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/array/TransposeMatrix.java)| _O(n)_       | _O(1)_          | Easy         |||
 
 ### String
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
+657 | [Judge Route Circle](https://leetcode.com/problems/judge-route-circle/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/string/JudgeCircle.java)| _O(n)_       | _O(1)_          | Easy         |||
+709 | [To Lower Case](https://leetcode.com/problems/to-lower-case/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/string/LowerCase.java)| _O(n)_       | _O(1)_          | Easy         |||
+804 | [Unique Morse Code Words](https://leetcode.com/problems/unique-morse-code-words/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/string/MorseRepresentations.java)| _O(n)_       | _O(1)_          | Easy         |||
 
 ### Linked List
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
+876 | [Middle of the Linked List](https://leetcode.com/problems/middle-of-the-linked-list/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/linkedlist/MiddleNode.java)| _O(n)_       | _O(1)_          | Easy         |||
 
 ### Stack
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
@@ -124,14 +126,19 @@ I'll keep updating for full summary and better solutions. Stay tuned for updates
 ### Tree
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
+617 | [Merge Two Binary Trees](https://leetcode.com/problems/merge-two-binary-trees/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/tree/MergeTrees.java)| _O(n)_       | _O(1)_          | Easy         |||
 
 ### Hash Table
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
+771 | [Jewels and Stones](https://leetcode.com/problems/jewels-and-stones/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/hashtable/JewelsInStones.java)| _O(n)_       | _O(1)_          | Easy         |||
+888 | [Uncommon Words from Two Sentences](https://leetcode.com/problems/uncommon-words-from-two-sentences/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/hashtable/UncommonFromSentences.java)| _O(n)_       | _O(1)_          | Easy         |||
 
 ### Math
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
+728 | [Self Dividing Numbers](https://leetcode.com/problems/self-dividing-numbers/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/math/DividingNumbers.java)| _O(n)_       | _O(1)_          | Easy         |||
+887 | [Projection Area of 3D Shapes](https://leetcode.com/problems/projection-area-of-3d-shapes/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/math/ProjectionArea.java)| _O(n)_       | _O(1)_          | Easy         |||
 
 ### Two Pointers
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
@@ -148,6 +155,7 @@ I'll keep updating for full summary and better solutions. Stay tuned for updates
 ### Binary Search
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
+852 | [Peak Index in a Mountain Array](https://leetcode.com/problems/peak-index-in-a-mountain-array/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/binarySearch/MountainArray.java)| _O(n)_       | _O(1)_          | Easy         |||
 
 ### Binary Search Tree
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
