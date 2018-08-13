@@ -9,9 +9,9 @@
 ## [Commons Algorithm](https://github.com/zhaohuiqiang/algorithm#commons-algorithm) 
 > This is commons algorithm implement, such as sort, find and etc.
 
-* [Sort](./commons/src/main/java/cn/cstn/algorithm/commons/util/Sort.java)
-* [Search](./commons/src/main/java/cn/cstn/algorithm/commons/util/Search.java)
-* [Union Find](./commons/src/main/java/cn/cstn/algorithm/commons/util/UF.java)
+* [Sort](./commons/src/main/java/cn/cstn/algorithm/commons/Sort.java)
+* [Search](./commons/src/main/java/cn/cstn/algorithm/commons/Search.java)
+* [Union Find](./commons/src/main/java/cn/cstn/algorithm/commons/UF.java)
 
 
 ## [Corporation Algorithm](https://github.com/zhaohuiqiang/algorithm#corporation) 
