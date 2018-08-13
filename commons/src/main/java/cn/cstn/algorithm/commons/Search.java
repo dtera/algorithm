@@ -1,4 +1,4 @@
-package cn.cstn.algorithm.commons.util;
+package cn.cstn.algorithm.commons;
 
 /**
  * description :        search algorithm
