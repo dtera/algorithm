@@ -1,6 +1,5 @@
 package cn.cstn.algorithm.commons;
 
-
 import org.junit.Test;
 
 import java.util.Arrays;
