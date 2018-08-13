@@ -1,4 +1,4 @@
-# [Algorithm](https://github.com/zhaohuiqiang/algorithm) ![Language](https://img.shields.io/badge/language-Java%20%2F%20C++%2011-orange.svg) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md) [![SayThanks](https://img.shields.io/badge/say-thanks-ff69b4.svg)](https://saythanks.io/to/zhaohuiqiang)
+# [Algorithm](https://github.com/zhaohuiqiang/algorithm) ![Author](https://img.shields.io/badge/author-zhaohq-blue.svg) ![Language](https://img.shields.io/badge/language-Java%20%2F%20C++%20etc-orange.svg) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md) [![SayThanks](https://img.shields.io/badge/say-thanks-ff69b4.svg)](https://saythanks.io/to/zhaohuiqiang)
 
 > In mathematics and computer science, an algorithm is an unambiguous specification of how to solve a class of problems. Algorithms can perform calculation, data processing and automated reasoning tasks.
 
