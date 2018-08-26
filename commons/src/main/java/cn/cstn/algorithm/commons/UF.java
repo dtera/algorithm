@@ -8,7 +8,7 @@ package cn.cstn.algorithm.commons;
 public class UF {
     private int[] id;
     private int[] sz;
-    private int count;
+    protected int count;
 
     public UF(int n) {
         id = new int[n];
