@@ -31,4 +31,27 @@ public class MUF extends UF {
         this.count--;
     }
 
+    public static MUF connectedComponent(int[][] a) {
+        int m = a.length, n = a[0].length;
+        MUF muf = new MUF(m, n);
+        int[][] d = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (a[i][j] == 0) {
+                    muf.deCount();
+                    continue;
+                }
+                for (int[] dk : d) {
+                    int p = i + dk[0];
+                    int q = j + dk[1];
+                    if (p < 0 || p >= m || q < 0 || q >= n || a[p][q] == 0) continue;
+                    muf.union(i, j, p, q);
+                }
+            }
+        }
+
+        return muf;
+    }
+
 }

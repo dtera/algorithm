@@ -15,25 +15,19 @@ public class UFTest {
                 {0, 1, 0, 0, 0, 1, 1},
                 {1, 1, 1, 0, 0, 0, 0},
                 {0, 0, 0, 0, 1, 0, 0},
-                {1, 1, 0, 0, 0, 0, 1},
-                {1, 0, 0, 1, 0, 1, 1},
-                {1, 1, 0, 1, 0, 0, 1},
-                {0, 0, 0, 0, 1, 0, 0},
-                {1, 1, 0, 0, 0, 0, 1},
-                {0, 0, 0, 0, 1, 0, 0},
+                {0, 1, 0, 0, 0, 0, 1},
         };
         int m = c.length, n = c[0].length, r = 500000;
         int[][] a = new int[m * r][n];
         for (int k = 0; k < r; k++)
             for (int i = 0; i < m; i++)
                 System.arraycopy(c[i], 0, a[m * k + i], 0, n);
-
         m = a.length;
         n = a[0].length;
         int[][] b = new int[m][n];
 
         long s = System.currentTimeMillis();
-        MUF muf = connectedComponent(a);
+        MUF muf = MUF.connectedComponent(a);
         long e = System.currentTimeMillis();
 
         for (int i = 0; i < m; i++) {
@@ -42,23 +36,20 @@ public class UFTest {
                 if (a[i][j] == 0) b[i][j] = 0;
             }
         }
-
-        /*for (int[] i : a) ArrayHelper.println(i);
-        System.out.println("==============================");
-        for (int i = 0; i < m; i++)
+        /*for (int i = 0; i < m; i++)
             ArrayHelper.println(b[i]);*/
 
         System.out.println("(0, 0) and (2, 1) connected status: " + muf.isConnected(0, 0, 2, 1));
-        System.out.println("num of connected component:" + muf.getCount() + " connectedComponent costs " + (e - s) + "ms");
+        System.out.println("num of connected component:" + muf.getCount() + " MUF.connectedComponent costs " + (e - s) + "ms");
 
-        System.out.println("****************************************************************");
         s = System.currentTimeMillis();
-        UF uf = _connectedComponent(a);
+        UF uf = connectedComponent(a);
         e = System.currentTimeMillis();
 
-        System.out.println(uf.find(0));
-        System.out.println(uf.isConnected(0, 1));
-        System.out.println("num of connected component:" + uf.getCount() + " _connectedComponent costs " + (e - s) + "ms");
+        System.out.println("****************************************************************************");
+        System.out.println("uf.find(0): " + uf.find(0));
+        System.out.println("uf.isConnected(0, 1): " + uf.isConnected(0, 1));
+        System.out.println("num of connected component:" + uf.getCount() + " connectedComponent costs " + (e - s) + "ms");
     }
 
     private MUF connectedComponent(int[][] a) {
