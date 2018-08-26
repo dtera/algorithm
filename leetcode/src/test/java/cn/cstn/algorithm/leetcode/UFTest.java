@@ -6,7 +6,7 @@ import cn.cstn.algorithm.commons.util.BeanUtil;
 import org.junit.Test;
 
 @SuppressWarnings("all")
-public class App {
+public class UFTest {
 
     @Test
     public void testUF() {
@@ -56,6 +56,8 @@ public class App {
         UF uf = _connectedComponent(a);
         e = System.currentTimeMillis();
 
+        System.out.println(uf.find(0));
+        System.out.println(uf.isConnected(0, 1));
         System.out.println("num of connected component:" + uf.getCount() + " _connectedComponent costs " + (e - s) + "ms");
     }
 
