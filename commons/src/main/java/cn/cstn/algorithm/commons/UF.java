@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 /**
  * description :        union find
  * @author :           zhaohq
- * date :               2018/8/12 0012 18:14
+ * date :               2018/8/12 0012 18:16
  */
 public class UF {
     private int[] id;
