@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.leetcode.array;
 
-import cn.cstn.algorithm.commons.util.ArrayHelper;
+import cn.cstn.algorithm.commons.util.ArrayUtil;
 
 import java.util.Arrays;
 
@@ -32,10 +32,10 @@ public class FlipAndInvertImage {
     public static void main(String[] args) {
         int[][] A = {{1, 1, 0}, {1, 0, 1}, {0, 0, 0}};
         int[][] fii = flipAndInvertImage(A);
-        Arrays.asList(fii).forEach(ArrayHelper::println);
+        Arrays.asList(fii).forEach(ArrayUtil::println);
         System.out.println("======================================");
         fii = _flipAndInvertImage(A);
-        Arrays.asList(fii).forEach(ArrayHelper::println);
+        Arrays.asList(fii).forEach(ArrayUtil::println);
         /*Integer[][] B = {{1, 1, 0}, {1, 0, 1}, {0, 0, 0}};
         Stream.of(B).map(Arrays::asList).forEach(System.out::println);*/
 

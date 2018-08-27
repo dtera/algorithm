@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.leetcode.hashtable;
 
-import cn.cstn.algorithm.commons.util.ArrayHelper;
+import cn.cstn.algorithm.commons.util.ArrayUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ public class UncommonFromSentences {
     public static void main(String[] args) {
         String A = "this apple is sweet", B = "this apple is sour";
         String[] ufs = uncommonFromSentences(A, B);
-        ArrayHelper.println(ufs);
+        ArrayUtil.println(ufs);
     }
 
     private static String[] uncommonFromSentences(String A, String B) {

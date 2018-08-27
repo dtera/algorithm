@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.leetcode.array;
 
-import cn.cstn.algorithm.commons.util.ArrayHelper;
+import cn.cstn.algorithm.commons.util.ArrayUtil;
 
 import java.util.Arrays;
 
@@ -24,9 +24,9 @@ import java.util.Arrays;
 public class TransposeMatrix {
     public static void main(String[] args) {
         int[][] A = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-        Arrays.asList(A).forEach(ArrayHelper::println);
+        Arrays.asList(A).forEach(ArrayUtil::println);
         System.out.println();
-        Arrays.asList(transpose(A)).forEach(ArrayHelper::println);
+        Arrays.asList(transpose(A)).forEach(ArrayUtil::println);
     }
 
     private static int[][] transpose(int[][] A) {
