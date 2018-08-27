@@ -1,11 +1,11 @@
 package cn.cstn.algorithm.commons.util;
 
 /**
- * description :     ArrayHelper
+ * description :     ArrayUtil
  * @author :        zhaohq
  * date :            2018-07-27 16:31
  */
-public class ArrayHelper {
+public class ArrayUtil {
     public static int[] indexOfMinMax(int[] a) {
         int[] imm = new int[2];
         for (int i = 0; i < a.length; i++) {
@@ -66,6 +66,10 @@ public class ArrayHelper {
         T t = arr[i];
         arr[i] = arr[j];
         arr[j] = t;
+    }
+
+    public static int[][] getWalkDirections() {
+        return new int[][]{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
     }
 
     public static void println(int[] a) {
