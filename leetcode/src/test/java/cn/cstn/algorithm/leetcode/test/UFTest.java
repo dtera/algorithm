@@ -1,7 +1,8 @@
-package cn.cstn.algorithm.leetcode;
+package cn.cstn.algorithm.leetcode.test;
 
 import cn.cstn.algorithm.commons.UF;
 import cn.cstn.algorithm.commons.graph.MUF;
+import cn.cstn.algorithm.commons.util.ArrayHelper;
 import cn.cstn.algorithm.commons.util.BeanUtil;
 import org.junit.Test;
 
@@ -17,7 +18,7 @@ public class UFTest {
                 {0, 0, 0, 0, 1, 0, 0},
                 {0, 1, 0, 0, 0, 0, 1},
         };
-        int m = c.length, n = c[0].length, r = 500000;
+        int m = c.length, n = c[0].length, r = 1;
         int[][] a = new int[m * r][n];
         for (int k = 0; k < r; k++)
             for (int i = 0; i < m; i++)
@@ -27,7 +28,8 @@ public class UFTest {
         int[][] b = new int[m][n];
 
         long s = System.currentTimeMillis();
-        MUF muf = MUF.connectedComponent(a);
+        MUF muf = new MUF(a);
+        muf.buildConnectedComponent();
         long e = System.currentTimeMillis();
 
         for (int i = 0; i < m; i++) {
@@ -39,22 +41,35 @@ public class UFTest {
         /*for (int i = 0; i < m; i++)
             ArrayHelper.println(b[i]);*/
 
+        int[] counts = muf.getCounts();
+        System.out.print("ComponentCounts: ");
+        ArrayHelper.println(counts);
+        System.out.print("ComponentCounts minMaxIndex: ");
+        ArrayHelper.println(ArrayHelper.indexOfMinMax(counts));
+        System.out.println("kthMin for counts: " + ArrayHelper.kthMin(counts, counts.length));
         System.out.println("(0, 0) and (2, 1) connected status: " + muf.isConnected(0, 0, 2, 1));
-        System.out.println("num of connected component:" + muf.getCount() + " MUF.connectedComponent costs " + (e - s) + "ms");
-
-        s = System.currentTimeMillis();
-        UF uf = connectedComponent(a);
-        e = System.currentTimeMillis();
+        System.out.println("num of connected component:" + muf.getCount() + "\t\tMUF.connectedComponent costs " + (e - s) + "ms");
 
         System.out.println("****************************************************************************");
+        s = System.currentTimeMillis();
+        UF uf = new MUF(a);
+        uf.buildConnectedComponent(this::connectedComponent);
+        e = System.currentTimeMillis();
+
+        counts = uf.getCounts();
+        System.out.print("ComponentCounts: ");
+        ArrayHelper.println(counts);
+        System.out.print("ComponentCounts minMaxIndex: ");
+        ArrayHelper.println(ArrayHelper.indexOfMinMax(counts));
         System.out.println("uf.find(0): " + uf.find(0));
         System.out.println("uf.isConnected(0, 1): " + uf.isConnected(0, 1));
-        System.out.println("num of connected component:" + uf.getCount() + " connectedComponent costs " + (e - s) + "ms");
+        System.out.println("num of connected component:" + uf.getCount() + "\t\tconnectedComponent costs " + (e - s) + "ms");
     }
 
-    private MUF connectedComponent(int[][] a) {
+    private void connectedComponent(UF uf) {
+        MUF muf = (MUF) uf;
+        int[][] a = muf.getA();
         int m = a.length, n = a[0].length;
-        MUF muf = new MUF(m, n);
 
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
@@ -73,7 +88,6 @@ public class UFTest {
             }
         }
 
-        return muf;
     }
 
     private UF _connectedComponent(int[][] a) {

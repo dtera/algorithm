@@ -1,5 +1,7 @@
-package cn.cstn.algorithm.commons;
+package cn.cstn.algorithm.commons.test;
 
+import cn.cstn.algorithm.commons.Search;
+import cn.cstn.algorithm.commons.Sort;
 import org.junit.Test;
 
 import java.util.Arrays;

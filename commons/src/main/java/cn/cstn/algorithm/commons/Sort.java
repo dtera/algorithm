@@ -1,5 +1,7 @@
 package cn.cstn.algorithm.commons;
 
+import cn.cstn.algorithm.commons.util.ArrayHelper;
+
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Consumer;
@@ -40,7 +42,7 @@ public class Sort {
                 if (arr[j].compareTo(arr[minIndex]) < 0)
                     minIndex = j;
             if (minIndex != i)
-                swap(arr, i, minIndex);
+                ArrayHelper.swap(arr, i, minIndex);
         }
     }
 
@@ -53,7 +55,7 @@ public class Sort {
         for (int i = from; i < to - 1; i++)
             for (int j = to - 1; j > i; j--)
                 if (arr[j].compareTo(arr[j - 1]) < 0)
-                    swap(arr, j, j - 1);
+                    ArrayHelper.swap(arr, j, j - 1);
     }
 
     public static <T extends Comparable<T>> void mergeSort(T[] arr) {
@@ -97,31 +99,11 @@ public class Sort {
 
     private static <T extends Comparable<T>> void quickSort(T[] arr, int low, int high) {
         if (low >= high) return;
-        int p = partition(arr, low, high);
+        int p = ArrayHelper.partition(arr, low, high);
         quickSort(arr, low, p - 1);
         quickSort(arr, p + 1, high);
     }
-
-    private static <T extends Comparable<T>> int partition(T[] arr, int low, int high) {
-        int j = low, i = low - 1;
-        while (j < high) {
-            if (arr[j].compareTo(arr[high]) <= 0) {
-                i++;
-                swap(arr, i, j);
-            }
-            j++;
-        }
-        swap(arr, i + 1, high);
-
-        return i + 1;
-    }
-
-    private static <T> void swap(T[] arr, int from, int to) {
-        T t = arr[from];
-        arr[from] = arr[to];
-        arr[to] = t;
-    }
-
+    
     public static <T> void radixSort(T[] arr, int k, Character[] radix) {
         int from = 0;
         radixSort(arr, from, arr.length, k, radix);
@@ -187,7 +169,7 @@ public class Sort {
             shift(arr, i, to - 1);
 
         for (int i = to - 1; i > from; i--) {
-            swap(arr, i, from);
+            ArrayHelper.swap(arr, i, from);
             shift(arr, from, i - 1);
         }
 
@@ -203,10 +185,10 @@ public class Sort {
             return;
 
         if (r <= to && arr[r].compareTo(arr[l]) > 0) {
-            swap(arr, i, r);
+            ArrayHelper.swap(arr, i, r);
             shift(arr, r, to);
         } else {
-            swap(arr, i, l);
+            ArrayHelper.swap(arr, i, l);
             shift(arr, l, to);
         }
     }

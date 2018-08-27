@@ -1,5 +1,9 @@
 package cn.cstn.algorithm.commons;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Consumer;
+
 /**
  * description :        union find
  * @author :           zhaohq
@@ -9,6 +13,7 @@ public class UF {
     private int[] id;
     private int[] sz;
     protected int count;
+    private int[] counts;
 
     public UF(int n) {
         id = new int[n];
@@ -54,6 +59,33 @@ public class UF {
 
     public int getCount() {
         return count;
+    }
+
+    public int[] getCounts() {
+        return counts;
+    }
+
+    private void setCounts() {
+        counts = new int[count];
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < sz.length; i++)
+            if (shouldAddToGroup(i))
+                set.add(find(i));
+
+        assert count == set.size();
+        int k = 0;
+        for (Integer i: set)
+            counts[k++] = sz[i];
+    }
+
+    protected boolean shouldAddToGroup(int i) {
+        return i >= 0 && i < id.length;
+    }
+
+    public void buildConnectedComponent(Consumer<UF> consumer) {
+        if (consumer != null)
+            consumer.accept(this);
+        setCounts();
     }
 
 }

@@ -8,50 +8,63 @@ import cn.cstn.algorithm.commons.UF;
  * date :               2018/8/26 0026 14:46
  */
 public class MUF extends UF {
-    private int n;
+    private int[][] a;
 
-    public MUF(int m, int n) {
-        super(m * n);
-        this.n = n;
+    public MUF(int[][] a) {
+        super(a.length * a[0].length);
+        this.a = a;
     }
 
     public boolean isConnected(int i, int j, int p, int q) {
-        return super.isConnected(n * i + j, n * p + q);
+        return super.isConnected(a[0].length * i + j, a[0].length * p + q);
     }
 
     public int find(int i, int j) {
-        return super.find(n * i + j);
+        return super.find(a[0].length * i + j);
     }
 
     public void union(int i, int j, int p, int q) {
-        super.union(n * i + j, n * p + q);
+        super.union(a[0].length * i + j, a[0].length * p + q);
     }
 
     public void deCount() {
         this.count--;
     }
 
-    public static MUF connectedComponent(int[][] a) {
+    @Override
+    protected boolean shouldAddToGroup(int k) {
+        int n = a[0].length, i = k / n, j = k % n;
+        return shouldAddToGroup(i, j);
+    }
+
+    private boolean shouldAddToGroup(int i, int j) {
+        return a[i][j] != 0;
+    }
+
+    public void buildConnectedComponent() {
         int m = a.length, n = a[0].length;
-        MUF muf = new MUF(m, n);
         int[][] d = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (a[i][j] == 0) {
-                    muf.deCount();
+                    deCount();
                     continue;
                 }
                 for (int[] dk : d) {
                     int p = i + dk[0];
                     int q = j + dk[1];
                     if (p < 0 || p >= m || q < 0 || q >= n || a[p][q] == 0) continue;
-                    muf.union(i, j, p, q);
+                    union(i, j, p, q);
                 }
             }
         }
 
-        return muf;
+        super.buildConnectedComponent(null);
+    }
+
+    public int[][] getA() {
+        return a;
     }
 
 }
