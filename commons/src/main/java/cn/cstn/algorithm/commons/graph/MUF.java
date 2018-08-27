@@ -1,6 +1,7 @@
 package cn.cstn.algorithm.commons.graph;
 
 import cn.cstn.algorithm.commons.UF;
+import cn.cstn.algorithm.commons.util.ArrayUtil;
 
 /**
  * description :        matrix union find
@@ -46,7 +47,7 @@ public class MUF extends UF {
 
     public void buildConnectedComponent() {
         int m = a.length, n = a[0].length;
-        int[][] d = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+        int[][] d = ArrayUtil.getWalkDirections();
 
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
