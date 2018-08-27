@@ -9,13 +9,13 @@ import cn.cstn.algorithm.commons.UF;
  */
 public class MUF extends UF {
     private int[][] a;
-    private int[][] b;
-    private boolean hasSetB;
+    private int[][] connectedGraph;
+    private boolean hasSetConnectedGraph;
 
     public MUF(int[][] a) {
         super(a.length * a[0].length);
         this.a = a;
-        b = new int[a.length][a[0].length];
+        connectedGraph = new int[a.length][a[0].length];
     }
 
     public boolean isConnected(int i, int j, int p, int q) {
@@ -30,8 +30,8 @@ public class MUF extends UF {
         super.union(a[0].length * i + j, a[0].length * p + q);
     }
 
-    public void deCount() {
-        this.count--;
+    public void decNumOfComponent() {
+        this.numOfComponent--;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class MUF extends UF {
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (a[i][j] == 0) {
-                    deCount();
+                    decNumOfComponent();
                     continue;
                 }
                 for (int[] dk : d) {
@@ -70,16 +70,16 @@ public class MUF extends UF {
         return a;
     }
 
-    public int[][] getB() {
-        if (!hasSetB)
-            for (int i = 0; i < b.length; i++)
-                for (int j = 0; j < b[0].length; j++) {
-                    b[i][j] = find(i, j);
-                    if (a[i][j] == 0) b[i][j] = -1;
+    public int[][] getConnectedGraph() {
+        if (!hasSetConnectedGraph)
+            for (int i = 0; i < connectedGraph.length; i++)
+                for (int j = 0; j < connectedGraph[0].length; j++) {
+                    connectedGraph[i][j] = find(i, j);
+                    if (a[i][j] == 0) connectedGraph[i][j] = -1;
                 }
 
-        hasSetB = true;
-        return b;
+        hasSetConnectedGraph = true;
+        return connectedGraph;
     }
 
 }

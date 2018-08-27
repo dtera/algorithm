@@ -12,8 +12,8 @@ import java.util.function.Consumer;
 public class UF {
     private int[] id;
     private int[] sz;
-    protected int count;
-    private int[] counts;
+    protected int numOfComponent;
+    private int[] nums;
 
     public UF(int n) {
         id = new int[n];
@@ -22,7 +22,7 @@ public class UF {
             id[i] = i;
             sz[i] = 1;
         }
-        count = n;
+        numOfComponent = n;
     }
 
     public boolean isConnected(int p, int q) {
@@ -54,28 +54,28 @@ public class UF {
             id[qr] = pr;
             sz[pr] += sz[qr];
         }
-        count--;
+        numOfComponent--;
     }
 
-    public int getCount() {
-        return count;
+    public int getNumOfComponent() {
+        return numOfComponent;
     }
 
-    public int[] getCounts() {
-        return counts;
+    public int[] getNums() {
+        return nums;
     }
 
-    private void setCounts() {
-        counts = new int[count];
+    private void setNums() {
+        nums = new int[numOfComponent];
         Set<Integer> set = new HashSet<>();
         for (int i = 0; i < sz.length; i++)
             if (shouldAddToGroup(i))
                 set.add(find(i));
 
-        assert count == set.size();
+        assert numOfComponent == set.size();
         int k = 0;
         for (Integer i: set)
-            counts[k++] = sz[i];
+            nums[k++] = sz[i];
     }
 
     protected boolean shouldAddToGroup(int i) {
@@ -85,7 +85,7 @@ public class UF {
     public void buildConnectedComponent(Consumer<UF> consumer) {
         if (consumer != null)
             consumer.accept(this);
-        setCounts();
+        setNums();
     }
 
 }

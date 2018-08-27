@@ -31,18 +31,18 @@ public class UFTest {
         muf.buildConnectedComponent();
         long e = System.currentTimeMillis();
 
-        int[][] b = muf.getB();
-        Arrays.stream(b).forEach(ArrayHelper::println);
+        int[][] connectedGraph = muf.getConnectedGraph();
+        Arrays.stream(connectedGraph).forEach(ArrayHelper::println);
 
-        int[] counts = muf.getCounts();
-        System.out.print("ComponentCounts: ");
-        ArrayHelper.println(counts);
-        System.out.print("ComponentCounts minMaxIndex: ");
-        ArrayHelper.println(ArrayHelper.indexOfMinMax(counts));
-        System.out.println("kthMin for counts: " + ArrayHelper.kthMin(counts, counts.length));
+        int[] nums = muf.getNums();
+        System.out.print("ComponentNums: ");
+        ArrayHelper.println(nums);
+        System.out.print("ComponentNums indexOfMinMax: ");
+        ArrayHelper.println(ArrayHelper.indexOfMinMax(nums));
+        System.out.println("kthMin for nums: " + ArrayHelper.kthMin(nums, nums.length));
         System.out.println("uf.find(2, 1): " + muf.find(2, 1));
         System.out.println("muf.isConnected(0, 0, 2, 1): " + muf.isConnected(0, 0, 2, 1));
-        System.out.println("num of connected component:" + muf.getCount() + "\t\tMUF.connectedComponent costs " + (e - s) + "ms");
+        System.out.println("num of connected component:" + muf.getNumOfComponent() + "\t\tMUF.connectedComponent costs " + (e - s) + "ms");
 
         System.out.println("****************************************************************************");
         s = System.currentTimeMillis();
@@ -50,12 +50,12 @@ public class UFTest {
         uf.buildConnectedComponent(this::connectedComponent);
         e = System.currentTimeMillis();
 
-        counts = uf.getCounts();
-        System.out.print("ComponentCounts: ");
-        ArrayHelper.println(counts);
+        nums = uf.getNums();
+        System.out.print("ComponentNums: ");
+        ArrayHelper.println(nums);
         System.out.println("uf.find(0): " + uf.find(0));
         System.out.println("uf.isConnected(0, 1): " + uf.isConnected(0, 1));
-        System.out.println("num of connected component:" + uf.getCount() + "\t\tconnectedComponent costs " + (e - s) + "ms");
+        System.out.println("num of connected component:" + uf.getNumOfComponent() + "\t\tconnectedComponent costs " + (e - s) + "ms");
     }
 
     private void connectedComponent(UF uf) {
@@ -66,7 +66,7 @@ public class UFTest {
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (a[i][j] == 0) {
-                    muf.deCount();
+                    muf.decNumOfComponent();
                     continue;
                 }
                 if (i > 0 && j > 0 && a[i - 1][j - 1] != 0) muf.union(i, j, i - 1, j - 1);
@@ -163,7 +163,7 @@ public class UFTest {
             }
         }
 
-        BeanUtil.setFieldValue(uf, "count", uf.getCount() - count);
+        BeanUtil.setFieldValue(uf, "numOfComponent", uf.getNumOfComponent() - count);
 
         return uf;
     }

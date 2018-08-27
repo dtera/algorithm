@@ -38,7 +38,7 @@ public class Xor {
     private static long _xor(int[] arr, int m) {
         long count = 0;
         TrieNode trie = buildTrieTree(arr);
-        System.out.println("root.count: " + trie.count);
+        System.out.println("root.numOfComponent: " + trie.count);
         for (int a : arr)
             count += queryTrieTree(trie, a, m, 31);
 
