@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.commons;
 
-import cn.cstn.algorithm.commons.util.ArrayHelper;
+import cn.cstn.algorithm.commons.util.ArrayUtil;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -42,7 +42,7 @@ public class Sort {
                 if (arr[j].compareTo(arr[minIndex]) < 0)
                     minIndex = j;
             if (minIndex != i)
-                ArrayHelper.swap(arr, i, minIndex);
+                ArrayUtil.swap(arr, i, minIndex);
         }
     }
 
@@ -55,7 +55,7 @@ public class Sort {
         for (int i = from; i < to - 1; i++)
             for (int j = to - 1; j > i; j--)
                 if (arr[j].compareTo(arr[j - 1]) < 0)
-                    ArrayHelper.swap(arr, j, j - 1);
+                    ArrayUtil.swap(arr, j, j - 1);
     }
 
     public static <T extends Comparable<T>> void mergeSort(T[] arr) {
@@ -99,7 +99,7 @@ public class Sort {
 
     private static <T extends Comparable<T>> void quickSort(T[] arr, int low, int high) {
         if (low >= high) return;
-        int p = ArrayHelper.partition(arr, low, high);
+        int p = ArrayUtil.partition(arr, low, high);
         quickSort(arr, low, p - 1);
         quickSort(arr, p + 1, high);
     }
@@ -169,7 +169,7 @@ public class Sort {
             shift(arr, i, to - 1);
 
         for (int i = to - 1; i > from; i--) {
-            ArrayHelper.swap(arr, i, from);
+            ArrayUtil.swap(arr, i, from);
             shift(arr, from, i - 1);
         }
 
@@ -185,10 +185,10 @@ public class Sort {
             return;
 
         if (r <= to && arr[r].compareTo(arr[l]) > 0) {
-            ArrayHelper.swap(arr, i, r);
+            ArrayUtil.swap(arr, i, r);
             shift(arr, r, to);
         } else {
-            ArrayHelper.swap(arr, i, l);
+            ArrayUtil.swap(arr, i, l);
             shift(arr, l, to);
         }
     }
