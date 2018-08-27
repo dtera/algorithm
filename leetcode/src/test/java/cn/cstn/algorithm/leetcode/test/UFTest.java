@@ -2,7 +2,7 @@ package cn.cstn.algorithm.leetcode.test;
 
 import cn.cstn.algorithm.commons.UF;
 import cn.cstn.algorithm.commons.graph.MUF;
-import cn.cstn.algorithm.commons.util.ArrayHelper;
+import cn.cstn.algorithm.commons.util.ArrayUtil;
 import cn.cstn.algorithm.commons.util.BeanUtil;
 import org.junit.Test;
 
@@ -32,14 +32,14 @@ public class UFTest {
         long e = System.currentTimeMillis();
 
         int[][] connectedGraph = muf.getConnectedGraph();
-        Arrays.stream(connectedGraph).forEach(ArrayHelper::println);
+        Arrays.stream(connectedGraph).forEach(ArrayUtil::println);
 
         int[] nums = muf.getNums();
         System.out.print("ComponentNums: ");
-        ArrayHelper.println(nums);
+        ArrayUtil.println(nums);
         System.out.print("ComponentNums indexOfMinMax: ");
-        ArrayHelper.println(ArrayHelper.indexOfMinMax(nums));
-        System.out.println("kthMin for nums: " + ArrayHelper.kthMin(nums, nums.length));
+        ArrayUtil.println(ArrayUtil.indexOfMinMax(nums));
+        System.out.println("kthMin for nums: " + ArrayUtil.kthMin(nums, nums.length));
         System.out.println("uf.find(2, 1): " + muf.find(2, 1));
         System.out.println("muf.isConnected(0, 0, 2, 1): " + muf.isConnected(0, 0, 2, 1));
         System.out.println("num of connected component:" + muf.getNumOfComponent() + "\t\tMUF.connectedComponent costs " + (e - s) + "ms");
@@ -52,7 +52,7 @@ public class UFTest {
 
         nums = uf.getNums();
         System.out.print("ComponentNums: ");
-        ArrayHelper.println(nums);
+        ArrayUtil.println(nums);
         System.out.println("uf.find(0): " + uf.find(0));
         System.out.println("uf.isConnected(0, 1): " + uf.isConnected(0, 1));
         System.out.println("num of connected component:" + uf.getNumOfComponent() + "\t\tconnectedComponent costs " + (e - s) + "ms");
