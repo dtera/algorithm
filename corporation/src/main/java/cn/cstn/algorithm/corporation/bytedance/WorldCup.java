@@ -1,7 +1,7 @@
 package cn.cstn.algorithm.corporation.bytedance;
 
 import cn.cstn.algorithm.commons.graph.MUF;
-import cn.cstn.algorithm.commons.util.ArrayHelper;
+import cn.cstn.algorithm.commons.util.ArrayUtil;
 
 import java.util.Scanner;
 
@@ -56,7 +56,38 @@ public class WorldCup {
         MUF muf = new MUF(a);
         muf.buildConnectedComponent();
         int[] nums = muf.getNums();
-        System.out.println(muf.getNumOfComponent() + "," + nums[ArrayHelper.indexOfMinMax(nums)[1]]);
+        System.out.println(muf.getNumOfComponent() + "," + nums[ArrayUtil.indexOfMinMax(nums)[1]]);
+        System.out.println("======================================================================");
 
+        int[][] b = new int[m][n];
+        int[][] d = ArrayUtil.getWalkDirections();
+        int maxNum = 0, numOfComponent = 0;
+        for (int i = 0; i < m; i++)
+            System.arraycopy(a[i], 0, b[i], 0, n);
+
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                if (b[i][j] != 0) {
+                    int num = 0;
+                    num = dfs(b, i, j, num, d);
+                    if (num > maxNum) maxNum = num;
+                    numOfComponent++;
+                }
+        System.out.println(numOfComponent + "," + maxNum);
     }
+
+    private static int dfs(int[][] b, int i, int j, int num, int[][] d) {
+        num++;
+        b[i][j] = 0;
+        for (int[] dk : d) {
+            int p = i + dk[0];
+            int q = j + dk[1];
+            if (p < 0 || p >= b.length || q < 0 || q >= b[0].length) continue;
+            if (b[p][q] != 0)
+                num = dfs(b, p, q, num, d);
+        }
+
+        return num;
+    }
+
 }
