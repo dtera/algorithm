@@ -6,6 +6,8 @@ import cn.cstn.algorithm.commons.util.ArrayHelper;
 import cn.cstn.algorithm.commons.util.BeanUtil;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 @SuppressWarnings("all")
 public class UFTest {
 
@@ -23,23 +25,14 @@ public class UFTest {
         for (int k = 0; k < r; k++)
             for (int i = 0; i < m; i++)
                 System.arraycopy(c[i], 0, a[m * k + i], 0, n);
-        m = a.length;
-        n = a[0].length;
-        int[][] b = new int[m][n];
 
         long s = System.currentTimeMillis();
         MUF muf = new MUF(a);
         muf.buildConnectedComponent();
         long e = System.currentTimeMillis();
 
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                b[i][j] = muf.find(i, j);
-                if (a[i][j] == 0) b[i][j] = 0;
-            }
-        }
-        /*for (int i = 0; i < m; i++)
-            ArrayHelper.println(b[i]);*/
+        int[][] b = muf.getB();
+        Arrays.stream(b).forEach(ArrayHelper::println);
 
         int[] counts = muf.getCounts();
         System.out.print("ComponentCounts: ");
@@ -47,7 +40,8 @@ public class UFTest {
         System.out.print("ComponentCounts minMaxIndex: ");
         ArrayHelper.println(ArrayHelper.indexOfMinMax(counts));
         System.out.println("kthMin for counts: " + ArrayHelper.kthMin(counts, counts.length));
-        System.out.println("(0, 0) and (2, 1) connected status: " + muf.isConnected(0, 0, 2, 1));
+        System.out.println("uf.find(2, 1): " + muf.find(2, 1));
+        System.out.println("muf.isConnected(0, 0, 2, 1): " + muf.isConnected(0, 0, 2, 1));
         System.out.println("num of connected component:" + muf.getCount() + "\t\tMUF.connectedComponent costs " + (e - s) + "ms");
 
         System.out.println("****************************************************************************");
@@ -59,8 +53,6 @@ public class UFTest {
         counts = uf.getCounts();
         System.out.print("ComponentCounts: ");
         ArrayHelper.println(counts);
-        System.out.print("ComponentCounts minMaxIndex: ");
-        ArrayHelper.println(ArrayHelper.indexOfMinMax(counts));
         System.out.println("uf.find(0): " + uf.find(0));
         System.out.println("uf.isConnected(0, 1): " + uf.isConnected(0, 1));
         System.out.println("num of connected component:" + uf.getCount() + "\t\tconnectedComponent costs " + (e - s) + "ms");
