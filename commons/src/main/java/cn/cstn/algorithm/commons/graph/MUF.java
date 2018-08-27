@@ -10,7 +10,7 @@ import cn.cstn.algorithm.commons.UF;
 public class MUF extends UF {
     private int[][] a;
     private int[][] connectedGraph;
-    private boolean hasSetConnectedGraph;
+    private boolean hasSetCG;
 
     public MUF(int[][] a) {
         super(a.length * a[0].length);
@@ -71,14 +71,14 @@ public class MUF extends UF {
     }
 
     public int[][] getConnectedGraph() {
-        if (!hasSetConnectedGraph)
+        if (!hasSetCG)
             for (int i = 0; i < connectedGraph.length; i++)
                 for (int j = 0; j < connectedGraph[0].length; j++) {
                     connectedGraph[i][j] = find(i, j);
                     if (a[i][j] == 0) connectedGraph[i][j] = -1;
                 }
 
-        hasSetConnectedGraph = true;
+        hasSetCG = true;
         return connectedGraph;
     }
 
