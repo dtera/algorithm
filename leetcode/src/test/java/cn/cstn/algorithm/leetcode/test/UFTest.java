@@ -1,7 +1,7 @@
 package cn.cstn.algorithm.leetcode.test;
 
 import cn.cstn.algorithm.commons.UF;
-import cn.cstn.algorithm.commons.graph.MUF;
+import cn.cstn.algorithm.commons.graph.UF2D;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
 import cn.cstn.algorithm.commons.util.BeanUtil;
 import org.junit.Test;
@@ -27,26 +27,26 @@ public class UFTest {
                 System.arraycopy(c[i], 0, a[m * k + i], 0, n);
 
         long s = System.currentTimeMillis();
-        MUF muf = new MUF(a);
-        muf.buildConnectedComponent();
+        UF2D uf2d = new UF2D(a);
+        uf2d.buildConnectedComponent();
         long e = System.currentTimeMillis();
 
-        int[][] connectedGraph = muf.getConnectedGraph();
+        int[][] connectedGraph = uf2d.getConnectedGraph();
         Arrays.stream(connectedGraph).forEach(ArrayUtil::println);
 
-        int[] nums = muf.getNums();
+        int[] nums = uf2d.getNums();
         System.out.print("ComponentNums: ");
         ArrayUtil.println(nums);
         System.out.print("ComponentNums indexOfMinMax: ");
         ArrayUtil.println(ArrayUtil.indexOfMinMax(nums));
         System.out.println("kthMin for nums: " + ArrayUtil.kthMin(nums, nums.length));
-        System.out.println("uf.find(2, 1): " + muf.find(2, 1));
-        System.out.println("muf.isConnected(0, 0, 2, 1): " + muf.isConnected(0, 0, 2, 1));
-        System.out.println("num of connected component:" + muf.getNumOfComponent() + "\t\tMUF.connectedComponent costs " + (e - s) + "ms");
+        System.out.println("uf.find(2, 1): " + uf2d.find(2, 1));
+        System.out.println("UF2D.isConnected(0, 0, 2, 1): " + uf2d.isConnected(0, 0, 2, 1));
+        System.out.println("num of connected component:" + uf2d.getNumOfComponent() + "\t\tUF2D.connectedComponent costs " + (e - s) + "ms");
 
         System.out.println("****************************************************************************");
         s = System.currentTimeMillis();
-        UF uf = new MUF(a);
+        UF uf = new UF2D(a);
         uf.buildConnectedComponent(this::connectedComponent);
         e = System.currentTimeMillis();
 
@@ -59,24 +59,24 @@ public class UFTest {
     }
 
     private void connectedComponent(UF uf) {
-        MUF muf = (MUF) uf;
-        int[][] a = muf.getA();
+        UF2D uf2d = (UF2D) uf;
+        int[][] a = uf2d.getA();
         int m = a.length, n = a[0].length;
 
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (a[i][j] == 0) {
-                    muf.decNumOfComponent();
+                    uf2d.decNumOfComponent();
                     continue;
                 }
-                if (i > 0 && j > 0 && a[i - 1][j - 1] != 0) muf.union(i, j, i - 1, j - 1);
-                if (i > 0 && a[i - 1][j] != 0) muf.union(i, j, i - 1, j);
-                if (i > 0 && j < n - 1 && a[i - 1][j + 1] != 0) muf.union(i, j, i - 1, j + 1);
-                if (j > 0 && a[i][j - 1] != 0) muf.union(i, j, i, j - 1);
-                if (j < n - 1 && a[i][j + 1] != 0) muf.union(i, j, i, j + 1);
-                if (i < m - 1 && j > 0 && a[i + 1][j - 1] != 0) muf.union(i, j, i + 1, j - 1);
-                if (i < m - 1 && a[i + 1][j] != 0) muf.union(i, j, i + 1, j);
-                if (i < m - 1 && j < n - 1 && a[i + 1][j + 1] != 0) muf.union(i, j, i + 1, j + 1);
+                if (i > 0 && j > 0 && a[i - 1][j - 1] != 0) uf2d.union(i, j, i - 1, j - 1);
+                if (i > 0 && a[i - 1][j] != 0) uf2d.union(i, j, i - 1, j);
+                if (i > 0 && j < n - 1 && a[i - 1][j + 1] != 0) uf2d.union(i, j, i - 1, j + 1);
+                if (j > 0 && a[i][j - 1] != 0) uf2d.union(i, j, i, j - 1);
+                if (j < n - 1 && a[i][j + 1] != 0) uf2d.union(i, j, i, j + 1);
+                if (i < m - 1 && j > 0 && a[i + 1][j - 1] != 0) uf2d.union(i, j, i + 1, j - 1);
+                if (i < m - 1 && a[i + 1][j] != 0) uf2d.union(i, j, i + 1, j);
+                if (i < m - 1 && j < n - 1 && a[i + 1][j + 1] != 0) uf2d.union(i, j, i + 1, j + 1);
             }
         }
 
