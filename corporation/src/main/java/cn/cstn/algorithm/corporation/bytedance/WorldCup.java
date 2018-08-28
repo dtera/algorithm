@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.corporation.bytedance;
 
-import cn.cstn.algorithm.commons.graph.MUF;
+import cn.cstn.algorithm.commons.graph.UF2D;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
 
 import java.util.Scanner;
@@ -53,10 +53,10 @@ public class WorldCup {
                 a[i][j] = Integer.parseInt(ls[j]);
         }
 
-        MUF muf = new MUF(a);
-        muf.buildConnectedComponent();
-        int[] nums = muf.getNums();
-        System.out.println(muf.getNumOfComponent() + "," + nums[ArrayUtil.indexOfMinMax(nums)[1]]);
+        UF2D uf2d = new UF2D(a);
+        uf2d.buildConnectedComponent();
+        int[] nums = uf2d.getNums();
+        System.out.println(uf2d.getNumOfComponent() + "," + nums[ArrayUtil.indexOfMinMax(nums)[1]]);
         System.out.println("======================================================================");
 
         int[][] b = new int[m][n];
