@@ -41,6 +41,7 @@ import java.util.Scanner;
  */
 public class WorldCup {
     public static void main(String[] args) {
+        //input data
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine();
         String[] ls = line.split(",");
@@ -53,12 +54,19 @@ public class WorldCup {
                 a[i][j] = Integer.parseInt(ls[j]);
         }
 
+        //method1:union find
         UF2D uf2d = new UF2D(a);
         uf2d.buildConnectedComponent();
         int[] nums = uf2d.getNums();
         System.out.println(uf2d.getNumOfComponent() + "," + nums[ArrayUtil.indexOfMinMax(nums)[1]]);
         System.out.println("======================================================================");
 
+        //method2: dfs
+        solve(a);
+    }
+
+    private static void solve(int[][] a) {
+        int m = a.length, n = a[0].length;
         int[][] b = new int[m][n];
         int[][] d = ArrayUtil.getWalkDirections();
         int maxNum = 0, numOfComponent = 0;
