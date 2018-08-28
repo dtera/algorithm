@@ -73,21 +73,29 @@ public class ArrayUtil {
     }
 
     public static void println(int[] a) {
-        if (a == null) return;
-        System.out.print("[");
-        for (int i = 0; i < a.length - 1; i++)
-            System.out.print(a[i] + ", ");
-
-        System.out.print(a[a.length - 1] + "]\n");
+        print(a, ", ", "[", "]\n");
     }
 
-    public static void println(String[] a) {
+    public static void print(int[] a, String sep, String s, String e) {
         if (a == null) return;
-        System.out.print("[");
+        System.out.print(s);
         for (int i = 0; i < a.length - 1; i++)
-            System.out.print(a[i] + ", ");
+            System.out.print(a[i] + sep);
 
-        System.out.print(a[a.length - 1] + "]\n");
+        System.out.print(a[a.length - 1] + e);
+    }
+
+    public static <T> void println(T[] a) {
+        print(a, ", ", "[", "]\n");
+    }
+
+    public static <T> void print(T[] a, String sep, String s, String e) {
+        if (a == null) return;
+        System.out.print(s);
+        for (int i = 0; i < a.length - 1; i++)
+            System.out.print(a[i] + sep);
+
+        System.out.print(a[a.length - 1] + e);
     }
 
 }
