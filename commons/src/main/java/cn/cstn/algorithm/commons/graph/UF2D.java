@@ -4,16 +4,16 @@ import cn.cstn.algorithm.commons.UF;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
 
 /**
- * description :        matrix union find
+ * description :        union find for 2 dimension array
  * @author :           zhaohq
  * date :               2018/8/26 0026 14:46
  */
-public class MUF extends UF {
+public class UF2D extends UF {
     private int[][] a;
     private int[][] connectedGraph;
     private boolean hasSetCG;
 
-    public MUF(int[][] a) {
+    public UF2D(int[][] a) {
         super(a.length * a[0].length);
         this.a = a;
         connectedGraph = new int[a.length][a[0].length];
