@@ -39,7 +39,7 @@ import java.util.Scanner;
  * @author :           zhaohq
  * date :               2018/8/27 0027 19:48
  */
-public class WorldCup {
+public class WorldCupOpeningCeremony {
     public static void main(String[] args) {
         //input data
         Scanner sc = new Scanner(System.in);
