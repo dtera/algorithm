@@ -37,11 +37,7 @@ public class CollectionUtil {
     public static List<Point> merge(List<Point> ps) {
         List<Point> res = new ArrayList<>();
         if (ps == null || ps.size() < 1) return res;
-        ps.sort((p, q) -> {
-            if (p.getX() > q.getX()) return 1;
-            else if (p.getX() < q.getX()) return -1;
-            return 0;
-        });
+        ps.sort(Comparator.comparingInt(Point::getX));
         //method1
         for (int i = 0, j = 0; i < ps.size(); i++)
             if (i == ps.size() - 1 || ps.get(i + 1).getX() > ps.get(i).getY()) {
