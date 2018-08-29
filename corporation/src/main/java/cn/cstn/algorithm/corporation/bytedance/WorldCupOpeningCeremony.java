@@ -6,7 +6,7 @@ import cn.cstn.algorithm.commons.util.ArrayUtil;
 import java.util.Scanner;
 
 /**
- * 头条8.12             世界杯开幕式
+ * 头条8.12             1.世界杯开幕式
  * description :        世界杯开幕式会在球场C举行,球场C的球迷看台可以容纳M*N个球迷。在球场售票完成后,
  *                      现官方想统计此次开幕式一共有多少个球队球迷群体,最大的球队球迷群体有多少人。
  *                      经调研发现,球迷群体在选座时有以下特性:
