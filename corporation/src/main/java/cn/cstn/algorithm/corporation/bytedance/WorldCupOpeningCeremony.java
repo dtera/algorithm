@@ -36,7 +36,7 @@ import java.util.Scanner;
  *                      备注:
  *                      数据范围    0<M<1000
  *                                  0<N<1000
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/8/27 0027 19:48
  */
 public class WorldCupOpeningCeremony {

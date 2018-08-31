@@ -9,7 +9,7 @@ import java.util.HashMap;
  *                   You want to know how many of the stones you have are also jewels.
  *                   The letters in J are guaranteed distinct, and all characters in J and S are letters.
  *                   Letters are case sensitive, so "a" is considered a different type of stone from "A".
- * @author :        zhaohq
+ * @author :         zhaohq
  * date :            2018-07-26 18:40
  */
 public class JewelsInStones {

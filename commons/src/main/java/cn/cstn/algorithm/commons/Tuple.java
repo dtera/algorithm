@@ -2,7 +2,7 @@ package cn.cstn.algorithm.commons;
 
 /**
  * description :        two tuple
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/8/31 0031 17:23
  */
 public class Tuple<T> {

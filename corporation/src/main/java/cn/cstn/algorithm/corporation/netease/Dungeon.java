@@ -36,7 +36,7 @@ import java.util.Scanner;
  *                                      0 -1
  *                              输出
  *                                      3
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/8/10 0010 17:43
  */
 public class Dungeon {

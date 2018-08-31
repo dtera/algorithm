@@ -13,7 +13,7 @@ package cn.cstn.algorithm.leetcode.string;
  * example 2:
  *                   Input: "LL"
  *                   Output: false
- * @author :        zhaohq
+ * @author :         zhaohq
  * date :            2018-07-26 18:39
  */
 public class JudgeCircle {

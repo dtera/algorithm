@@ -27,7 +27,7 @@ import java.util.Scanner;
  *                          0 < n < 100
  *                          0 < x < 1000
  *                          0 < y < 1e6
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/8/29 0029 14:12
  */
 @Slf4j

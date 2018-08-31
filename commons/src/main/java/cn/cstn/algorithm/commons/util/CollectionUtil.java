@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 /**
  * description :        CollectionUtil
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/8/28 0028 20:39
  */
 public class CollectionUtil {

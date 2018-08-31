@@ -25,7 +25,7 @@ import java.util.Map;
  *                              0 <= A.length <= 200
  *                              0 <= B.length <= 200
  *                              A and B both contain only spaces and lowercase letters.
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/8/12 0012 15:19
  */
 public class UncommonFromSentences {

@@ -2,7 +2,7 @@ package cn.cstn.algorithm.commons.math;
 
 /**
  * description :        2 dimension point
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/8/28 0028 21:49
  */
 public class Point {

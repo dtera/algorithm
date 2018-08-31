@@ -24,7 +24,7 @@ package cn.cstn.algorithm.leetcode.tree;
  *                  	  / \   \
  *                  	 5   4   7
  * note:            The merging process must start from the root nodes of both trees.
- * @author :       zhaohq
+ * @author :        zhaohq
  * date :           2018-07-26 18:11
  */
 public class MergeTrees {

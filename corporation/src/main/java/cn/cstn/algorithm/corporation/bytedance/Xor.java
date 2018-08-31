@@ -19,7 +19,7 @@ import java.util.Scanner;
  *                      输入    3 10
  *                              6 5 10
  *                      输出    2
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/8/10 0010 8:48
  */
 public class Xor {

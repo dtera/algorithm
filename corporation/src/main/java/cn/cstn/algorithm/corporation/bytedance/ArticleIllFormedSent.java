@@ -33,7 +33,7 @@ import java.util.Scanner;
  *                          数据范围    m<2^16
  *                          下标数值 < 2^32
  *                          每个编辑记录的下标 < 2^16组
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/8/28 0028 19:10
  */
 public class ArticleIllFormedSent {

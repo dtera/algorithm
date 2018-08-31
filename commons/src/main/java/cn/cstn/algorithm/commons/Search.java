@@ -2,7 +2,7 @@ package cn.cstn.algorithm.commons;
 
 /**
  * description :        search algorithm
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/4/12 0012 21:40
  */
 public class Search {

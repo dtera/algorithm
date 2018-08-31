@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 /**
  * description :        common sort algorithm
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/3/16 0012 21:39
  */
 public class Sort {

@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 /**
  * description :        union find
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/8/12 0012 18:16
  */
 public class UF {

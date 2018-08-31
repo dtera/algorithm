@@ -29,7 +29,7 @@ import java.util.Set;
  *                   The length of words will be at most 100.
  *                   Each words[i] will have length in range [1, 12].
  *                   words[i] will only consist of lowercase letters.
- * @author :        zhaohq
+ * @author :         zhaohq
  * date :            2018-07-26 18:16
  */
 public class MorseRepresentations {

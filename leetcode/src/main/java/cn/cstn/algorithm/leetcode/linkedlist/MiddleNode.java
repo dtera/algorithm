@@ -17,8 +17,7 @@ package cn.cstn.algorithm.leetcode.linkedlist;
  *                      Since the list has two middle nodes with values 3 and 4, we return the second one.
  * note :
  *                      The number of nodes in the given list will be between 1 and 100.
- *
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/7/29 20:38
  */
 public class MiddleNode {

@@ -25,7 +25,7 @@ import java.util.Arrays;
  * notes:
  *                   1 <= A.length = A[0].length <= 20
  *                   0 <= A[i][j] <= 1
- * @author :        zhaohq
+ * @author :         zhaohq
  * date :            2018-07-26 18:54
  */
 public class FlipAndInvertImage {

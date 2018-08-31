@@ -14,7 +14,7 @@ import java.util.Arrays;
  *                      Note:
  *                              n is a positive integer, which is in the range of [1, 10000].
  *                              All the integers in the array will be in the range of [-10000, 10000].
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/8/12 0012 14:09
  */
 public class ArrayPartitionI {

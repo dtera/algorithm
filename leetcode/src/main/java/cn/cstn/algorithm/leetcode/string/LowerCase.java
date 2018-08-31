@@ -4,7 +4,7 @@ package cn.cstn.algorithm.leetcode.string;
  * 709               To Lower Case
  * description :     Implement function ToLowerCase() that has a string parameter str,
  *                   and returns the same string in lowercase.
- * @author :        zhaohq
+ * @author :         zhaohq
  * date :            2018-07-26 18:17
  */
 public class LowerCase {

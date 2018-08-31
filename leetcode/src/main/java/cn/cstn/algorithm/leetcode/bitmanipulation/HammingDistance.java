@@ -15,7 +15,7 @@ package cn.cstn.algorithm.leetcode.bitmanipulation;
  *                   4   (0 1 0 0)
  *                          ↑   ↑
  *                   The above arrows point to positions where the corresponding bits are different.
- * @author :        zhaohq
+ * @author :         zhaohq
  * date :            2018-07-26 18:50
  */
 public class HammingDistance {

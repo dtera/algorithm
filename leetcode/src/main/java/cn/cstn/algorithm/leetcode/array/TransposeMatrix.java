@@ -18,7 +18,7 @@ import java.util.Arrays;
  * note :
  *                   1 <= A.length <= 1000
  *                   1 <= A[0].length <= 1000
- * @author :        zhaohq
+ * @author :         zhaohq
  * date :            2018-07-27 16:19
  */
 public class TransposeMatrix {

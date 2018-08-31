@@ -5,7 +5,7 @@ import cn.cstn.algorithm.commons.util.ArrayUtil;
 
 /**
  * description :        union find for 2 dimension array
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/8/26 0026 14:46
  */
 public class UF2D extends UF {

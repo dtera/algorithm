@@ -18,7 +18,7 @@ import java.util.Scanner;
  *                                      7 4 7
  *                                      2 50
  *                              输出    49
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/8/10 0010 9:53
  */
 public class Chorus {

@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 /**
  * description :     ArrayUtil
- * @author :        zhaohq
+ * @author :         zhaohq
  * date :            2018-07-27 16:31
  */
 public class ArrayUtil {

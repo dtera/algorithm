@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * description :        class description
- * @author :           zhaohq
+ * @author :            zhaohq
  * date :               2018/8/28 0028 21:44
  */
 public class MergeIntervals {
