@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+    <!--specify logfile dir-->
+    <property name="LOG_HOME" value="/var/log/algorithm"/>
+    <!-- output to console -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--output format：%d denotes date，%thread denotes thread name，
+            %-5level：show 5 char width from left,%msg：log message，%n denotes line break-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80}:: %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!-- generate log file every day-->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--log file name-->
+            <FileNamePattern>${LOG_HOME}/algorithm.log.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--how many days should log file retain-->
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--output format：%d denotes date，%thread denotes thread name，
+            %-5level：show 5 char width from left,%msg：log message，%n denotes line break-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+        <!--max size for log file-->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!-- level for log output -->
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
