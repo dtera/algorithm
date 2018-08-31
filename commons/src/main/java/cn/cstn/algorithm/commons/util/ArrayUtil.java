@@ -1,18 +1,62 @@
 package cn.cstn.algorithm.commons.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import cn.cstn.algorithm.commons.Tuple;
+
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
  * description :     ArrayUtil
+ *
  * @author :        zhaohq
  * date :            2018-07-27 16:31
  */
 public class ArrayUtil {
 
+    public static <T> void coCombination(T[] a, Consumer<Tuple<List<T>>> consumer) {
+        Map<Integer, List<List<T>>> map = new HashMap<>();
+        for (int i = 1; i < a.length; i++) {
+            int len = i;
+            combination(a, i, list -> {
+                List<List<T>> lists = map.computeIfAbsent(len, k -> new ArrayList<>());
+                lists.add(list);
+            });
+        }
+
+        for (int i = 1; i <= a.length / 2; i++) {
+            List<List<T>> pls = map.get(i);
+            combinationPair(pls, t -> {
+                List<T> intersect = CollectionUtil.intersect(t._1(), t._2());
+                if (intersect.size() == 0) consumer.accept(t);
+            });
+            for (int j = i + 1; j < a.length && i + j <= a.length; j++) {
+                List<List<T>> cls = map.get(j);
+                combinationPair(pls, cls, t -> {
+                    List<T> intersect = CollectionUtil.intersect(t._1(), t._2());
+                    if (intersect.size() == 0) consumer.accept(t);
+                });
+            }
+        }
+
+    }
+
+    public static <T> void combinationPair(List<T> pls, Consumer<Tuple<T>> consumer) {
+        for (int i = 0; i < pls.size() - 1; i++) {
+            T pl = pls.get(i);
+            for (int j = i + 1; j < pls.size(); j++) {
+                T cl = pls.get(j);
+                consumer.accept(new Tuple<>(pl, cl));
+            }
+        }
+    }
+
+    public static <T> void combinationPair(List<T> pls, List<T> cls, Consumer<Tuple<T>> consumer) {
+        for (T pl : pls) {
+            for (T cl : cls) {
+                consumer.accept(new Tuple<>(pl, cl));
+            }
+        }
+    }
 
     public static <T> void combination(T[] a, Consumer<List<T>> consumer) {
         for (int i = 1; i <= a.length; i++)
