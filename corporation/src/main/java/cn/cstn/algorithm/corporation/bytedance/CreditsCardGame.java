@@ -2,6 +2,7 @@ package cn.cstn.algorithm.corporation.bytedance;
 
 import cn.cstn.algorithm.commons.math.Point;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Scanner;
@@ -29,6 +30,7 @@ import java.util.Scanner;
  * @author :           zhaohq
  * date :               2018/8/29 0029 14:12
  */
+@Slf4j
 public class CreditsCardGame {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -43,12 +45,14 @@ public class CreditsCardGame {
     private static int solve(Point[] ps) {
         final int[] max = {0};
         ArrayUtil.coCombination(ps, t -> {
-            List<Point> pl = t._1();
-            List<Point> ql = t._2();
-            int s1 = pl.stream().mapToInt(Point::getX).sum();
-            int s2 = ql.stream().mapToInt(Point::getX).sum();
+            List<Point> a = t._1();
+            List<Point> b = t._2();
+            int s1 = a.stream().mapToInt(Point::getX).sum();
+            int s2 = b.stream().mapToInt(Point::getX).sum();
             if (s1 == s2) {
-                int gs = pl.stream().mapToInt(Point::getY).sum() + ql.stream().mapToInt(Point::getY).sum();
+                int gs = a.stream().mapToInt(Point::getY).sum() + b.stream().mapToInt(Point::getY).sum();
+                log.debug("group and the corresponding score when a and b have the same individual score: "
+                        + t.toString() + "\t" + gs);
                 if (gs > max[0]) max[0] = gs;
             }
         });
