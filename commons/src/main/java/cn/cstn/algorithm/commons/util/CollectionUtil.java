@@ -1,5 +1,6 @@
 package cn.cstn.algorithm.commons.util;
 
+import cn.cstn.algorithm.commons.Tuple;
 import cn.cstn.algorithm.commons.math.Point;
 
 import java.util.*;
@@ -11,6 +12,42 @@ import java.util.function.Consumer;
  * date :               2018/8/28 0028 20:39
  */
 public class CollectionUtil {
+
+    public static <T> void combinationPair(List<T> pls, Consumer<Tuple<T>> consumer) {
+        for (int i = 0; i < pls.size() - 1; i++) {
+            T pl = pls.get(i);
+            for (int j = i + 1; j < pls.size(); j++) {
+                T cl = pls.get(j);
+                consumer.accept(new Tuple<>(pl, cl));
+            }
+        }
+    }
+
+    public static <T> void combinationPair(List<T> pls, List<T> cls, Consumer<Tuple<T>> consumer) {
+        for (T pl : pls) {
+            for (T cl : cls) {
+                consumer.accept(new Tuple<>(pl, cl));
+            }
+        }
+    }
+
+    public static <T> List<T> intersect(List<T> ls1, List<T> ls2) {
+        List<T> list = new ArrayList<>(ls1);
+        list.retainAll(ls2);
+        return list;
+    }
+
+    public static <T> List<T> union(List<T> ls1, List<T> ls2) {
+        List<T> list = new ArrayList<>(ls1);
+        list.addAll(ls2);
+        return list;
+    }
+
+    public static <T> List<T> diff(List<T> ls1, List<T> ls2) {
+        List<T> list = new ArrayList<>(ls1);
+        list.removeAll(ls2);
+        return list;
+    }
 
     public static List<Point> _merge(List<Point> ps) {
         List<Point> res = new ArrayList<>();
