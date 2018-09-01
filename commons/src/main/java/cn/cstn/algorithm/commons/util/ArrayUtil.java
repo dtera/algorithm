@@ -69,9 +69,7 @@ public class ArrayUtil {
             combination(a, from + 1, n - 1, cl, consumer);
             combination(a, from + 1, n, pl, consumer);
         }
-
     }
-
 
     public static <T extends Comparable<T>> boolean nextPermutation(T[] a, Consumer<T[]> consumer) {
         return nextPermutation(a, Comparable::compareTo, consumer);
