@@ -111,8 +111,12 @@ public class ArrayUtil {
     }
 
     public static int[] indexOfMinMax(int[] a) {
+        return indexOfMinMax(a, 0, a.length - 1);
+    }
+
+    public static int[] indexOfMinMax(int[] a, int from, int to) {
         int[] imm = new int[2];
-        for (int i = 0; i < a.length; i++) {
+        for (int i = from; i <= to; i++) {
             if (a[i] < a[imm[0]]) imm[0] = i;
             if (a[i] > a[imm[1]]) imm[1] = i;
         }
