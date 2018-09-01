@@ -14,13 +14,10 @@ public class ArrayUtil {
 
     public static <T> void coCombination(T[] a, Consumer<Tuple<List<T>>> consumer) {
         Map<Integer, List<List<T>>> map = new HashMap<>();
-        for (int i = 1; i < a.length; i++) {
-            int len = i;
-            combination(a, i, list -> {
-                List<List<T>> lists = map.computeIfAbsent(len, k -> new ArrayList<>());
-                lists.add(list);
-            });
-        }
+        combination(a, 1, a.length - 1, list -> {
+            List<List<T>> lists = map.computeIfAbsent(list.size(), k -> new ArrayList<>());
+            lists.add(list);
+        });
 
         for (int i = 1; i <= a.length / 2; i++) {
             List<List<T>> pls = map.get(i);
@@ -36,11 +33,15 @@ public class ArrayUtil {
                 });
             }
         }
-
     }
 
     public static <T> void combination(T[] a, Consumer<List<T>> consumer) {
-        for (int i = 1; i <= a.length; i++)
+        combination(a, 1, a.length, consumer);
+    }
+
+    public static <T> void combination(T[] a, int from, int to, Consumer<List<T>> consumer) {
+        assert from > 0 && to <= a.length;
+        for (int i = from; i <= to; i++)
             combination(a, i, consumer);
     }
 
@@ -112,7 +113,7 @@ public class ArrayUtil {
 
     public static List<Integer> asList(int... a) {
         List<Integer> res = new ArrayList<>();
-        for (int ai: a)
+        for (int ai : a)
             res.add(ai);
 
         return res;
