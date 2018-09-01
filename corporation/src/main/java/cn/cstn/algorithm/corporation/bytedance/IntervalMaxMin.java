@@ -35,7 +35,26 @@ public class IntervalMaxMin {
         for (int i = 0; i < n; i++) a[i] = sc.nextInt();
         for (int i = 0; i < n; i++) b[i] = sc.nextInt();
 
+        System.out.println(_numOfInterval(a, b));
         System.out.println(numOfInterval(a, b));
+    }
+
+    private static int _numOfInterval(int[] a, int[] b) {
+        int num = 0, n = a.length;
+        int[][] mxs = new int[n][n], mns = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            mxs[i][i] = a[i];
+            mns[i][i] = b[i];
+            for (int j = i + 1; j < n; j++) {
+                mxs[i][j] = Math.max(mxs[i][j - 1], a[j]);
+                mns[i][j] = Math.min(mns[i][j - 1], b[j]);
+            }
+        }
+        for (int i = 0; i < n; i++)
+            for (int j = i; j < n; j++)
+                if (mxs[i][j] < mns[i][j]) num++;
+
+        return num;
     }
 
     private static int numOfInterval(int[] a, int[] b) {
@@ -53,4 +72,5 @@ public class IntervalMaxMin {
 
         return num;
     }
+
 }
