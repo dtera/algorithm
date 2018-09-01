@@ -2,13 +2,9 @@ package cn.cstn.algorithm.commons.test;
 
 import cn.cstn.algorithm.commons.math.Point;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
-import cn.cstn.algorithm.commons.util.CollectionUtil;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 public class ArrayTest {
 
@@ -58,6 +54,8 @@ public class ArrayTest {
         ArrayUtil.combination(a, System.out::println);
         System.out.println("=============================");
         ArrayUtil.combination(a, 3, System.out::println);
+        System.out.println("=============================");
+        ArrayUtil.combination(a, 1, 2, System.out::println);
     }
 
     @Test
