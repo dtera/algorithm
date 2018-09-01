@@ -110,13 +110,23 @@ public class ArrayUtil {
         }
     }
 
+    public static List<Integer> asList(int... a) {
+        List<Integer> res = new ArrayList<>();
+        for (int ai: a)
+            res.add(ai);
+
+        return res;
+    }
+
     public static int[] indexOfMinMax(int[] a) {
         return indexOfMinMax(a, 0, a.length - 1);
     }
 
     public static int[] indexOfMinMax(int[] a, int from, int to) {
         int[] imm = new int[2];
-        for (int i = from; i <= to; i++) {
+        imm[0] = from;
+        imm[1] = from;
+        for (int i = from + 1; i <= to; i++) {
             if (a[i] < a[imm[0]]) imm[0] = i;
             if (a[i] > a[imm[1]]) imm[1] = i;
         }
