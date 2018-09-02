@@ -4,6 +4,7 @@ import cn.cstn.algorithm.commons.Tuple;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -30,19 +31,48 @@ import java.util.Scanner;
  * @author :            zhaohq
  * date :               2018/8/29 0029 14:12
  */
-@Slf4j
+@Slf4j @SuppressWarnings("unchecked")
 public class CreditsCardGame {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
-        Tuple[] ts = new Tuple[n];
+        Tuple<Integer>[] ts = new Tuple[n];
         for (int i = 0; i < n; i++)
             ts[i] = new Tuple<>(sc.nextInt(), sc.nextInt());
 
-        System.out.println(solve(ts));
+        System.out.println(_maxGroupScore(ts));
+        System.out.println(maxGroupScore(ts));
     }
 
-    private static int solve(Tuple[] ts) {
+    private static int _maxGroupScore(Tuple<Integer>[] ts) {
+        int sx = 0, sy = 0;
+        for (Tuple<Integer> t : ts) {
+            sx += t._1();
+            sy += t._2();
+        }
+        int[][] f = new int[2][2 * sx + 1];
+        Arrays.fill(f[0], - sy * 4);
+        Arrays.fill(f[1], - sy * 4);
+        int[] pc = {0, 1};
+        f[pc[1]][sx] = 0;
+        for (Tuple<Integer> t : ts) {
+            ArrayUtil.swap(pc, 0, 1);
+            for (int j = 0; j < f[0].length; j++) {
+                f[pc[1]][j] = f[pc[0]][j];
+                log.debug("f[0][" + j + "] = " + f[0][j] + "\t\tf[1][" + j + "] = " + f[1][j]);
+                if (j - t._1() >= 0)
+                    f[pc[1]][j] = Math.max(f[pc[1]][j], f[pc[0]][j - t._1()] + t._2());
+                log.debug("f[0][" + j + "] = " + f[0][j] + "\t\tf[1][" + j + "] = " + f[1][j]);
+                if (j + t._1() < f[0].length)
+                    f[pc[1]][j] = Math.max(f[pc[1]][j], f[pc[0]][j + t._1()] + t._2());
+                log.debug("f[0][" + j + "] = " + f[0][j] + "\t\tf[1][" + j + "] = " + f[1][j]);
+            }
+        }
+
+        return f[pc[1]][sx];
+    }
+
+    private static int maxGroupScore(Tuple[] ts) {
         final int[] max = {0};
         ArrayUtil.coCombination(ts, t -> {
             List<Tuple> a = t._1();
