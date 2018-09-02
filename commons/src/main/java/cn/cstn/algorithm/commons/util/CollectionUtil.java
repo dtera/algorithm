@@ -1,7 +1,6 @@
 package cn.cstn.algorithm.commons.util;
 
 import cn.cstn.algorithm.commons.Tuple;
-import cn.cstn.algorithm.commons.math.Point;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -49,14 +48,14 @@ public class CollectionUtil {
         return list;
     }
 
-    public static List<Point> _merge(List<Point> ps) {
-        List<Point> res = new ArrayList<>();
-        if (ps == null || ps.size() < 1) return res;
-        int n = ps.size();
+    public static List<Tuple<Integer>> _merge(List<Tuple<Integer>> ts) {
+        List<Tuple<Integer>> res = new ArrayList<>();
+        if (ts == null || ts.size() < 1) return res;
+        int n = ts.size();
         int[] ss = new int[n], es = new int[n];
         for (int i = 0; i < n; i++) {
-            ss[i] = ps.get(i).getX();
-            es[i] = ps.get(i).getY();
+            ss[i] = ts.get(i)._1();
+            es[i] = ts.get(i)._2();
         }
 
         Arrays.sort(ss);
@@ -64,35 +63,35 @@ public class CollectionUtil {
 
         for (int i = 0, j = 0; i < n; i++)
             if (i == n - 1 || ss[i + 1] > es[i]) {
-                res.add(new Point(ss[j], es[i]));
+                res.add(new Tuple<>(ss[j], es[i]));
                 j = i + 1;
             }
 
         return res;
     }
 
-    public static List<Point> merge(List<Point> ps) {
-        List<Point> res = new ArrayList<>();
-        if (ps == null || ps.size() < 1) return res;
-        ps.sort(Comparator.comparingInt(Point::getX));
+    public static List<Tuple<Integer>> merge(List<Tuple<Integer>> ts) {
+        List<Tuple<Integer>> res = new ArrayList<>();
+        if (ts == null || ts.size() < 1) return res;
+        ts.sort(Comparator.comparingInt(Tuple::_1));
         //method1
-        for (int i = 0, j = 0; i < ps.size(); i++)
-            if (i == ps.size() - 1 || ps.get(i + 1).getX() > ps.get(i).getY()) {
-                res.add(new Point(ps.get(j).getX(), ps.get(i).getY()));
+        for (int i = 0, j = 0; i < ts.size(); i++)
+            if (i == ts.size() - 1 || ts.get(i + 1)._1() > ts.get(i)._2()) {
+                res.add(new Tuple<>(ts.get(j)._1(), ts.get(i)._2()));
                 j = i + 1;
             }
         //method2
-        /*Point p = ps.get(0);
-        int s = p.getX(), e = p.getY();
-        for (int i = 1; i < ps.size(); i++) {
-            p = ps.get(i);
-            if (p.getX() > e) {
-                res.add(new Point(s, e));
-                s = p.getX();
-                e = p.getY();
-            } else e = Math.max(p.getY(), e);
+        /*Tuple p = ts.get(0);
+        int s = p._1(), e = p._2();
+        for (int i = 1; i < ts.size(); i++) {
+            p = ts.get(i);
+            if (p._1() > e) {
+                res.add(new Tuple(s, e));
+                s = p._1();
+                e = p._2();
+            } else e = Math.max(p._2(), e);
         }
-        res.add(new Point(s, e));*/
+        res.add(new Tuple(s, e));*/
         return res;
     }
 

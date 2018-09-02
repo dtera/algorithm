@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.corporation.bytedance;
 
-import cn.cstn.algorithm.commons.math.Point;
+import cn.cstn.algorithm.commons.Tuple;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
 import cn.cstn.algorithm.commons.util.CollectionUtil;
 
@@ -43,7 +43,7 @@ public class ArticleIllFormedSent {
         String line = sc.nextLine();
         int m = Integer.parseInt(line);
         List<int[]> list = new ArrayList<>();
-        List<Point> lps = new ArrayList<>();
+        List<Tuple<Integer>> lts = new ArrayList<>();
         for (int i = 0; i < m; i++) {
             line = sc.nextLine();
             String[] ls = line.split(";");
@@ -51,10 +51,8 @@ public class ArticleIllFormedSent {
                 String[] ps = pos.split(",");
                 int x= Integer.parseInt(ps[0]), y = Integer.parseInt(ps[1]);
                 list.add(new int[]{x, y});
-                Point p = new Point();
-                p.setX(x);
-                p.setY(y);
-                lps.add(p);
+                Tuple<Integer> p = new Tuple<>(x, y);
+                lts.add(p);
             }
         }
 
@@ -62,8 +60,8 @@ public class ArticleIllFormedSent {
         List<int[]> res = merge(list);
         CollectionUtil.print(res, "; ", "", "\n", ArticleIllFormedSent::print);
         //method2
-        List<Point> mps = CollectionUtil.merge(lps);
-        CollectionUtil.println(mps);
+        List<Tuple<Integer>> mts = CollectionUtil.merge(lts);
+        CollectionUtil.println(mts);
     }
 
     private static void print(int[] a) {

@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.corporation.bytedance;
 
-import cn.cstn.algorithm.commons.math.Point;
+import cn.cstn.algorithm.commons.Tuple;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,22 +35,22 @@ public class CreditsCardGame {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
-        Point[] ps = new Point[n];
+        Tuple[] ts = new Tuple[n];
         for (int i = 0; i < n; i++)
-            ps[i] = new Point(sc.nextInt(), sc.nextInt());
+            ts[i] = new Tuple<>(sc.nextInt(), sc.nextInt());
 
-        System.out.println(solve(ps));
+        System.out.println(solve(ts));
     }
 
-    private static int solve(Point[] ps) {
+    private static int solve(Tuple[] ts) {
         final int[] max = {0};
-        ArrayUtil.coCombination(ps, t -> {
-            List<Point> a = t._1();
-            List<Point> b = t._2();
-            int s1 = a.stream().mapToInt(Point::getX).sum();
-            int s2 = b.stream().mapToInt(Point::getX).sum();
+        ArrayUtil.coCombination(ts, t -> {
+            List<Tuple> a = t._1();
+            List<Tuple> b = t._2();
+            int s1 = a.stream().mapToInt(Tuple<Integer>::_1).sum();
+            int s2 = b.stream().mapToInt(Tuple<Integer>::_1).sum();
             if (s1 == s2) {
-                int gs = a.stream().mapToInt(Point::getY).sum() + b.stream().mapToInt(Point::getY).sum();
+                int gs = a.stream().mapToInt(Tuple<Integer>::_2).sum() + b.stream().mapToInt(Tuple<Integer>::_2).sum();
                 log.debug("group and the corresponding score when a and b have the same individual score: "
                         + t.toString() + "\t" + gs);
                 if (gs > max[0]) max[0] = gs;

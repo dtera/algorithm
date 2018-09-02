@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.commons.test;
 
-import cn.cstn.algorithm.commons.math.Point;
+import cn.cstn.algorithm.commons.Tuple;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
 import org.junit.Test;
 
@@ -29,7 +29,7 @@ public class ArrayTest {
         ArrayUtil.println(a);
     }
 
-    @Test
+    @Test @SuppressWarnings("unchecked")
     public void testPermutation() {
         Integer[] a = {1, 2, 3};
         ArrayUtil.permutation(a, ArrayUtil::println);
@@ -41,10 +41,10 @@ public class ArrayTest {
         System.out.println("next permutation:");
         while (ArrayUtil.nextPermutation(b, ArrayUtil::println)) System.out.println("next permutation:");
         System.out.println("========================================");
-        Point[] ps = {new Point(1, 3), new Point(2, 1), new Point(3, 2)};
-        ArrayUtil.println(ps);
+        Tuple[] ts = {new Tuple<>(1, 3), new Tuple<>(2, 1), new Tuple<>(3, 2)};
+        ArrayUtil.println(ts);
         System.out.println("next permutation:");
-        while (ArrayUtil.nextPermutation(ps, Comparator.comparingInt(Point::getX), ArrayUtil::println))
+        while (ArrayUtil.nextPermutation(ts, Comparator.comparingInt(Tuple<Integer>::_1), ArrayUtil::println))
             System.out.println("next permutation:");
     }
 
