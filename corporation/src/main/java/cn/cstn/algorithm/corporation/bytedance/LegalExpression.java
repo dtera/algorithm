@@ -33,10 +33,11 @@ public class LegalExpression {
     }
 
     private static int numOfLegalExpression(int n) {
+        assert n >= 0;
         int mod=1000000007, m = n;
-        //dp denotes the legal expression ending with digit,
-        //whereas dp_ denotes the legal expression ending with parenthesis
         if (n < 4)  m = 3;
+        /*dp denotes the legal expression ending with digit,
+        whereas dp_ denotes the legal expression ending with parenthesis*/
         int[] dp = new int[m + 1], dp_ = new int[m + 1];
         dp[0] = 0;
         dp[1] = 10;
