@@ -22,6 +22,14 @@ public class Tuple<T> {
         return _2;
     }
 
+    public void s_1(T _1) {
+        this._1 = _1;
+    }
+
+    public void s_2(T _2) {
+        this._2 = _2;
+    }
+
     @Override
     public String toString() {
         return "(" + _1 + ", " + _2 + ")";
