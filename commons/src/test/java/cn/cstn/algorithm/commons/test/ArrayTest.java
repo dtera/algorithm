@@ -69,7 +69,9 @@ public class ArrayTest {
         Integer[] a = {2, 1, 3, 1};
         Tuple[] b = {new Tuple<>(2, 6), new Tuple<>(1, 7), new Tuple<>(3, 8), new Tuple<>(1, 9)};
         System.out.println(ArrayUtil.lis(a));
+        System.out.println(ArrayUtil.lis(a, 3));
         System.out.println(ArrayUtil.lis(b, Comparator.comparingInt(Tuple<Integer>::_1)));
+        System.out.println(ArrayUtil.lis(b, 2, Comparator.comparingInt(Tuple<Integer>::_1)));
     }
 
 }
