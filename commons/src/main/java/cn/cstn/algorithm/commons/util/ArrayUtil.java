@@ -1,6 +1,8 @@
 package cn.cstn.algorithm.commons.util;
 
+import cn.cstn.algorithm.commons.KV;
 import cn.cstn.algorithm.commons.Tuple;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -10,7 +12,38 @@ import java.util.function.Consumer;
  * @author :         zhaohq
  * date :            2018-07-27 16:31
  */
+@Slf4j
 public class ArrayUtil {
+
+    public static <T extends Comparable<T>> KV<Integer, LinkedList<T>> lis(T[] a) {
+        return lis(a, Comparable<T>::compareTo);
+    }
+
+    public static <T> KV<Integer, LinkedList<T>> lis(T[] a, Comparator<T> comparator) {
+        int n = a.length, mi = 0;
+        int[] dp = new int[n];
+        int[] dpi = new int[n];
+        LinkedList<T> seq = new LinkedList<>();
+
+        for (int i = 0; i < n; i++) {
+            int k = -1;
+            for (int j = 0; j < i; j++)
+                if (comparator.compare(a[j], a[i]) < 0 && dp[j] > dp[k == -1 ? k = 0 : k])
+                    k = j;
+            dp[i] = k == -1 ? 1 : dp[k] + 1;
+            dpi[i] = k;
+            if (dp[i] > dp[mi]) mi = i;
+        }
+        int i  = mi;
+        for (; dpi[i] != -1; i = dpi[i]) seq.addFirst(a[i]);
+        seq.addFirst(a[i]);
+        log.debug("a = " + Arrays.toString(a));
+        log.debug("dp = " + Arrays.toString(dp));
+        log.debug("dpi = " + Arrays.toString(dpi));
+        log.debug("seq = " + seq);
+
+        return new KV<>(dp[mi], seq);
+    }
 
     public static <T> void coCombination(T[] a, Consumer<Tuple<List<T>>> consumer) {
         Map<Integer, List<List<T>>> map = new HashMap<>();
