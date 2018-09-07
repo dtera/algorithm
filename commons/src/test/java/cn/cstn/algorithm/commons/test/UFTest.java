@@ -1,4 +1,4 @@
-package cn.cstn.algorithm.leetcode.test;
+package cn.cstn.algorithm.commons.test;
 
 import cn.cstn.algorithm.commons.UF;
 import cn.cstn.algorithm.commons.graph.UF2D;
