@@ -1,5 +1,7 @@
 package cn.cstn.algorithm.corporation.bytedance;
 
+import cn.cstn.algorithm.commons.util.ArrayUtil;
+
 import java.util.Scanner;
 
 /**
@@ -33,15 +35,11 @@ public class AirQuality {
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
         int t = sc.nextInt();
-        int[] a = new int[n];
+        Integer[] a = new Integer[n];
         for (int i = 0; i < n; i++)
             a[i] = sc.nextInt();
 
-        System.out.println(lis(a, t));
-    }
-
-    private static int lis(int[] a, int t) {
-        return 0;
+        System.out.println(ArrayUtil.lis(a, t)._1());
     }
 
 }
