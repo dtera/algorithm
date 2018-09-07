@@ -19,24 +19,35 @@ public class ArrayUtil {
         return lis(a, Comparable<T>::compareTo);
     }
 
+    public static <T extends Comparable<T>> KV<Integer, LinkedList<T>> lis(T[] a, int t) {
+        return lis(a, t, Comparable<T>::compareTo);
+    }
+
     public static <T> KV<Integer, LinkedList<T>> lis(T[] a, Comparator<T> comparator) {
+        return lis(a, 1, comparator);
+    }
+
+    public static <T> KV<Integer, LinkedList<T>> lis(T[] a, int t, Comparator<T> comparator) {
         int n = a.length, mi = 0;
-        int[] dp = new int[n];
-        int[] dpi = new int[n];
+        int[] dp = new int[n * t];
+        int[] dpi = new int[n * t];
         LinkedList<T> seq = new LinkedList<>();
 
-        for (int i = 0; i < n; i++) {
-            int k = -1;
+        for (int i = 0; i < n * t; i++) {
+            int k = -1, cm = 0;
             for (int j = 0; j < i; j++)
-                if (comparator.compare(a[j], a[i]) < 0 && dp[j] > dp[k == -1 ? k = 0 : k])
+                if (comparator.compare(a[j % n], a[i % n]) < 0 && dp[j] > cm) {
+                    cm = dp[j];
                     k = j;
-            dp[i] = k == -1 ? 1 : dp[k] + 1;
+                }
+            dp[i] = cm + 1;
             dpi[i] = k;
             if (dp[i] > dp[mi]) mi = i;
         }
         int i  = mi;
-        for (; dpi[i] != -1; i = dpi[i]) seq.addFirst(a[i]);
-        seq.addFirst(a[i]);
+        for (; dpi[i] != -1; i = dpi[i]) seq.addFirst(a[i % n]);
+        seq.addFirst(a[i % n]);
+
         log.debug("a = " + Arrays.toString(a));
         log.debug("dp = " + Arrays.toString(dp));
         log.debug("dpi = " + Arrays.toString(dpi));
