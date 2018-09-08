@@ -1,6 +1,9 @@
 package cn.cstn.algorithm.corporation.bytedance;
 
-import java.util.Scanner;
+import cn.cstn.algorithm.commons.KV;
+import cn.cstn.algorithm.commons.Tuple;
+
+import java.util.*;
 
 /**
  * 8.25                 5.减法求值
@@ -33,22 +36,48 @@ import java.util.Scanner;
  * @author :            zhaohq
  * date :               2018/9/6 0006 15:48
  */
+@SuppressWarnings("unchecked")
 public class SubtractionEvaluate {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        int m = sc.nextInt();
-        String[] cs = new String[n];
-        String[] qs = new String[m];
-        for (int i = 0; i < n; i++)
-            cs[i] = sc.nextLine();
-        for (int i = 0; i < n; i++)
-            qs[i] = sc.nextLine();
+        String line = sc.nextLine();
+        String[] ls = line.split(" ");
+        int n = Integer.parseInt(ls[0]);
+        int m = Integer.parseInt(ls[1]);
+        Map<String, List<KV<Integer, String>>> cs = new HashMap<>();
+        Tuple<String>[] qs = new Tuple[m];
+
+        for (int i = 0; i < n; i++) {
+            line = sc.nextLine();
+            ls = line.split(" ");
+            cs.computeIfAbsent(ls[0], k -> new ArrayList<>())
+                    .add(new KV<>(Integer.parseInt(ls[2]), ls[4]));
+            cs.computeIfAbsent(ls[4], k -> new ArrayList<>())
+                    .add(new KV<>(Integer.parseInt(ls[2]), ls[0]));
+        }
+        for (int i = 0; i < m; i++) {
+            line = sc.nextLine();
+            ls = line.split(" ");
+            qs[i] = new Tuple<>(ls[0], ls[2]);
+        }
 
         subtractionEvaluate(cs, qs);
     }
 
-    private static void subtractionEvaluate(String[] cs, String[] qs) {
-
+    private static void subtractionEvaluate(Map<String, List<KV<Integer, String>>> cs, Tuple<String>[] qs) {
+        for (Tuple<String> q : qs) {
+            boolean hasAnswer = false;
+            outer:
+            for (KV<Integer, String> kv1 : cs.get(q._1())) {
+                for (KV<Integer, String> kv2 : cs.get(q._2())) {
+                    if (kv1._2().equals(kv2._2())) {
+                        System.out.println(kv1._1() - kv2._1());
+                        hasAnswer = true;
+                        break outer;
+                    }
+                }
+            }
+            if (!hasAnswer) System.out.println("cannot_answer");
+        }
     }
 }
