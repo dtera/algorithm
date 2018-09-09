@@ -5,7 +5,7 @@ package cn.cstn.algorithm.commons.util;
  * @author :            zhaohq
  * date :               2018-09-09 22:53
  */
-public class Math {
+public class MathUtil {
 
     public static int gcd(int m, int n) {
         //return m % n == 0 ? n : gcd(n, m % n);
