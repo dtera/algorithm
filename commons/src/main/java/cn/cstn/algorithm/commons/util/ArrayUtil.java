@@ -15,6 +15,23 @@ import java.util.function.Consumer;
 @Slf4j
 public class ArrayUtil {
 
+    public static boolean isMultiStageGraph(Set<Integer>[] g) {
+        int n = g.length;
+        boolean[] access = new boolean[n];
+        for (int i = 0; i < n; i++) {
+            log.debug("g[" + i + "] = {" + i + " -> " + g[i].toString() + "}");
+            if (access[i]) continue;
+            access[i] = true;
+            for (int j = 0; j < n; j++)
+                if (!access[j] && !g[i].contains(j))
+                    if (g[i].equals(g[j]))
+                        access[j] = true;
+                    else return false;
+        }
+
+        return true;
+    }
+
     public static <T extends Comparable<T>> KV<Integer, LinkedList<T>> lis(T[] a) {
         return lis(a, Comparable<T>::compareTo);
     }
