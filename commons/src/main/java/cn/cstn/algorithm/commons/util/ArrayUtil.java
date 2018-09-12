@@ -15,6 +15,21 @@ import java.util.function.Consumer;
 @Slf4j
 public class ArrayUtil {
 
+    public static <T> int longestPalindrome(T[] a) {
+        if (a == null || a.length == 0) return 0;
+        int ml = 1, n = a.length;
+        for (int i = 0; i < n; i++) {
+            int j = 1;
+            while (i - j >= 0 && i + j < n && a[i - j].equals(a[i + j])) j++;
+            ml = Math.max(ml, 2 * (j - 1) + 1);
+            j = 0;
+            while (i - j >= 0 && i + j + 1 < n && a[i - j].equals(a[i + j + 1])) j++;
+            ml = Math.max(ml, 2 * j);
+        }
+
+        return ml;
+    }
+
     public static boolean isMultiStageGraph(Set<Integer>[] g) {
         int n = g.length;
         boolean[] access = new boolean[n];
