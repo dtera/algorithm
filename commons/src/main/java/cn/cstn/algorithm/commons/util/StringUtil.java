@@ -11,6 +11,33 @@ import java.util.function.Predicate;
  */
 public class StringUtil {
 
+    public static int longestPalindrome(String s) {
+        if (s == null || s.length() == 0) return 0;
+        int mx =1, ml = 1, n = s.length(), id = 0;
+        char[] cs = new char[2 * n + 1];
+        for (int i = 0; i < n; i++) {
+            cs[2 * i] = '*';
+            cs[2 * i + 1] = s.charAt(i);
+        }
+        cs[2 * n] = '*';
+
+        int[] dp = new int[cs.length];
+        dp[0] = dp[cs.length - 1] = 1;
+        for (int i = 1; i < dp.length - 1; i++) {
+            dp[i] = i < mx ? Math.min(dp[2 * id - i], mx - i) : 1;
+
+            if (i + dp[i] >= mx) {
+                while (i - dp[i] >=0 && i + dp[i] < cs.length && cs[i - dp[i]] == cs[i + dp[i]])
+                    dp[i] += 1;
+                mx = i + dp[i];
+                id = i;
+            }
+            ml = Math.max(ml, dp[i]);
+        }
+
+        return ml - 1;
+    }
+
     public static boolean isPairOfWords(String s, String sp) {
         assert s != null && sp != null && s.length() == sp.length();
         int n = s.length();
