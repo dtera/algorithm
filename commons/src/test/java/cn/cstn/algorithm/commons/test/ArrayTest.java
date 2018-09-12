@@ -2,6 +2,7 @@ package cn.cstn.algorithm.commons.test;
 
 import cn.cstn.algorithm.commons.Tuple;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
+import cn.cstn.algorithm.commons.util.StringUtil;
 import org.junit.Test;
 
 import java.util.Comparator;
@@ -72,6 +73,13 @@ public class ArrayTest {
         System.out.println(ArrayUtil.lis(a, 3));
         System.out.println(ArrayUtil.lis(b, Comparator.comparingInt(Tuple<Integer>::_1)));
         System.out.println(ArrayUtil.lis(b, 2, Comparator.comparingInt(Tuple<Integer>::_1)));
+    }
+
+    @Test
+    public void testLongestPalindrome() {
+        Integer[] a = {2, 2, 4, 5};
+        System.out.println(ArrayUtil.longestPalindrome(a));
+        System.out.println(StringUtil.longestPalindrome("google"));
     }
 
 }
