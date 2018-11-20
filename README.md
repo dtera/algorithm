@@ -1,4 +1,4 @@
-# [Algorithm](https://github.com/zhaohuiqiang/algorithm)  ![Author](https://img.shields.io/badge/author-zhaohq-red.svg) ![Language](https://img.shields.io/badge/language-Java%20%2F%20C++%20etc-orange.svg) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md) [![SayThanks](https://img.shields.io/badge/say-thanks-ff69b4.svg)](https://saythanks.io/to/zhaohuiqiang)
+# [Algorithm](https://github.com/dtera/algorithm)  ![Author](https://img.shields.io/badge/author-zhaohq-red.svg) ![Language](https://img.shields.io/badge/language-Java%20%2F%20C++%20etc-orange.svg) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md) [![SayThanks](https://img.shields.io/badge/say-thanks-ff69b4.svg)](https://saythanks.io/to/dtera)
 
 > In mathematics and computer science, an algorithm is an unambiguous specification of how to solve a class of problems. Algorithms can perform calculation, data processing and automated reasoning tasks.
 >
@@ -6,7 +6,7 @@
 >
 > The concept of algorithm has existed for centuries and the use of the concept can be ascribed to Greek mathematicians, e.g. the sieve of Eratosthenes and Euclid's algorithm; the term algorithm itself derives from the 9th Century mathematician Muḥammad ibn Mūsā al'Khwārizmī, latinized 'Algoritmi'. A partial formalization of what would become the modern notion of algorithm began with attempts to solve the Entscheidungsproblem (the "decision problem") posed by David Hilbert in 1928. Subsequent formalizations were framed as attempts to define "effective calculability" or "effective method"; those formalizations included the Gödel–Herbrand–Kleene recursive functions of 1930, 1934 and 1935, Alonzo Church's lambda calculus of 1936, Emil Post's Formulation 1 of 1936, and Alan Turing's Turing machines of 1936–7 and 1939.
 
-## [Commons Algorithm](https://github.com/zhaohuiqiang/algorithm#commons-algorithm) 
+## [Commons Algorithm](https://github.com/dtera/algorithm#commons-algorithm) 
 > This is commons algorithm implement, such as sort, find and etc.
 
 * [Sort](./commons/src/main/java/cn/cstn/algorithm/commons/Sort.java)
@@ -14,51 +14,51 @@
 * [Union Find](./commons/src/main/java/cn/cstn/algorithm/commons/UF.java)
 
 
-## [Corporation Algorithm](https://github.com/zhaohuiqiang/algorithm#corporation) 
+## [Corporation Algorithm](https://github.com/dtera/algorithm#corporation) 
 > This is corporation interview algorithm implement, such as alibaba, tencent, baidu and etc.
 
-* [Alibaba](https://github.com/zhaohuiqiang/algorithm#alibaba)
-* [Tencent](https://github.com/zhaohuiqiang/algorithm#tencent)
-* [Baidu](https://github.com/zhaohuiqiang/algorithm#baidu)
-* [Huawei](https://github.com/zhaohuiqiang/algorithm#huawei)
-* [Jingdong](https://github.com/zhaohuiqiang/algorithm#jingdong)
-* [Netease](https://github.com/zhaohuiqiang/algorithm#netease)
-* [Bytedance](https://github.com/zhaohuiqiang/algorithm#bytedance)
+* [Alibaba](https://github.com/dtera/algorithm#alibaba)
+* [Tencent](https://github.com/dtera/algorithm#tencent)
+* [Baidu](https://github.com/dtera/algorithm#baidu)
+* [Huawei](https://github.com/dtera/algorithm#huawei)
+* [Jingdong](https://github.com/dtera/algorithm#jingdong)
+* [Netease](https://github.com/dtera/algorithm#netease)
+* [Bytedance](https://github.com/dtera/algorithm#bytedance)
 
 ## [LeetCode Algorithm](https://leetcode.com/problemset/algorithms/) 
 >The number of LeetCode questions is increasing every week.
-For more questions and solutions, you can see my [Algorithm](https://github.com/zhaohuiqiang/algorithm) repository.
+For more questions and solutions, you can see my [Algorithm](https://github.com/dtera/algorithm) repository.
 I'll keep updating for full summary and better solutions. Stay tuned for updates.
 (Notes: "📖" means you need to subscribe to [LeetCode premium membership](https://leetcode.com/subscribe/) for the access to premium questions.)
 
-* [Bit Manipulation](https://github.com/zhaohuiqiang/algorithm#bit-manipulation)
-* [Array](https://github.com/zhaohuiqiang/algorithm#array)
-* [String](https://github.com/zhaohuiqiang/algorithm#string)
-* [Linked List](https://github.com/zhaohuiqiang/algorithm#linked-list)
-* [Stack](https://github.com/zhaohuiqiang/algorithm#stack)
-* [Queue](https://github.com/zhaohuiqiang/algorithm#queue)
-* [Heap](https://github.com/zhaohuiqiang/algorithm#heap)
-* [Tree](https://github.com/zhaohuiqiang/algorithm#tree)
-* [Hash Table](https://github.com/zhaohuiqiang/algorithm#hash-table)
-* [Math](https://github.com/zhaohuiqiang/algorithm#math)
-* [Two Pointers](https://github.com/zhaohuiqiang/algorithm#two-pointers)
-* [Sort](https://github.com/zhaohuiqiang/algorithm#sort)
-* [Recursion](https://github.com/zhaohuiqiang/algorithm#recursion)
-* [Binary Search](https://github.com/zhaohuiqiang/algorithm#binary-search)
-* [Binary Search Tree](https://github.com/zhaohuiqiang/algorithm#binary-search-tree)
-* [Breadth-First Search](https://github.com/zhaohuiqiang/algorithm#breadth-first-search)
-* [Depth-First Search](https://github.com/zhaohuiqiang/algorithm#depth-first-search)
-* [Backtracking](https://github.com/zhaohuiqiang/algorithm#backtracking)
-* [Dynamic Programming](https://github.com/zhaohuiqiang/algorithm#dynamic-programming)
-* [Greedy](https://github.com/zhaohuiqiang/algorithm#greedy)
-* [Graph](https://github.com/zhaohuiqiang/algorithm#graph)
-* [Geometry](https://github.com/zhaohuiqiang/algorithm#geometry)
-* [Design](https://github.com/zhaohuiqiang/algorithm#design)
-* [SQL](https://github.com/zhaohuiqiang/algorithm#sql)
-* [Shell Script](https://github.com/zhaohuiqiang/algorithm#shell-script)
+* [Bit Manipulation](https://github.com/dtera/algorithm#bit-manipulation)
+* [Array](https://github.com/dtera/algorithm#array)
+* [String](https://github.com/dtera/algorithm#string)
+* [Linked List](https://github.com/dtera/algorithm#linked-list)
+* [Stack](https://github.com/dtera/algorithm#stack)
+* [Queue](https://github.com/dtera/algorithm#queue)
+* [Heap](https://github.com/dtera/algorithm#heap)
+* [Tree](https://github.com/dtera/algorithm#tree)
+* [Hash Table](https://github.com/dtera/algorithm#hash-table)
+* [Math](https://github.com/dtera/algorithm#math)
+* [Two Pointers](https://github.com/dtera/algorithm#two-pointers)
+* [Sort](https://github.com/dtera/algorithm#sort)
+* [Recursion](https://github.com/dtera/algorithm#recursion)
+* [Binary Search](https://github.com/dtera/algorithm#binary-search)
+* [Binary Search Tree](https://github.com/dtera/algorithm#binary-search-tree)
+* [Breadth-First Search](https://github.com/dtera/algorithm#breadth-first-search)
+* [Depth-First Search](https://github.com/dtera/algorithm#depth-first-search)
+* [Backtracking](https://github.com/dtera/algorithm#backtracking)
+* [Dynamic Programming](https://github.com/dtera/algorithm#dynamic-programming)
+* [Greedy](https://github.com/dtera/algorithm#greedy)
+* [Graph](https://github.com/dtera/algorithm#graph)
+* [Geometry](https://github.com/dtera/algorithm#geometry)
+* [Design](https://github.com/dtera/algorithm#design)
+* [SQL](https://github.com/dtera/algorithm#sql)
+* [Shell Script](https://github.com/dtera/algorithm#shell-script)
 
 
-## [Corporation](https://github.com/zhaohuiqiang/algorithm#corporation)
+## [Corporation](https://github.com/dtera/algorithm#corporation)
 
 ### Alibaba
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
@@ -89,7 +89,7 @@ I'll keep updating for full summary and better solutions. Stay tuned for updates
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
 
-## [LeetCode](https://github.com/zhaohuiqiang/algorithm#leetcode-algorithm)
+## [LeetCode](https://github.com/dtera/algorithm#leetcode-algorithm)
 
 ### Bit Manipulation
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note| 
