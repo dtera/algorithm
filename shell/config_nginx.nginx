@@ -1,0 +1,90 @@
+#!/bin/bash
+
+NGINXROOT="/app/openresty/nginx"
+
+# Install nginx
+install_nginx() {
+	wget http://openresty.org/download/ngx_openresty-1.7.2.1.tar.gz
+	tar zxf ngx_openresty-1.7.2.1.tar.gz
+	cd ngx_openresty-1.7.2.1
+	./configure --prefix=/app/openresty
+	make && make install
+	if [ !`grep /etc/profile openresty` ]; then
+        cat >>/etc/profile << EOF
+	PATH=/app/openresty/nginx/sbin:$PATH 
+	export PATH
+EOF
+	
+        source /etc/profile
+	fi
+}
+
+# Uninstall nginx
+uninstall_nginx() {
+	rm -rf /app/openresty
+}
+
+add_nginx_service() {
+	cp ./etc/rc.d/init.d/nginx /etc/rc.d/init.d/nginx
+	chkconfig --add nginx
+	echo ""
+	echo "nginx has been installed as a system service"
+	echo "Usage: service nginx start|stop|restart|reload"
+}
+
+while :; do
+	echo ""
+	echo "This is auto-configure script for nginx server"
+	echo ""
+	echo "Now, you can:"
+	echo ""
+	echo "	0.Do nothing, just exit."
+	echo "  1.Install nginx."
+	echo "  2.Uninstall nginx."
+	echo "	3.Backup the original configuration."
+	echo "	4.Reset the original configuration."
+	echo "	5.Update nginx basic configuration."
+	echo "  6.Add a nginx service."
+	echo ""
+	read -p "What do you want to do? [0,1,2,3,4,5,6] (0): " choice
+	case $choice in
+	1)	
+		echo "Begin to install nginx..."
+		install_nginx
+		echo ""
+		echo "DONE.";;
+	2)
+		echo "Begin to uninstall nginx..."
+		echo ""
+		echo "Press enter to continue or ctrl+c to exit."
+		read
+		uninstall_nginx
+		echo ""
+		echo "DONE.";;
+	3)
+		echo ""
+		echo "Backuping the original configuration..."
+		mkdir -p bkp/etc/nginx/conf/ && cp -a $NGINXROOT/conf/nginx.conf "$_"
+		echo "DONE.";;
+	4)
+		echo ""
+		echo "Resetting the original configuration..."
+		cp ./bkp/etc/nginx/conf/nginx.conf $NGINXROOT/conf/nginx.conf
+		echo "DONE.";;
+	5)
+		echo ""
+		echo "Update nginx configuration..."
+		$NGINXROOT/sbin/nginx -s reload
+		echo "DONE.";;
+	6)
+		echo ""
+		echo "Adding nginx service..."
+		add_nginx_service
+		echo "DONE.";;
+	*)
+		echo ""
+		echo "Do nothing, just exit the script..."
+		echo "DONE."
+		break
+	esac
+done
