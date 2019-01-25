@@ -15,6 +15,16 @@ import java.util.function.Consumer;
 @Slf4j
 public class ArrayUtil {
 
+    public static String kthItemOfMirroredArr(int n, int k) {
+        int len = (int) Math.pow(2, n);
+        if (n < 1 || k < 0 || k >= len) return "not exists";
+        if (n == 1) return "" + k;
+        else {
+            if (k < len / 2) return "0" + kthItemOfMirroredArr(n - 1, k);
+            else return "1" + kthItemOfMirroredArr(n - 1, len - 1 - k);
+        }
+    }
+
     public static <T> int longestPalindrome(T[] a) {
         if (a == null || a.length == 0) return 0;
         int ml = 1, n = a.length;

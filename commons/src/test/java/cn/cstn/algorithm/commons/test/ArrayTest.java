@@ -30,7 +30,8 @@ public class ArrayTest {
         ArrayUtil.println(a);
     }
 
-    @Test @SuppressWarnings("unchecked")
+    @Test
+    @SuppressWarnings("unchecked")
     public void testPermutation() {
         Integer[] a = {1, 2, 3};
         ArrayUtil.permutation(a, ArrayUtil::println);
@@ -65,7 +66,8 @@ public class ArrayTest {
         ArrayUtil.coCombination(a, System.out::println);
     }
 
-    @Test @SuppressWarnings("unchecked")
+    @Test
+    @SuppressWarnings("unchecked")
     public void testLIS() {
         Integer[] a = {2, 1, 3, 1};
         Tuple[] b = {new Tuple<>(2, 6), new Tuple<>(1, 7), new Tuple<>(3, 8), new Tuple<>(1, 9)};
@@ -80,6 +82,11 @@ public class ArrayTest {
         Integer[] a = {2, 2, 4, 5};
         System.out.println(ArrayUtil.longestPalindrome(a));
         System.out.println(StringUtil.longestPalindrome("google"));
+    }
+
+    @Test
+    public void testKthItemOfMirroredArr() {
+        System.out.println(ArrayUtil.kthItemOfMirroredArr(3, 3));
     }
 
 }
