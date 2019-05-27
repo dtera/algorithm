@@ -1,4 +1,4 @@
-# [Algorithm](https://github.com/dtera/algorithm)  ![Author](https://img.shields.io/badge/author-zhaohq-red.svg) ![Language](https://img.shields.io/badge/language-Java%20%2F%20C++%20etc-orange.svg) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md) [![SayThanks](https://img.shields.io/badge/say-thanks-ff69b4.svg)](https://saythanks.io/to/dtera)
+## [Algorithm](https://github.com/dtera/algorithm)  ![Author](https://img.shields.io/badge/author-zhaohq-red.svg) ![Language](https://img.shields.io/badge/language-Java%20%2F%20C++%20etc-orange.svg) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md) [![SayThanks](https://img.shields.io/badge/say-thanks-ff69b4.svg)](https://saythanks.io/to/dtera)
 
 > In mathematics and computer science, an algorithm is an unambiguous specification of how to solve a class of problems. Algorithms can perform calculation, data processing and automated reasoning tasks.
 >
@@ -6,7 +6,7 @@
 >
 > The concept of algorithm has existed for centuries and the use of the concept can be ascribed to Greek mathematicians, e.g. the sieve of Eratosthenes and Euclid's algorithm; the term algorithm itself derives from the 9th Century mathematician Muḥammad ibn Mūsā al'Khwārizmī, latinized 'Algoritmi'. A partial formalization of what would become the modern notion of algorithm began with attempts to solve the Entscheidungsproblem (the "decision problem") posed by David Hilbert in 1928. Subsequent formalizations were framed as attempts to define "effective calculability" or "effective method"; those formalizations included the Gödel–Herbrand–Kleene recursive functions of 1930, 1934 and 1935, Alonzo Church's lambda calculus of 1936, Emil Post's Formulation 1 of 1936, and Alan Turing's Turing machines of 1936–7 and 1939.
 
-## [Commons Algorithm](https://github.com/dtera/algorithm#commons-algorithm) 
+### [Commons](https://github.com/dtera/algorithm#commons-algorithm) 
 > This is commons algorithm implement, such as sort, find and etc.
 
 * [Sort](./commons/src/main/java/cn/cstn/algorithm/commons/Sort.java)
@@ -14,7 +14,7 @@
 * [Union Find](./commons/src/main/java/cn/cstn/algorithm/commons/UF.java)
 
 
-## [Corporation Algorithm](https://github.com/dtera/algorithm#corporation) 
+### [Corporations](https://github.com/dtera/algorithm#corporation) 
 > This is corporation interview algorithm implement, such as alibaba, tencent, baidu and etc.
 
 * [Alibaba](https://github.com/dtera/algorithm#alibaba)
@@ -25,7 +25,7 @@
 * [Netease](https://github.com/dtera/algorithm#netease)
 * [Bytedance](https://github.com/dtera/algorithm#bytedance)
 
-## [LeetCode Algorithm](https://leetcode.com/problemset/algorithms/) 
+### [LeetCode](https://leetcode.com/problemset/algorithms/) 
 >The number of LeetCode questions is increasing every week.
 For more questions and solutions, you can see my [Algorithm](https://github.com/dtera/algorithm) repository.
 I'll keep updating for full summary and better solutions. Stay tuned for updates.
