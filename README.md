@@ -58,143 +58,143 @@ I'll keep updating for full summary and better solutions. Stay tuned for updates
 * [Shell Script](https://github.com/dtera/algorithm#shell-script)
 
 
-## [Corporation](https://github.com/dtera/algorithm#corporation)
+### [Corporations](https://github.com/dtera/algorithm#corporation)
 
-### Alibaba
+#### Alibaba
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Tencent
+#### Tencent
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Baidu
+#### Baidu
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Huawei
+#### Huawei
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Jingdong
+#### Jingdong
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Netease
+#### Netease
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Bytedance
+#### Bytedance
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
 
-## [LeetCode](https://github.com/dtera/algorithm#leetcode-algorithm)
+### [LeetCode](https://github.com/dtera/algorithm#leetcode-algorithm)
 
-### Bit Manipulation
+#### Bit Manipulation
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note| 
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 461 | [Hamming Distance](https://leetcode.com/problems/hamming-distance/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/bitmanipulation/HammingDistance.java)| _O(1)_       | _O(1)_          | Easy         |||
 
-### Array
+#### Array
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note| 
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 561 | [Array Partition I](https://leetcode.com/problems/array-partition-i/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/array/ArrayPartitionI.java)| _O(r)_       | _O(r)_          | Easy         |||
 832 | [Flipping an Image](https://leetcode.com/problems/flipping-an-image/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/array/FlipAndInvertImage.java)| _O(n^2)_       | _O(1)_          | Easy         |||
 867 | [Transpose Matrix](https://leetcode.com/problems/transpose-matrix/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/array/TransposeMatrix.java)| _O(1)_       | _O(1)_          | Easy         |||
 
-### String
+#### String
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 657 | [Judge Route Circle](https://leetcode.com/problems/judge-route-circle/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/string/JudgeCircle.java)| _O(n)_       | _O(1)_          | Easy         |||
 709 | [To Lower Case](https://leetcode.com/problems/to-lower-case/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/string/LowerCase.java)| _O(n)_       | _O(1)_          | Easy         |||
 804 | [Unique Morse Code Words](https://leetcode.com/problems/unique-morse-code-words/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/string/MorseRepresentations.java)| _O(n)_       | _O(n)_          | Easy         |||
 
-### Linked List
+#### Linked List
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 876 | [Middle of the Linked List](https://leetcode.com/problems/middle-of-the-linked-list/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/linkedlist/MiddleNode.java)| _O(n)_       | _O(1)_          | Easy         |||
 
-### Stack
+#### Stack
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Heap
+#### Heap
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Tree
+#### Tree
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 617 | [Merge Two Binary Trees](https://leetcode.com/problems/merge-two-binary-trees/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/tree/MergeTrees.java)| _O(n)_       | _O(h)_          | Easy         |||
 
-### Hash Table
+#### Hash Table
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 771 | [Jewels and Stones](https://leetcode.com/problems/jewels-and-stones/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/hashtable/JewelsInStones.java)| _O(m + n)_       | _O(n)_          | Easy         |||
 888 | [Uncommon Words from Two Sentences](https://leetcode.com/problems/uncommon-words-from-two-sentences/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/hashtable/UncommonFromSentences.java)| _O(m + n)_       | _O(m + n)_          | Easy         |||
 
-### Math
+#### Math
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 728 | [Self Dividing Numbers](https://leetcode.com/problems/self-dividing-numbers/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/math/DividingNumbers.java)| _O(n)_       | _O(1)_          | Easy         |||
 887 | [Projection Area of 3D Shapes](https://leetcode.com/problems/projection-area-of-3d-shapes/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/math/ProjectionArea.java)| _O(n^2)_       | _O(1)_          | Easy         |||
 
-### Two Pointers
+#### Two Pointers
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Sort
+#### Sort
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Recursion
+#### Recursion
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Binary Search
+#### Binary Search
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 852 | [Peak Index in a Mountain Array](https://leetcode.com/problems/peak-index-in-a-mountain-array/) | [Java](./leetcode/src/main/java/cn/cstn/algorithm/leetcode/binarySearch/MountainArray.java)| _O(logn)_       | _O(1)_          | Easy         |||
 
-### Binary Search Tree
+#### Binary Search Tree
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Breadth-First Search
+#### Breadth-First Search
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
 
-### Depth-First Search
+#### Depth-First Search
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Backtracking
+#### Backtracking
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note| 
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Dynamic Programming
+#### Dynamic Programming
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note| 
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Greedy
+#### Greedy
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note| 
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Graph
+#### Graph
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note| 
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### Design
+#### Design
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note| 
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
-### SQL
+#### SQL
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note| 
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
 
 
-### Shell Script
+#### Shell Script
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note| 
 |-----|---------------- | --------------- | --------------- | --------------- | ------------- |--------------|-----|
