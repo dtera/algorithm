@@ -12,6 +12,7 @@ public class Search {
         int high = arr.length - 1;
 
         while (low <= high) {
+            if (target.compareTo(arr[low]) == 0) return low;
             final int mid = (low + high) / 2;
             if (target.compareTo(arr[mid]) == 0) return mid;
 
@@ -27,7 +28,7 @@ public class Search {
                 else
                     high = mid - 1;
             } else low++;
-            
+
             //method2:
             /*else if (target < arr[mid]) {
                 if (arr[mid] > arr[low])
