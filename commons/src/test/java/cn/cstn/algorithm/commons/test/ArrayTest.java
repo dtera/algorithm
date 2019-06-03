@@ -5,7 +5,8 @@ import cn.cstn.algorithm.commons.util.ArrayUtil;
 import cn.cstn.algorithm.commons.util.StringUtil;
 import org.junit.Test;
 
-import java.util.Comparator;
+import java.util.*;
+import java.util.function.Consumer;
 
 public class ArrayTest {
 
@@ -13,7 +14,7 @@ public class ArrayTest {
     public void testPrint() {
         int[] a = {4, 6, 1, 8, 5, 3, 9, 7, 2};
         Integer[] b = {4, 6, 1, 8, 5, 3, 9, 7, 2};
-        ArrayUtil.println(a);
+        ArrayUtil.println(ArrayUtil.primitiveToObj(a));
         ArrayUtil.print(a, ", ", "", "\n");
         ArrayUtil.println(b);
         ArrayUtil.print(b, ", ", "", "\n");
@@ -23,15 +24,17 @@ public class ArrayTest {
     @Test
     public void testReverse() {
         Integer[] a = {1, 2, 3};
+        char[] c = {'a', 'b', 'c'};
         ArrayUtil.reverse(a);
         ArrayUtil.println(a);
         System.out.println("========================================");
         ArrayUtil.reverse(a, 1, 2);
+        ArrayUtil.reverse(c, 1, 2);
+        ArrayUtil.swap(c, 1, 2);
         ArrayUtil.println(a);
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testPermutation() {
         Integer[] a = {1, 2, 3};
         ArrayUtil.permutation(a, ArrayUtil::println);
@@ -67,7 +70,6 @@ public class ArrayTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testLIS() {
         Integer[] a = {2, 1, 3, 1};
         Tuple[] b = {new Tuple<>(2, 6), new Tuple<>(1, 7), new Tuple<>(3, 8), new Tuple<>(1, 9)};
@@ -87,6 +89,72 @@ public class ArrayTest {
     @Test
     public void testKthItemOfMirroredArr() {
         System.out.println(ArrayUtil.kthItemOfMirroredArr(3, 3));
+    }
+
+    @Test
+    public void sort() {
+        Map<String, Consumer<Integer[]>> sorts = new HashMap<>();
+        sorts.put("插入", ArrayUtil::insertSort);
+        sorts.put("选择", ArrayUtil::selectSort);
+        sorts.put("冒泡", ArrayUtil::bubbleSort);
+        sorts.put("归并", ArrayUtil::mergeSort);
+        sorts.put("快速", ArrayUtil::quickSort);
+        sorts.put("基数", ArrayTest::radixSort);
+        sorts.put("计数", ArrayTest::countSort);
+        sorts.put("堆", ArrayUtil::heapSort);
+        sorts.put("桶", ArrayUtil::bucketSort);/**/
+
+        Integer[] origin = new Integer[100000];
+        Random rd = new Random();
+        for (int i = 0; i < 100000; i++) {
+            origin[i] = rd.nextInt(100000);
+        }
+        //System.out.println( "排序前：    " + Arrays.asList(new Integer[]{92, 63, 42, 35, 74, 13, 89, 6, 48, 46, 23, 72, 17, 54}));
+        //System.out.println( "排序前：    " + Arrays.asList(origin));
+        System.out.println("===================================================================");
+        for (String type : sorts.keySet()) {
+            //Integer[] arr = {92, 63, 42, 35, 74, 13, 89, 6, 48, 46, 23, 72, 17, 54};
+            Integer[] arr = origin.clone();
+            System.out.println(type + "排序之前：" + Arrays.asList(arr).subList(0, 100));
+            long begin = System.currentTimeMillis();
+            ArrayUtil.sort(sorts.get(type), arr);
+            long end = System.currentTimeMillis();
+            System.out.println(type + "排序之后：" + Arrays.asList(arr).subList(0, 100));
+            System.out.println(type + "排序耗时：" + (end - begin) + "ms");
+            System.out.println("===================================================================");
+        }
+
+    }
+
+    private static void countSort(Integer[] arr) {
+        int bound = 100000;
+        ArrayUtil.countSort(arr, bound);
+    }
+
+    private static  <T> void radixSort(T[] arr) {
+        Character[] radix = new Character[10];
+        for (int i = 0; i < radix.length; i++)
+            radix[i] = Character.forDigit(i, 10);
+
+        ArrayUtil.radixSort(arr, 5, radix);
+    }
+
+    @Test
+    public void find() {
+        Integer[] arr = {5, 5, 5, 6, 7, 8, 9, 1, 2, 3, 4};
+        System.out.println("带查找数组：" + Arrays.asList(arr));
+        //Arrays.stream(arr).forEach(p->System.out.print(p+", "));
+
+        System.out.println("================分治查找旋转数组================");
+        for (int a : new HashSet<>(Arrays.asList(arr)))
+            System.out.println(a + "元素的索引为：" + ArrayUtil.rotatedArrFind(arr, a));
+
+        Arrays.sort(arr);
+        System.out.println("================二分查找有序数组================");
+        for (int a : new HashSet<>(Arrays.asList(arr)))
+            System.out.println(a + "元素的索引为：" + ArrayUtil.BS(arr, a));
+
+        System.out.println(arr[0] + "元素的索引为：" + ArrayUtil.BS(arr, arr[0], 0, arr.length));
     }
 
 }

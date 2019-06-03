@@ -9,12 +9,10 @@
 ### [Commons](https://github.com/dtera/algorithm#commons-algorithm) 
 > This is commons algorithm implement, such as sort, find and etc.
 
-* [Sort](./commons/src/main/java/cn/cstn/algorithm/commons/Sort.java)
-* [Search](./commons/src/main/java/cn/cstn/algorithm/commons/Search.java)
+* [Array](./commons/src/main/java/cn/cstn/algorithm/commons/util/ArrayUtil.java)
 * [Union Find](./commons/src/main/java/cn/cstn/algorithm/commons/UF.java)
 
-
-### [Corporations](https://github.com/dtera/algorithm#corporation) 
+### [Corporation](https://github.com/dtera/algorithm#corporation) 
 > This is corporation interview algorithm implement, such as alibaba, tencent, baidu and etc.
 
 * [Alibaba](https://github.com/dtera/algorithm#alibaba)
@@ -58,7 +56,7 @@ I'll keep updating for full summary and better solutions. Stay tuned for updates
 * [Shell Script](https://github.com/dtera/algorithm#shell-script)
 
 
-### [Corporations](https://github.com/dtera/algorithm#corporation)
+### [Corporation](https://github.com/dtera/algorithm#corporation)
 
 #### Alibaba
 |  #  | Title           |  Solution       |  Time           | Space           | Difficulty    | Tag          | Note|

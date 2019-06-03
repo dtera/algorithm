@@ -4,11 +4,13 @@ import cn.cstn.algorithm.commons.KV;
 import cn.cstn.algorithm.commons.Tuple;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Consumer;
 
 /**
  * description :     ArrayUtil
+ *
  * @author :         zhaohq
  * date :            2018-07-27 16:31
  */
@@ -86,7 +88,7 @@ public class ArrayUtil {
             dpi[i] = k;
             if (dp[i] > dp[mi]) mi = i;
         }
-        int i  = mi;
+        int i = mi;
         for (; dpi[i] != -1; i = dpi[i]) seq.addFirst(a[i % n]);
         seq.addFirst(a[i % n]);
 
@@ -248,7 +250,7 @@ public class ArrayUtil {
     public static <T extends Comparable<T>> int partition(T[] arr, int low, int high) {
         int j = low, i = low - 1;
         while (j < high) {
-            if (arr[j].compareTo(arr[high]) <= 0) {
+            if (arr[j].compareTo(arr[high]) < 0) {
                 i++;
                 swap(arr, i, j);
             }
@@ -259,16 +261,30 @@ public class ArrayUtil {
         return i + 1;
     }
 
+    public static String reverse(String s) {
+        char[] a = s.toCharArray();
+        reverse(a, 0, s.length() - 1);
+        return new String(a);
+    }
+
+    public static void reverse(char[] a, int from, int to) {
+        while (from < to)
+            swap(a, from++, to--);
+    }
+
     public static <T> void reverse(T[] a) {
         reverse(a, 0, a.length - 1);
     }
 
     public static <T> void reverse(T[] a, int from, int to) {
-        while (from < to) {
-            T t = a[from];
-            a[from++] = a[to];
-            a[to--] = t;
-        }
+        while (from < to)
+            swap(a, from++, to--);
+    }
+
+    public static void swap(char[] arr, int i, int j) {
+        char t = arr[i];
+        arr[i] = arr[j];
+        arr[j] = t;
     }
 
     public static void swap(int[] arr, int i, int j) {
@@ -287,21 +303,24 @@ public class ArrayUtil {
         return new int[][]{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
     }
 
+    public static Integer[] primitiveToObj(int[] a) {
+        Integer[] b = new Integer[a.length];
+        for (int i = 0; i < a.length; i++)
+            b[i] = a[i];
+
+        return b;
+    }
+
     public static void println(int[] a) {
         print(a, ", ", "[", "]\n");
     }
 
-    public static void print(int[] a, String sep, String s, String e) {
-        if (a == null) return;
-        System.out.print(s);
-        for (int i = 0; i < a.length - 1; i++)
-            System.out.print(a[i] + sep);
-
-        System.out.print(a[a.length - 1] + e);
-    }
-
     public static <T> void println(T[] a) {
         print(a, ", ", "[", "]\n");
+    }
+
+    public static void print(int[] a, String sep, String s, String e) {
+        print(primitiveToObj(a), sep, s, e);
     }
 
     public static <T> void print(T[] a, String sep, String s, String e) {
@@ -312,5 +331,296 @@ public class ArrayUtil {
 
         System.out.print(a[a.length - 1] + e);
     }
+
+    //=================================common sort algorithm================================================
+    public static <T extends Comparable<T>> void insertSort(T[] arr) {
+        int begin = 0;
+        insertSort(arr, begin, arr.length);
+    }
+
+    private static <T extends Comparable<T>> void insertSort(T[] arr, int begin, int end) {
+        for (int i = begin + 1; i < end; i++) {
+            T x = arr[i];
+            int j = i - 1;
+            while (j >= begin && x.compareTo(arr[j]) < 0) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            arr[j + 1] = x;
+        }
+    }
+
+    public static <T extends Comparable<T>> void selectSort(T[] arr) {
+        int begin = 0;
+        selectSort(arr, begin, arr.length);
+    }
+
+    private static <T extends Comparable<T>> void selectSort(T[] arr, int begin, int end) {
+        for (int i = begin; i < end - 1; i++) {
+            int minIndex = i;
+            for (int j = i + 1; j < end; j++)
+                if (arr[j].compareTo(arr[minIndex]) < 0)
+                    minIndex = j;
+            if (minIndex != i)
+                swap(arr, i, minIndex);
+        }
+    }
+
+    public static <T extends Comparable<T>> void bubbleSort(T[] arr) {
+        int begin = 0;
+        bubbleSort(arr, begin, arr.length);
+    }
+
+    private static <T extends Comparable<T>> void bubbleSort(T[] arr, int begin, int end) {
+        for (int i = begin; i < end - 1; i++)
+            for (int j = end - 1; j > i; j--)
+                if (arr[j].compareTo(arr[j - 1]) < 0)
+                    swap(arr, j, j - 1);
+    }
+
+    public static <T extends Comparable<T>> void mergeSort(T[] arr) {
+        int from = 0;
+        mergeSort(arr, from, arr.length - 1);
+    }
+
+    private static <T extends Comparable<T>> void mergeSort(T[] arr, int from, int to) {
+        if (from == to) return;
+        int mid = (from + to) / 2;
+
+        mergeSort(arr, from, mid);
+        mergeSort(arr, mid + 1, to);
+        merge(arr, from, mid, to);
+
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends Comparable<T>> void merge(T[] arr, int from, int mid, int to) {
+        T[] t = (T[]) Array.newInstance(arr[0].getClass(), to - from + 1);
+        int i = from, j = mid + 1, k = 0;
+
+        while (i <= mid && j <= to)
+            if (arr[i].compareTo(arr[j]) < 0)
+                t[k++] = arr[i++];
+            else
+                t[k++] = arr[j++];
+
+        while (i <= mid)
+            t[k++] = arr[i++];
+        while (j <= to)
+            t[k++] = arr[j++];
+
+        System.arraycopy(t, 0, arr, from, to - from + 1);
+
+    }
+
+    public static <T extends Comparable<T>> void quickSort(T[] arr) {
+        quickSort(arr, 0, arr.length - 1);
+    }
+
+    private static <T extends Comparable<T>> void quickSort(T[] arr, int from, int to) {
+        if (from >= to) return;
+        int p = partition(arr, from, to);
+        quickSort(arr, from, p - 1);
+        quickSort(arr, p + 1, to);
+    }
+
+    public static <T> void radixSort(T[] arr, int k, Character[] radix) {
+        int begin = 0;
+        radixSort(arr, begin, arr.length, k, radix);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> void radixSort(T[] arr, int begin, int end, int k, Character[] radix) {
+        Map<Character, Integer> radix2Index = new HashMap<>();
+        for (int i = 0; i < radix.length; i++)
+            radix2Index.put(radix[i], i);
+
+        String[] a = new String[end - begin];
+        for (int i = begin; i < end; i++)
+            a[i] = reverse(arr[i].toString());
+
+        for (int i = 0; i < k; i++) {
+            List<T>[] lists = new ArrayList[radix.length];
+            for (int j = begin; j < end; j++) {
+                Character ci;
+                try {
+                    ci = a[j].charAt(i);
+                } catch (Exception e) {
+                    ci = radix[0];
+                }
+                Integer indexOfCi = radix2Index.get(ci);
+                List<T> list = lists[indexOfCi];
+                if (list == null)
+                    list = lists[indexOfCi] = new ArrayList<>();
+                list.add(arr[j]);
+            }
+
+            int j = 0;
+            for (List<T> list : lists)
+                if (list != null)
+                    for (T item : list)
+                        arr[j++] = item;
+        }
+    }
+
+    public static void countSort(Integer[] arr, int bound) {
+        int begin = 0;
+        countSort(arr, begin, arr.length, bound);
+    }
+
+    private static void countSort(Integer[] arr, int begin, int end, int bound) {
+        Integer[] countArr = new Integer[bound];
+        Arrays.fill(countArr, 0);
+        for (int i = begin; i < end; i++)
+            countArr[arr[i]]++;
+
+        int j = end - 1;
+        for (int i = bound - 1; i >= 0; i--) {
+            while (countArr[i] != 0 && j >= begin) {
+                arr[j--] = i;
+                countArr[i]--;
+            }
+        }
+    }
+
+    public static <T extends Comparable<T>> void heapSort(T[] arr) {
+        int begin = 0;
+        heapSort(arr, begin, arr.length);
+    }
+
+    private static <T extends Comparable<T>> void heapSort(T[] arr, int begin, int end) {
+        for (int i = (end - 2) / 2; i >= begin; i--)
+            shift(arr, i, end - 1);
+
+        for (int i = end - 1; i > begin; i--) {
+            swap(arr, i, begin);
+            shift(arr, begin, i - 1);
+        }
+
+    }
+
+    private static <T extends Comparable<T>> void shift(T[] arr, int i, int end) {
+        int l = 2 * i + 1;
+        int r = 2 * (i + 1);
+
+        if (l > end || //
+                (l == end && arr[i].compareTo(arr[l]) >= 0) || //
+                (arr[i].compareTo(arr[l]) >= 0 && arr[i].compareTo(arr[r]) >= 0))
+            return;
+
+        if (r <= end && arr[r].compareTo(arr[l]) > 0) {
+            swap(arr, i, r);
+            shift(arr, r, end);
+        } else {
+            swap(arr, i, l);
+            shift(arr, l, end);
+        }
+    }
+
+    public static <T extends Comparable<T>> void bucketSort(T[] arr) {
+        int begin = 0;
+        bucketSort(arr, begin, arr.length);
+    }
+
+    private static <T extends Comparable<T>> void bucketSort(T[] arr, int begin, int end) {
+        Character[] radix = new Character[10];
+        for (int i = 0; i < radix.length; i++)
+            radix[i] = Character.forDigit(i, 10);
+
+        bucketSort(arr, begin, end, radix);
+
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends Comparable<T>> void bucketSort(T[] arr, int begin, int end, Character... radix) {
+        Map<Character, Integer> radix2Index = new HashMap<>();
+        List<T>[] buckets = new ArrayList[radix.length];
+        for (int i = 0; i < radix.length; i++) {
+            radix2Index.put(radix[i], i);
+            buckets[i] = new ArrayList<>();
+        }
+
+        for (int i = begin; i < end; i++) {
+            Character initial = arr[i].toString().charAt(0);
+            List<T> bucket = buckets[radix2Index.get(initial)];
+            bucket.add(arr[i]);
+        }
+
+        int k = begin;
+        for (List<T> bucket : buckets) {
+            for (T t : bucket) {
+                arr[k++] = t;
+            }
+            insertSort(arr, 0, k);
+        }
+    }
+
+    public static <T extends Comparable<T>> void sort(Consumer<T[]> consumer, T[] arr) {
+        consumer.accept(arr);
+    }
+    //=================================common sort algorithm================================================
+
+    //=================================search algorithm=====================================================
+    public static <T extends Comparable<T>> int rotatedArrFind(T[] arr, T target) {
+        int low = 0;
+        int high = arr.length - 1;
+
+        while (low <= high) {
+            if (target.compareTo(arr[low]) == 0) return low;
+            final int mid = (low + high) / 2;
+            if (target.compareTo(arr[mid]) == 0) return mid;
+
+            //method1:
+            if (arr[mid].compareTo(arr[low]) > 0)
+                if (target.compareTo(arr[low]) >= 0 && target.compareTo(arr[mid]) < 0)
+                    return BS(arr, target, low, mid - 1);
+                else
+                    low = mid + 1;
+            else if (arr[mid].compareTo(arr[low]) < 0) {
+                if (target.compareTo(arr[mid]) > 0 && target.compareTo(arr[high]) <= 0)
+                    return BS(arr, target, mid + 1, high);
+                else
+                    high = mid - 1;
+            } else low++;
+
+            //method2:
+            /*else if (target < arr[mid]) {
+                if (arr[mid] > arr[low])
+                    if (target >= arr[low])
+                        return BS(arr, target, low, mid - 1);
+                    else
+                        low = mid + 1;
+                else high = mid - 1;
+            } else {
+                if (arr[mid] < arr[high])
+                    if (target <= arr[high])
+                        return BS(arr, target, mid + 1, high);
+                    else
+                        high = mid - 1;
+                else low = mid + 1;
+            }*/
+
+        }
+
+        return -1;
+    }
+
+    public static <T extends Comparable<T>> int BS(T[] arr, T target) {
+        return BS(arr, target, 0, arr.length - 1);
+    }
+
+    public static <T extends Comparable<T>> int BS(T[] arr, T target, int low, int high) {
+        int mid = (low + high) / 2;
+        while (low <= high) {
+            if (arr[mid].compareTo(target) == 0) return mid;
+            else if (target.compareTo(arr[mid]) < 0)
+                high = mid - 1;
+            else
+                low = mid + 1;
+            mid = (low + high) / 2;
+        }
+        return -1;
+    }
+    //=================================search algorithm=====================================================
 
 }
