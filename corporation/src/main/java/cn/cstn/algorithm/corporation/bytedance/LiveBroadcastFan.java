@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.corporation.bytedance;
 
-import cn.cstn.algorithm.commons.Tuple;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -42,24 +42,24 @@ public class LiveBroadcastFan {
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
         int m = sc.nextInt();
-        Tuple<Integer>[] ts = new Tuple[n];
+        Pair<Integer, Integer>[] ts = new Pair[n];
         for (int i = 0; i < n; i++) {
-            ts[i] = new Tuple<>(sc.nextInt(), sc.nextInt());
-            assert ts[i]._1() < m && ts[i]._2() < m;
+            ts[i] = Pair.of(sc.nextInt(), sc.nextInt());
+            assert ts[i].getLeft() < m && ts[i].getRight() < m;
         }
 
         System.out.println(numOfWatchLiveBroadcast(ts, m));
     }
 
-    private static int numOfWatchLiveBroadcast(Tuple<Integer>[] ts, int m) {
+    private static int numOfWatchLiveBroadcast(Pair<Integer, Integer>[] ts, int m) {
         if (ts == null) return 0;
-        int num = 1, e = ts[0]._2();
-        if (ts[0]._1() > ts[0]._2()) e += m;
-        Arrays.sort(ts, Comparator.comparingInt(Tuple<Integer>::_1));
+        int num = 1, e = ts[0].getRight();
+        if (ts[0].getLeft() > ts[0].getRight()) e += m;
+        Arrays.sort(ts, Comparator.comparingInt(Pair<Integer, Integer>::getLeft));
         for (int i = 1; i < ts.length; i++)
-            if (ts[i]._1() >= e && (ts[i]._1() <= ts[i]._2() || i == ts.length - 1)) num++;
-            else if (ts[i]._1() <= ts[i]._2())
-                e = Math.min(e, ts[i]._2());
+            if (ts[i].getLeft() >= e && (ts[i].getLeft() <= ts[i].getRight() || i == ts.length - 1)) num++;
+            else if (ts[i].getLeft() <= ts[i].getRight())
+                e = Math.min(e, ts[i].getRight());
 
         return num;
     }

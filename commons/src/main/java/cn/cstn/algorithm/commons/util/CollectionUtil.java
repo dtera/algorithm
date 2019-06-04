@@ -1,31 +1,33 @@
 package cn.cstn.algorithm.commons.util;
 
-import cn.cstn.algorithm.commons.Tuple;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 import java.util.function.Consumer;
 
 /**
  * description :        CollectionUtil
+ *
  * @author :            zhaohq
  * date :               2018/8/28 0028 20:39
  */
 public class CollectionUtil {
 
-    public static <T> void combinationPair(List<T> pls, Consumer<Tuple<T>> consumer) {
+    public static <T> void combinationPair(List<T> pls, Consumer<Pair<T, T>> consumer) {
         for (int i = 0; i < pls.size() - 1; i++) {
             T pl = pls.get(i);
             for (int j = i + 1; j < pls.size(); j++) {
                 T cl = pls.get(j);
-                consumer.accept(new Tuple<>(pl, cl));
+                consumer.accept(Pair.of(pl, cl));
             }
         }
     }
 
-    public static <T> void combinationPair(List<T> pls, List<T> cls, Consumer<Tuple<T>> consumer) {
+    public static <T> void combinationPair(List<T> pls, List<T> cls, Consumer<Pair<T, T>> consumer) {
         for (T pl : pls) {
             for (T cl : cls) {
-                consumer.accept(new Tuple<>(pl, cl));
+                consumer.accept(Pair.of(pl, cl));
             }
         }
     }
@@ -48,14 +50,14 @@ public class CollectionUtil {
         return list;
     }
 
-    public static List<Tuple<Integer>> _merge(List<Tuple<Integer>> ts) {
-        List<Tuple<Integer>> res = new ArrayList<>();
+    public static List<Pair<Integer, Integer>> _merge(List<Pair<Integer, Integer>> ts) {
+        List<Pair<Integer, Integer>> res = new ArrayList<>();
         if (ts == null || ts.size() < 1) return res;
         int n = ts.size();
         int[] ss = new int[n], es = new int[n];
         for (int i = 0; i < n; i++) {
-            ss[i] = ts.get(i)._1();
-            es[i] = ts.get(i)._2();
+            ss[i] = ts.get(i).getLeft();
+            es[i] = ts.get(i).getRight();
         }
 
         Arrays.sort(ss);
@@ -63,35 +65,35 @@ public class CollectionUtil {
 
         for (int i = 0, j = 0; i < n; i++)
             if (i == n - 1 || ss[i + 1] > es[i]) {
-                res.add(new Tuple<>(ss[j], es[i]));
+                res.add(Pair.of(ss[j], es[i]));
                 j = i + 1;
             }
 
         return res;
     }
 
-    public static List<Tuple<Integer>> merge(List<Tuple<Integer>> ts) {
-        List<Tuple<Integer>> res = new ArrayList<>();
+    public static List<Pair<Integer, Integer>> merge(List<Pair<Integer, Integer>> ts) {
+        List<Pair<Integer, Integer>> res = new ArrayList<>();
         if (ts == null || ts.size() < 1) return res;
-        ts.sort(Comparator.comparingInt(Tuple::_1));
+        ts.sort(Comparator.comparingInt(Pair::getLeft));
         //method1
         for (int i = 0, j = 0; i < ts.size(); i++)
-            if (i == ts.size() - 1 || ts.get(i + 1)._1() > ts.get(i)._2()) {
-                res.add(new Tuple<>(ts.get(j)._1(), ts.get(i)._2()));
+            if (i == ts.size() - 1 || ts.get(i + 1).getLeft() > ts.get(i).getRight()) {
+                res.add(Pair.of(ts.get(j).getLeft(), ts.get(i).getRight()));
                 j = i + 1;
             }
         //method2
-        /*Tuple p = ts.get(0);
-        int s = p._1(), e = p._2();
+        /*Pair p = ts.get(0);
+        int s = p.getLeft(), e = p.getRight();
         for (int i = 1; i < ts.size(); i++) {
             p = ts.get(i);
-            if (p._1() > e) {
-                res.add(new Tuple(s, e));
-                s = p._1();
-                e = p._2();
-            } else e = Math.max(p._2(), e);
+            if (p.getLeft() > e) {
+                res.add(new Pair(s, e));
+                s = p.getLeft();
+                e = p.getRight();
+            } else e = Math.max(p.getRight(), e);
         }
-        res.add(new Tuple(s, e));*/
+        res.add(new Pair(s, e));*/
         return res;
     }
 

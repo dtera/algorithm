@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.commons.util;
 
-import cn.cstn.algorithm.commons.Tuple;
+import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.util.function.Predicate;
 
@@ -43,20 +43,20 @@ public class StringUtil {
         int n = s.length();
 
         return isPairOfWords(n, t -> {
-            t.s_1((t._1() + 1) % sp.length());
-            return s.charAt(t._2()) != sp.charAt(t._1());
+            t.setLeft((t.getLeft() + 1) % sp.length());
+            return s.charAt(t.getRight()) != sp.charAt(t.getLeft());
         }) || isPairOfWords(n, t -> {
-            t.s_1((t._1() - 1 + sp.length()) % sp.length());
-            return s.charAt(t._2()) != sp.charAt(t._1());
+            t.setLeft((t.getLeft() - 1 + sp.length()) % sp.length());
+            return s.charAt(t.getRight()) != sp.charAt(t.getLeft());
         });
     }
 
-    private static boolean isPairOfWords(int n, Predicate<Tuple<Integer>> p) {
+    private static boolean isPairOfWords(int n, Predicate<MutablePair<Integer, Integer>> p) {
         for (int i = 0; i < n; i++) {
             int j = 0;
-            Tuple<Integer> t = new Tuple<>(i, j);
+            MutablePair<Integer, Integer> t = MutablePair.of(i, j);
             for (; j < n; j++) {
-                t.s_2(j);
+                t.setRight(j);
                 if (p.test(t)) break;
             }
             if (j == n) return true;

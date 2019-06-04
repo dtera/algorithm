@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.corporation.jd;
 
-import cn.cstn.algorithm.commons.Tuple;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.Scanner;
 
@@ -22,20 +22,20 @@ public class Contrast {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
-        Tuple<Integer>[] ts = new Tuple[n];
+        Triple<Integer, Integer, Integer>[] ts = new Triple[n];
         for (int i = 0; i < n; i++)
-            ts[i] = new Tuple<>(sc.nextInt(), sc.nextInt(), sc.nextInt());
+            ts[i] = Triple.of(sc.nextInt(), sc.nextInt(), sc.nextInt());
 
         System.out.println(numOfQualifiedProduct(ts));
     }
 
-    private static int numOfQualifiedProduct(Tuple<Integer>[] ts) {
+    private static int numOfQualifiedProduct(Triple<Integer, Integer, Integer>[] ts) {
         int num = 0, n = ts.length;
         boolean[] valid = new boolean[n];
         for (int i = 0; i < n; i++)
             for (int j = 0; j < n; j++)
-                if (!valid[j] && i != j && ts[i]._1() < ts[j]._1()&&//
-                        ts[i]._2() < ts[j]._2()&& ts[i].g_(2) < ts[j]._1()) {
+                if (!valid[j] && i != j && ts[i].getLeft() < ts[j].getLeft()&&//
+                        ts[i].getMiddle() < ts[j].getMiddle()&& ts[i].getRight() < ts[j].getLeft()) {
                     valid[i] = true;
                     num++;
                     break;

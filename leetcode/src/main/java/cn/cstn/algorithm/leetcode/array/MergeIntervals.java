@@ -1,7 +1,7 @@
 package cn.cstn.algorithm.leetcode.array;
 
-import cn.cstn.algorithm.commons.Tuple;
 import cn.cstn.algorithm.commons.util.CollectionUtil;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,9 +13,9 @@ import java.util.List;
  */
 public class MergeIntervals {
     public static void main(String[] args) {
-        List<Tuple<Integer>> ts = Arrays.asList(new Tuple<>(1,3),new Tuple<>(2,6),
-                new Tuple<>(8,10),new Tuple<>(15,18));
-        List<Tuple<Integer>> lts = CollectionUtil.merge(ts);
+        List<Pair<Integer, Integer>> ts = Arrays.asList(Pair.of(1,3),Pair.of(2,6),
+                Pair.of(8,10),Pair.of(15,18));
+        List<Pair<Integer, Integer>> lts = CollectionUtil.merge(ts);
         CollectionUtil.println(lts);
         lts = CollectionUtil._merge(ts);
         CollectionUtil.println(lts);

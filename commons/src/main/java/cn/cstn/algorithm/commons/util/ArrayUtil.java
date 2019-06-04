@@ -1,8 +1,7 @@
 package cn.cstn.algorithm.commons.util;
 
-import cn.cstn.algorithm.commons.KV;
-import cn.cstn.algorithm.commons.Tuple;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -59,19 +58,19 @@ public class ArrayUtil {
         return true;
     }
 
-    public static <T extends Comparable<T>> KV<Integer, LinkedList<T>> lis(T[] a) {
+    public static <T extends Comparable<T>> Pair<Integer, LinkedList<T>> lis(T[] a) {
         return lis(a, Comparable<T>::compareTo);
     }
 
-    public static <T extends Comparable<T>> KV<Integer, LinkedList<T>> lis(T[] a, int t) {
+    public static <T extends Comparable<T>> Pair<Integer, LinkedList<T>> lis(T[] a, int t) {
         return lis(a, t, Comparable<T>::compareTo);
     }
 
-    public static <T> KV<Integer, LinkedList<T>> lis(T[] a, Comparator<T> comparator) {
+    public static <T> Pair<Integer, LinkedList<T>> lis(T[] a, Comparator<T> comparator) {
         return lis(a, 1, comparator);
     }
 
-    public static <T> KV<Integer, LinkedList<T>> lis(T[] a, int t, Comparator<T> comparator) {
+    public static <T> Pair<Integer, LinkedList<T>> lis(T[] a, int t, Comparator<T> comparator) {
         int n = a.length, mi = 0;
         int[] dp = new int[n * t];
         int[] dpi = new int[n * t];
@@ -97,10 +96,10 @@ public class ArrayUtil {
         log.debug("dpi = " + Arrays.toString(dpi));
         log.debug("seq = " + seq);
 
-        return new KV<>(dp[mi], seq);
+        return Pair.of(dp[mi], seq);
     }
 
-    public static <T> void coCombination(T[] a, Consumer<Tuple<List<T>>> consumer) {
+    public static <T> void coCombination(T[] a, Consumer<Pair<List<T>, List<T>>> consumer) {
         Map<Integer, List<List<T>>> map = new HashMap<>();
         combination(a, 1, a.length - 1, list -> {
             List<List<T>> lists = map.computeIfAbsent(list.size(), k -> new ArrayList<>());
@@ -110,13 +109,13 @@ public class ArrayUtil {
         for (int i = 1; i <= a.length / 2; i++) {
             List<List<T>> pls = map.get(i);
             CollectionUtil.combinationPair(pls, t -> {
-                List<T> intersect = CollectionUtil.intersect(t._1(), t._2());
+                List<T> intersect = CollectionUtil.intersect(t.getLeft(), t.getRight());
                 if (intersect.size() == 0) consumer.accept(t);
             });
             for (int j = i + 1; j < a.length && i + j <= a.length; j++) {
                 List<List<T>> cls = map.get(j);
                 CollectionUtil.combinationPair(pls, cls, t -> {
-                    List<T> intersect = CollectionUtil.intersect(t._1(), t._2());
+                    List<T> intersect = CollectionUtil.intersect(t.getLeft(), t.getRight());
                     if (intersect.size() == 0) consumer.accept(t);
                 });
             }

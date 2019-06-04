@@ -1,7 +1,6 @@
 package cn.cstn.algorithm.corporation.bytedance;
 
-import cn.cstn.algorithm.commons.KV;
-import cn.cstn.algorithm.commons.Tuple;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
@@ -44,34 +43,34 @@ public class SubtractionEvaluate {
         String[] ls = line.split(" ");
         int n = Integer.parseInt(ls[0]);
         int m = Integer.parseInt(ls[1]);
-        Map<String, List<KV<Integer, String>>> cs = new HashMap<>();
-        Tuple<String>[] qs = new Tuple[m];
+        Map<String, List<Pair<Integer, String>>> cs = new HashMap<>();
+        Pair<String, String>[] qs = new Pair[m];
 
         for (int i = 0; i < n; i++) {
             line = sc.nextLine();
             ls = line.split(" ");
             cs.computeIfAbsent(ls[0], k -> new ArrayList<>())
-                    .add(new KV<>(Integer.parseInt(ls[2]), ls[4]));
+                    .add(Pair.of(Integer.parseInt(ls[2]), ls[4]));
             cs.computeIfAbsent(ls[4], k -> new ArrayList<>())
-                    .add(new KV<>(Integer.parseInt(ls[2]), ls[0]));
+                    .add(Pair.of(Integer.parseInt(ls[2]), ls[0]));
         }
         for (int i = 0; i < m; i++) {
             line = sc.nextLine();
             ls = line.split(" ");
-            qs[i] = new Tuple<>(ls[0], ls[2]);
+            qs[i] = Pair.of(ls[0], ls[2]);
         }
 
         subtractionEvaluate(cs, qs);
     }
 
-    private static void subtractionEvaluate(Map<String, List<KV<Integer, String>>> cs, Tuple<String>[] qs) {
-        for (Tuple<String> q : qs) {
+    private static void subtractionEvaluate(Map<String, List<Pair<Integer, String>>> cs, Pair<String, String>[] qs) {
+        for (Pair<String, String> q : qs) {
             boolean hasAnswer = false;
             outer:
-            for (KV<Integer, String> kv1 : cs.get(q._1())) {
-                for (KV<Integer, String> kv2 : cs.get(q._2())) {
-                    if (kv1._2().equals(kv2._2())) {
-                        System.out.println(kv1._1() - kv2._1());
+            for (Pair<Integer, String> kv1 : cs.get(q.getLeft())) {
+                for (Pair<Integer, String> kv2 : cs.get(q.getRight())) {
+                    if (kv1.getRight().equals(kv2.getRight())) {
+                        System.out.println(kv1.getLeft() - kv2.getLeft());
                         hasAnswer = true;
                         break outer;
                     }

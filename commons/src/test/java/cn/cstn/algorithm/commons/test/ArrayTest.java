@@ -1,8 +1,8 @@
 package cn.cstn.algorithm.commons.test;
 
-import cn.cstn.algorithm.commons.Tuple;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
 import cn.cstn.algorithm.commons.util.StringUtil;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
 import java.util.*;
@@ -49,10 +49,10 @@ public class ArrayTest {
         System.out.println("next permutation:");
         while (ArrayUtil.nextPermutation(b, ArrayUtil::println)) System.out.println("next permutation:");
         System.out.println("========================================");
-        Tuple[] ts = {new Tuple<>(1, 3), new Tuple<>(2, 1), new Tuple<>(3, 2)};
+        Pair[] ts = {Pair.of(1, 3), Pair.of(2, 1), Pair.of(3, 2)};
         ArrayUtil.println(ts);
         System.out.println("next permutation:");
-        while (ArrayUtil.nextPermutation(ts, Comparator.comparingInt(Tuple<Integer>::_1), ArrayUtil::println))
+        while (ArrayUtil.nextPermutation(ts, Comparator.comparingInt(Pair<Integer, Integer>::getLeft), ArrayUtil::println))
             System.out.println("next permutation:");
     }
 
@@ -75,11 +75,11 @@ public class ArrayTest {
     @Test
     public void testLIS() {
         Integer[] a = {2, 1, 3, 1};
-        Tuple[] b = {new Tuple<>(2, 6), new Tuple<>(1, 7), new Tuple<>(3, 8), new Tuple<>(1, 9)};
+        Pair[] b = {Pair.of(2, 6), Pair.of(1, 7), Pair.of(3, 8), Pair.of(1, 9)};
         System.out.println(ArrayUtil.lis(a));
         System.out.println(ArrayUtil.lis(a, 3));
-        System.out.println(ArrayUtil.lis(b, Comparator.comparingInt(Tuple<Integer>::_1)));
-        System.out.println(ArrayUtil.lis(b, 2, Comparator.comparingInt(Tuple<Integer>::_1)));
+        System.out.println(ArrayUtil.lis(b, Comparator.comparingInt(Pair<Integer, Integer>::getLeft)));
+        System.out.println(ArrayUtil.lis(b, 2, Comparator.comparingInt(Pair<Integer, Integer>::getLeft)));
     }
 
     @Test
@@ -135,7 +135,7 @@ public class ArrayTest {
         ArrayUtil.countSort(arr, bound);
     }
 
-    private static  <T> void radixSort(T[] arr) {
+    private static <T> void radixSort(T[] arr) {
         Character[] radix = new Character[10];
         for (int i = 0; i < radix.length; i++)
             radix[i] = Character.forDigit(i, 10);

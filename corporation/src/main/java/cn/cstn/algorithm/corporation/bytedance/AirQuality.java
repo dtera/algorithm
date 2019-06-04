@@ -39,7 +39,7 @@ public class AirQuality {
         for (int i = 0; i < n; i++)
             a[i] = sc.nextInt();
 
-        System.out.println(ArrayUtil.lis(a, t)._1());
+        System.out.println(ArrayUtil.lis(a, t).getLeft());
     }
 
 }

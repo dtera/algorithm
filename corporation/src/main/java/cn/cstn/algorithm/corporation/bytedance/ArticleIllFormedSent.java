@@ -1,8 +1,8 @@
 package cn.cstn.algorithm.corporation.bytedance;
 
-import cn.cstn.algorithm.commons.Tuple;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
 import cn.cstn.algorithm.commons.util.CollectionUtil;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class ArticleIllFormedSent {
         String line = sc.nextLine();
         int m = Integer.parseInt(line);
         List<int[]> list = new ArrayList<>();
-        List<Tuple<Integer>> lts = new ArrayList<>();
+        List<Pair<Integer, Integer>> lts = new ArrayList<>();
         for (int i = 0; i < m; i++) {
             line = sc.nextLine();
             String[] ls = line.split(";");
@@ -51,7 +51,7 @@ public class ArticleIllFormedSent {
                 String[] ps = pos.split(",");
                 int x= Integer.parseInt(ps[0]), y = Integer.parseInt(ps[1]);
                 list.add(new int[]{x, y});
-                Tuple<Integer> p = new Tuple<>(x, y);
+                Pair<Integer, Integer> p = Pair.of(x, y);
                 lts.add(p);
             }
         }
@@ -60,7 +60,7 @@ public class ArticleIllFormedSent {
         List<int[]> res = merge(list);
         CollectionUtil.print(res, "; ", "", "\n", ArticleIllFormedSent::print);
         //method2
-        List<Tuple<Integer>> mts = CollectionUtil.merge(lts);
+        List<Pair<Integer, Integer>> mts = CollectionUtil.merge(lts);
         CollectionUtil.println(mts);
     }
 
