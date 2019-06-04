@@ -19,12 +19,15 @@ public class ArrayTest {
         ArrayUtil.println(b);
         ArrayUtil.print(b, ", ", "", "\n");
         ArrayUtil.swap(a, 1, 2);
+        ArrayUtil.swap(b, 1, 2);
     }
 
     @Test
     public void testReverse() {
         Integer[] a = {1, 2, 3};
         char[] c = {'a', 'b', 'c'};
+        String s = "zhaohq";
+        ArrayUtil.reverse(s);
         ArrayUtil.reverse(a);
         ArrayUtil.println(a);
         System.out.println("========================================");
@@ -113,7 +116,6 @@ public class ArrayTest {
         //System.out.println( "排序前：    " + Arrays.asList(origin));
         System.out.println("===================================================================");
         for (String type : sorts.keySet()) {
-            //Integer[] arr = {92, 63, 42, 35, 74, 13, 89, 6, 48, 46, 23, 72, 17, 54};
             Integer[] arr = origin.clone();
             System.out.println(type + "排序之前：" + Arrays.asList(arr).subList(0, 100));
             long begin = System.currentTimeMillis();
@@ -123,6 +125,8 @@ public class ArrayTest {
             System.out.println(type + "排序耗时：" + (end - begin) + "ms");
             System.out.println("===================================================================");
         }
+        Integer[] arr = {92, 63, 42, 35, 74, 13, 89, 6, 48, 46, 23, 72, 17, 54};
+        ArrayUtil.partition(arr, 0, arr.length - 1);
 
     }
 
