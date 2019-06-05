@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-@SuppressWarnings("all")
+@SuppressWarnings("unused")
 public class UFTest {
 
     @Test
@@ -20,7 +20,7 @@ public class UFTest {
                 {0, 0, 0, 0, 1, 0, 0},
                 {0, 1, 0, 0, 0, 0, 1},
         };
-        int m = c.length, n = c[0].length, r = 1;
+        int m = c.length, n = c[0].length, r = 2;
         int[][] a = new int[m * r][n];
         for (int k = 0; k < r; k++)
             for (int i = 0; i < m; i++)

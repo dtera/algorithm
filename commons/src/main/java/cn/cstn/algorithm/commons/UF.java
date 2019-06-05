@@ -47,7 +47,7 @@ public class UF {
         int pr = find(p);
         int qr = find(q);
         if (pr == qr) return;
-        if (sz[pr] < sz[qr]) {
+        if (sz[pr] <= sz[qr]) {
             id[pr] = qr;
             sz[qr] += sz[pr];
         } else {
