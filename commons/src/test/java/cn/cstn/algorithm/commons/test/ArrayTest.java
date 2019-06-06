@@ -2,6 +2,7 @@ package cn.cstn.algorithm.commons.test;
 
 import cn.cstn.algorithm.commons.util.ArrayUtil;
 import cn.cstn.algorithm.commons.util.StringUtil;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ public class ArrayTest {
         ArrayUtil.print(a, ", ", "", "\n");
         ArrayUtil.println(b);
         ArrayUtil.print(b, ", ", "", "\n");
-        ArrayUtil.swap(a, 1, 2);
+        ArrayUtils.swap(a, 1, 2);
         ArrayUtil.swap(b, 1, 2);
     }
 
@@ -32,8 +33,8 @@ public class ArrayTest {
         ArrayUtil.println(a);
         System.out.println("========================================");
         ArrayUtil.reverse(a, 1, 2);
-        ArrayUtil.reverse(c, 1, 2);
-        ArrayUtil.swap(c, 1, 2);
+        ArrayUtils.reverse(c, 1, 2);
+        ArrayUtils.swap(c, 1, 2);
         ArrayUtil.println(a);
     }
 

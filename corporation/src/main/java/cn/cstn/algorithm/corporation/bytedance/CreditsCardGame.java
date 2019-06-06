@@ -2,6 +2,7 @@ package cn.cstn.algorithm.corporation.bytedance;
 
 import cn.cstn.algorithm.commons.util.ArrayUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
@@ -59,7 +60,7 @@ public class CreditsCardGame {
         int[] pc = {0, 1};
         f[pc[1]][sx] = 0;
         for (Pair<Integer, Integer> t : ts) {
-            ArrayUtil.swap(pc, 0, 1);
+            ArrayUtils.swap(pc, 0, 1);
             for (int j = 0; j < f[0].length; j++) {
                 f[pc[1]][j] = Math.max(f[pc[0]][j], f[pc[0]][Math.abs(j - t.getLeft())] + t.getRight());
                 if (j + t.getLeft() < f[0].length)
@@ -84,7 +85,7 @@ public class CreditsCardGame {
         int[] pc = {0, 1};
         f[pc[1]][sx] = 0;
         for (Pair<Integer, Integer> t : ts) {
-            ArrayUtil.swap(pc, 0, 1);
+            ArrayUtils.swap(pc, 0, 1);
             for (int j = 0; j < f[0].length; j++) {
                 f[pc[1]][j] = f[pc[0]][j];
                 //log.debug("f[0][" + j + "] = " + f[0][j] + "\t\tf[1][" + j + "] = " + f[1][j]);

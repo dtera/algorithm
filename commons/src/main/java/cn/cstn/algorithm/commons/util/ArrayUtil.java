@@ -1,6 +1,7 @@
 package cn.cstn.algorithm.commons.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.Array;
@@ -221,8 +222,8 @@ public class ArrayUtil {
     }
 
     public static int kthMin(int[] a, int k) {
-        int[] b = new int[a.length];
-        System.arraycopy(a, 0, b, 0, a.length);
+        Integer[] b = ArrayUtils.toObject(a);
+        //System.arraycopy(ArrayUtils.toObject(a), 0, b, 0, a.length);
         int ki = partition(b, 0, b.length - 1);
         while (ki != k - 1) {
             if (ki < k - 1) ki = partition(b, ki + 1, b.length - 1);
@@ -230,20 +231,6 @@ public class ArrayUtil {
         }
 
         return b[ki];
-    }
-
-    private static int partition(int[] arr, int low, int high) {
-        int j = low, i = low - 1;
-        while (j < high) {
-            if (arr[j] < arr[high]) {
-                i++;
-                swap(arr, i, j);
-            }
-            j++;
-        }
-        swap(arr, i + 1, high);
-
-        return i + 1;
     }
 
     public static <T extends Comparable<T>> int partition(T[] arr, int low, int high) {
@@ -262,13 +249,8 @@ public class ArrayUtil {
 
     public static String reverse(String s) {
         char[] a = s.toCharArray();
-        reverse(a, 0, s.length() - 1);
+        ArrayUtils.reverse(a);
         return new String(a);
-    }
-
-    public static void reverse(char[] a, int from, int to) {
-        while (from < to)
-            swap(a, from++, to--);
     }
 
     public static <T> void reverse(T[] a) {
@@ -278,18 +260,6 @@ public class ArrayUtil {
     public static <T> void reverse(T[] a, int from, int to) {
         while (from < to)
             swap(a, from++, to--);
-    }
-
-    public static void swap(char[] arr, int i, int j) {
-        char t = arr[i];
-        arr[i] = arr[j];
-        arr[j] = t;
-    }
-
-    public static void swap(int[] arr, int i, int j) {
-        int t = arr[i];
-        arr[i] = arr[j];
-        arr[j] = t;
     }
 
     public static <T> void swap(T[] arr, int i, int j) {
