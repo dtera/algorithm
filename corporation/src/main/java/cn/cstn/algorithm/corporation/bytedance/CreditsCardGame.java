@@ -43,12 +43,11 @@ public class CreditsCardGame {
         for (int i = 0; i < n; i++)
             ts[i] = Pair.of(sc.nextInt(), sc.nextInt());
 
-        System.out.println(__maxGroupScore(ts));
         System.out.println(_maxGroupScore(ts));
         System.out.println(maxGroupScore(ts));
     }
 
-    private static int __maxGroupScore(Pair<Integer, Integer>[] ts) {
+    private static int _maxGroupScore(Pair<Integer, Integer>[] ts) {
         int sx = 0, sy = 0;
         for (Pair<Integer, Integer> t : ts) {
             sx += t.getLeft();
@@ -73,45 +72,15 @@ public class CreditsCardGame {
         return f[pc[1]][sx];
     }
 
-    private static int _maxGroupScore(Pair<Integer, Integer>[] ts) {
-        int sx = 0, sy = 0;
-        for (Pair<Integer, Integer> t : ts) {
-            sx += t.getLeft();
-            sy += t.getRight();
-        }
-        int[][] f = new int[2][2 * sx + 1];
-        Arrays.fill(f[0], -sy - 1);
-        Arrays.fill(f[1], -sy - 1);
-        int[] pc = {0, 1};
-        f[pc[1]][sx] = 0;
-        for (Pair<Integer, Integer> t : ts) {
-            ArrayUtils.swap(pc, 0, 1);
-            for (int j = 0; j < f[0].length; j++) {
-                f[pc[1]][j] = f[pc[0]][j];
-                //log.debug("f[0][" + j + "] = " + f[0][j] + "\t\tf[1][" + j + "] = " + f[1][j]);
-                if (j - t.getLeft() >= 0)
-                    f[pc[1]][j] = Math.max(f[pc[1]][j], f[pc[0]][j - t.getLeft()] + t.getRight());
-                //log.debug("f[0][" + j + "] = " + f[0][j] + "\t\tf[1][" + j + "] = " + f[1][j]);
-                if (j + t.getLeft() < f[0].length)
-                    f[pc[1]][j] = Math.max(f[pc[1]][j], f[pc[0]][j + t.getLeft()] + t.getRight());
-                //log.debug("f[0][" + j + "] = " + f[0][j] + "\t\tf[1][" + j + "] = " + f[1][j]);
-            }
-            log.debug("\n" + t + "\t\tf[0] = " + Arrays.toString(f[0]) + //
-                    "\t\tf[1] = " + Arrays.toString(f[1]));
-        }
-
-        return f[pc[1]][sx];
-    }
-
-    private static int maxGroupScore(Pair[] ts) {
+    private static int maxGroupScore(Pair<Integer, Integer>[] ts) {
         final int[] max = {0};
         ArrayUtil.coCombination(ts, t -> {
-            List<Pair> a = t.getLeft();
-            List<Pair> b = t.getRight();
-            int s1 = a.stream().mapToInt(Pair<Integer, Integer>::getLeft).sum();
-            int s2 = b.stream().mapToInt(Pair<Integer, Integer>::getLeft).sum();
+            List<Pair<Integer, Integer>> a = t.getLeft();
+            List<Pair<Integer, Integer>> b = t.getRight();
+            int s1 = a.stream().mapToInt(Pair::getLeft).sum();
+            int s2 = b.stream().mapToInt(Pair::getLeft).sum();
             if (s1 == s2) {
-                int gs = a.stream().mapToInt(Pair<Integer, Integer>::getRight).sum() + b.stream().mapToInt(Pair<Integer, Integer>::getRight).sum();
+                int gs = a.stream().mapToInt(Pair::getRight).sum() + b.stream().mapToInt(Pair::getRight).sum();
                 log.debug("group and the corresponding score when a and b have the same individual score: "
                         + t.toString() + "\t" + gs);
                 if (gs > max[0]) max[0] = gs;

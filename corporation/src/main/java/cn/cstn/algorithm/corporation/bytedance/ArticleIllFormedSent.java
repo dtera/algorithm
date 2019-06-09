@@ -36,6 +36,7 @@ import java.util.Scanner;
  * @author :            zhaohq
  * date :               2018/8/28 0028 19:10
  */
+@SuppressWarnings("SuspiciousNameCombination")
 public class ArticleIllFormedSent {
     public static void main(String[] args) {
         System.out.println("=====================input data=====================");
