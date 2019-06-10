@@ -57,7 +57,7 @@ public class CreditsCardGame {
         Arrays.fill(f[0], -sy - 1);
         Arrays.fill(f[1], -sy - 1);
         int[] pc = {0, 1};
-        f[pc[1]][sx] = 0;
+        f[pc[1]][0] = 0;
         for (Pair<Integer, Integer> t : ts) {
             ArrayUtils.swap(pc, 0, 1);
             for (int j = 0; j < f[0].length; j++) {
@@ -69,7 +69,7 @@ public class CreditsCardGame {
                     "\t\tf[1] = " + Arrays.toString(f[1]));
         }
 
-        return f[pc[1]][sx];
+        return f[pc[1]][0];
     }
 
     private static int maxGroupScore(Pair<Integer, Integer>[] ts) {
