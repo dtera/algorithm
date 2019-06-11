@@ -51,8 +51,9 @@ public class LegalExpression {
             dp[i] = (int)Math.pow(10, i) % mod;
             dp_[i] = (dp[i - 2] + dp_[i - 2]) % mod;
             for (int j = i - 1; j > 1; j--) {
-                dp[i] += 2 * dp[i - j] * (dp[j - 1] + dp_[j - 1]) % mod;
-                dp_[i] += 2 * dp_[i - j] * (dp[j - 1] + dp_[j - 1]) % mod;
+                int t = dp[j - 1] + dp_[j - 1];
+                dp[i] += 2 * dp[i - j] * t % mod;
+                dp_[i] += 2 * dp_[i - j] * t % mod;
             }
         }
 
