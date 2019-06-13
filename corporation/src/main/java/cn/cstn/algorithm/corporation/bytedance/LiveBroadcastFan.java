@@ -55,7 +55,7 @@ public class LiveBroadcastFan {
         if (ts == null) return 0;
         int num = 1, e = ts[0].getRight();
         if (ts[0].getLeft() > ts[0].getRight()) e += m;
-        Arrays.sort(ts, Comparator.comparingInt(Pair<Integer, Integer>::getLeft));
+        Arrays.sort(ts, Comparator.comparingInt(Pair::getLeft));
         for (int i = 1; i < ts.length; i++)
             if (ts[i].getLeft() >= e && (ts[i].getLeft() <= ts[i].getRight() || i == ts.length - 1)) num++;
             else if (ts[i].getLeft() <= ts[i].getRight())
