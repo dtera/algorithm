@@ -10,8 +10,8 @@ import java.util.function.Consumer;
  * date :               2018/8/12 0012 18:16
  */
 public class UF {
-    private int[] id;
-    private int[] sz;
+    private final int[] id;
+    private final int[] sz;
     protected int numOfComponent;
     private int[] nums;
 

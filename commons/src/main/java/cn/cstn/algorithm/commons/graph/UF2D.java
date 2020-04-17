@@ -6,11 +6,11 @@ import cn.cstn.algorithm.commons.util.ArrayUtil;
 /**
  * description :        union find for 2 dimension array
  * @author :            zhaohq
- * date :               2018/8/26 0026 14:46
+ * @date :               2018/8/26 0026 14:46
  */
 public class UF2D extends UF {
-    private int[][] a;
-    private int[][] connectedGraph;
+    private final int[][] a;
+    private final int[][] connectedGraph;
     private boolean hasSetCG;
 
     public UF2D(int[][] a) {
