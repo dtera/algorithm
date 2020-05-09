@@ -5,6 +5,7 @@ import lombok.Getter;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 /**
  * description :        union find
@@ -25,11 +26,11 @@ public class UF {
         sz = new int[n];
         numOfComponent = n;
         roots = new HashSet<>();
-        for (int i = 0; i < n; i++) {
+        IntStream.range(0, n).forEach(i -> {
             id[i] = i;
             sz[i] = 1;
             roots.add(i);
-        }
+        });
     }
 
     public boolean isConnected(int p, int q) {
