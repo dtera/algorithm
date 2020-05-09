@@ -210,6 +210,14 @@ public class ArrayUtil {
     }
 
     public static int[] indexOfMinMax(int[] a, int from, int to) {
+        return indexOfMinMax(ArrayUtils.toObject(a), from, to);
+    }
+
+    public static int[] indexOfMinMax(Integer[] a) {
+        return indexOfMinMax(a, 0, a.length - 1);
+    }
+
+    public static int[] indexOfMinMax(Integer[] a, int from, int to) {
         int[] imm = new int[2];
         imm[0] = from;
         imm[1] = from;
@@ -222,15 +230,18 @@ public class ArrayUtil {
     }
 
     public static int kthMin(int[] a, int k) {
-        Integer[] b = ArrayUtils.toObject(a);
+        return kthMin(ArrayUtils.toObject(a), k);
+    }
+
+    public static int kthMin(Integer[] a, int k) {
         //System.arraycopy(ArrayUtils.toObject(a), 0, b, 0, a.length);
-        int ki = partition(b, 0, b.length - 1);
+        int ki = partition(a, 0, a.length - 1);
         while (ki != k - 1) {
-            if (ki < k - 1) ki = partition(b, ki + 1, b.length - 1);
-            if (ki > k - 1) ki = partition(b, 0, ki - 1);
+            if (ki < k - 1) ki = partition(a, ki + 1, a.length - 1);
+            if (ki > k - 1) ki = partition(a, 0, ki - 1);
         }
 
-        return b[ki];
+        return a[ki];
     }
 
     public static <T extends Comparable<T>> int partition(T[] arr, int low, int high) {

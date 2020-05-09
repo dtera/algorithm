@@ -20,7 +20,7 @@ public class UFTest {
                 {0, 0, 0, 0, 1, 0, 0},
                 {0, 1, 0, 0, 0, 0, 1},
         };
-        int m = c.length, n = c[0].length, r = 2;
+        int m = c.length, n = c[0].length, r = 1;
         int[][] a = new int[m * r][n];
         for (int k = 0; k < r; k++)
             for (int i = 0; i < m; i++)
@@ -34,7 +34,7 @@ public class UFTest {
         int[][] connectedGraph = uf2d.getConnectedGraph();
         Arrays.stream(connectedGraph).forEach(ArrayUtil::println);
 
-        int[] nums = uf2d.getNums();
+        Integer[] nums = uf2d.getSizeOfComponents();
         System.out.print("ComponentNums: ");
         ArrayUtil.println(nums);
         System.out.print("ComponentNums indexOfMinMax: ");
@@ -50,7 +50,7 @@ public class UFTest {
         uf.buildConnectedComponent(this::connectedComponent);
         e = System.currentTimeMillis();
 
-        nums = uf.getNums();
+        nums = uf.getSizeOfComponents();
         System.out.print("ComponentNums: ");
         ArrayUtil.println(nums);
         System.out.println("uf.find(0): " + uf.find(0));

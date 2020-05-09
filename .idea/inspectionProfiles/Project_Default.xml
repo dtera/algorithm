@@ -12,6 +12,37 @@
         <isEnabled>true</isEnabled>
       </Java>
     </inspection_tool>
+    <inspection_tool class="JavaDoc" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="TOP_LEVEL_CLASS_OPTIONS">
+        <value>
+          <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="none" />
+          <option name="REQUIRED_TAGS" value="" />
+        </value>
+      </option>
+      <option name="INNER_CLASS_OPTIONS">
+        <value>
+          <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="none" />
+          <option name="REQUIRED_TAGS" value="" />
+        </value>
+      </option>
+      <option name="METHOD_OPTIONS">
+        <value>
+          <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="none" />
+          <option name="REQUIRED_TAGS" value="@return@param@throws or @exception" />
+        </value>
+      </option>
+      <option name="FIELD_OPTIONS">
+        <value>
+          <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="none" />
+          <option name="REQUIRED_TAGS" value="" />
+        </value>
+      </option>
+      <option name="IGNORE_DEPRECATED" value="false" />
+      <option name="IGNORE_JAVADOC_PERIOD" value="true" />
+      <option name="IGNORE_DUPLICATED_THROWS" value="false" />
+      <option name="IGNORE_POINT_TO_ITSELF" value="false" />
+      <option name="myAdditionalJavadocTags" value="date" />
+    </inspection_tool>
     <inspection_tool class="JdAbstractClassShouldStartWithAbstractNaming" enabled="false" level="CRITICAL " enabled_by_default="false" />
     <inspection_tool class="JdAccessStaticViaInstance" enabled="false" level="BLOCKER " enabled_by_default="false" />
     <inspection_tool class="JdAccessToNonThreadSafeStaticFieldFromInstance" enabled="false" level="CRITICAL " enabled_by_default="false" />
@@ -20,6 +51,7 @@
     <inspection_tool class="JdAvoidCallStaticSimpleDateFormat" enabled="false" level="CRITICAL " enabled_by_default="false" />
     <inspection_tool class="JdAvoidComplexCondition" enabled="false" level="MAJOR " enabled_by_default="false" />
     <inspection_tool class="JdAvoidConcurrentCompetitionRandom" enabled="false" level="MAJOR " enabled_by_default="false" />
+    <inspection_tool class="JdAvoidDoubleOrFloatEqualCompare" enabled="false" level="CRITICAL " enabled_by_default="false" />
     <inspection_tool class="JdAvoidManuallyCreateThread" enabled="false" level="CRITICAL " enabled_by_default="false" />
     <inspection_tool class="JdAvoidMissUseOfMathRandom" enabled="false" level="MAJOR " enabled_by_default="false" />
     <inspection_tool class="JdAvoidNegationOperator" enabled="false" level="MAJOR " enabled_by_default="false" />
@@ -28,6 +60,7 @@
     <inspection_tool class="JdAvoidReturnInFinally" enabled="false" level="CRITICAL " enabled_by_default="false" />
     <inspection_tool class="JdAvoidStartWithDollarAndUnderLineNaming" enabled="false" level="CRITICAL " enabled_by_default="false" />
     <inspection_tool class="JdAvoidUseTimer" enabled="false" level="BLOCKER " enabled_by_default="false" />
+    <inspection_tool class="JdBigDecimalAvoidDoubleConstructor" enabled="false" level="MAJOR " enabled_by_default="false" />
     <inspection_tool class="JdBooleanPropertyShouldNotStartWithIs" enabled="false" level="CRITICAL " enabled_by_default="false" />
     <inspection_tool class="JdClassCastExceptionWithSubListToArrayList" enabled="false" level="CRITICAL " enabled_by_default="false" />
     <inspection_tool class="JdClassCastExceptionWithToArray" enabled="false" level="CRITICAL " enabled_by_default="false" />
@@ -80,6 +113,7 @@
     <inspection_tool class="JdJDSystemOutPrint" enabled="false" level="WARNING " enabled_by_default="false" />
     <inspection_tool class="JdJDXXE" enabled="false" level="中危风险" enabled_by_default="false" />
     <inspection_tool class="JdJdMethodAndFieldMastHaveComment" enabled="false" level="MAJOR " enabled_by_default="false" />
+    <inspection_tool class="JdLockShouldWithTryFinally" enabled="false" level="BLOCKER " enabled_by_default="false" />
     <inspection_tool class="JdLowerCamelCaseVariableNaming" enabled="false" level="CRITICAL " enabled_by_default="false" />
     <inspection_tool class="JdMapOrSetKeyShouldOverrideHashCodeEquals" enabled="false" level="CRITICAL " enabled_by_default="false" />
     <inspection_tool class="JdMethodReturnWrapperType" enabled="false" level="MAJOR " enabled_by_default="false" />

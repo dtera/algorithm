@@ -2,13 +2,16 @@ package cn.cstn.algorithm.commons.graph;
 
 import cn.cstn.algorithm.commons.UF;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
+import lombok.Getter;
 
 /**
  * description :        union find for 2 dimension array
+ *
  * @author :            zhaohq
  * @date :               2018/8/26 0026 14:46
  */
 public class UF2D extends UF {
+    @Getter
     private final int[][] a;
     private final int[][] connectedGraph;
     private boolean hasSetCG;
@@ -20,29 +23,28 @@ public class UF2D extends UF {
     }
 
     public boolean isConnected(int i, int j, int p, int q) {
-        return super.isConnected(a[0].length * i + j, a[0].length * p + q);
+        return super.isConnected(_2_1(i, j), _2_1(p, q));
     }
 
     public int find(int i, int j) {
-        return super.find(a[0].length * i + j);
+        return super.find(_2_1(i, j));
     }
 
     public void union(int i, int j, int p, int q) {
-        super.union(a[0].length * i + j, a[0].length * p + q);
+        super.union(_2_1(i, j), _2_1(p, q));
     }
+
+    private int _2_1(int i, int j) {
+        return a[0].length * i + j;
+    }
+
+    /*private Pair<Integer, Integer> _1_2(int k) {
+        int n = a[0].length, i = k / n, j = k % n;
+        return Pair.of(i, j);
+    }*/
 
     public void decNumOfComponent() {
         this.numOfComponent--;
-    }
-
-    @Override
-    protected boolean shouldAddToGroup(int k) {
-        int n = a[0].length, i = k / n, j = k % n;
-        return shouldAddToGroup(i, j);
-    }
-
-    private boolean shouldAddToGroup(int i, int j) {
-        return a[i][j] != 0;
     }
 
     public void buildConnectedComponent() {
@@ -53,6 +55,7 @@ public class UF2D extends UF {
             for (int j = 0; j < n; j++) {
                 if (a[i][j] == 0) {
                     decNumOfComponent();
+                    this.roots.remove(_2_1(i, j));
                     continue;
                 }
                 for (int[] dk : d) {
@@ -65,10 +68,6 @@ public class UF2D extends UF {
         }
 
         super.buildConnectedComponent(null);
-    }
-
-    public int[][] getA() {
-        return a;
     }
 
     public int[][] getConnectedGraph() {

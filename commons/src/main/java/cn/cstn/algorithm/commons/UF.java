@@ -1,28 +1,35 @@
 package cn.cstn.algorithm.commons;
 
+import lombok.Getter;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
 /**
  * description :        union find
+ *
  * @author :            zhaohq
  * date :               2018/8/12 0012 18:16
  */
 public class UF {
     private final int[] id;
     private final int[] sz;
+    @Getter
     protected int numOfComponent;
-    private int[] nums;
+    @Getter
+    protected final Set<Integer> roots;
 
     public UF(int n) {
         id = new int[n];
         sz = new int[n];
+        numOfComponent = n;
+        roots = new HashSet<>();
         for (int i = 0; i < n; i++) {
             id[i] = i;
             sz[i] = 1;
+            roots.add(i);
         }
-        numOfComponent = n;
     }
 
     public boolean isConnected(int p, int q) {
@@ -47,45 +54,25 @@ public class UF {
         int pr = find(p);
         int qr = find(q);
         if (pr == qr) return;
-        if (sz[pr] <= sz[qr]) {
+        if (sz[pr] < sz[qr]) {
             id[pr] = qr;
             sz[qr] += sz[pr];
+            roots.remove(pr);
         } else {
             id[qr] = pr;
             sz[pr] += sz[qr];
+            roots.remove(qr);
         }
         numOfComponent--;
     }
 
-    public int getNumOfComponent() {
-        return numOfComponent;
-    }
-
-    public int[] getNums() {
-        return nums;
-    }
-
-    private void setNums() {
-        nums = new int[numOfComponent];
-        Set<Integer> set = new HashSet<>();
-        for (int i = 0; i < sz.length; i++)
-            if (shouldAddToGroup(i))
-                set.add(find(i));
-
-        assert numOfComponent == set.size();
-        int k = 0;
-        for (Integer i: set)
-            nums[k++] = sz[i];
-    }
-
-    protected boolean shouldAddToGroup(int i) {
-        return i >= 0 && i < id.length;
+    public Integer[] getSizeOfComponents() {
+        return roots.stream().map(i -> sz[i]).toArray(Integer[]::new);
     }
 
     public void buildConnectedComponent(Consumer<UF> consumer) {
         if (consumer != null)
             consumer.accept(this);
-        setNums();
     }
 
 }
