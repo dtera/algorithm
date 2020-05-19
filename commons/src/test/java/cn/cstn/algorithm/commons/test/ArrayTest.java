@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.util.*;
 import java.util.function.Consumer;
 
+@SuppressWarnings("all")
 public class ArrayTest {
 
     @Test
@@ -93,6 +94,13 @@ public class ArrayTest {
     @Test
     public void testKthItemOfMirroredArr() {
         System.out.println(ArrayUtil.kthItemOfMirroredArr(3, 3));
+    }
+
+    @Test
+    public void quickSort() {
+        String[] arr = {"3", "30", "34", "5", "9"};
+        ArrayUtil.quickSort(arr, (s1, s2) -> (s1 + s2).compareTo(s2 + s1));
+        ArrayUtil.println(arr);
     }
 
     @Test

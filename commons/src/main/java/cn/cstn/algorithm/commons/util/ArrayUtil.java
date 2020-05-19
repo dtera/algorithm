@@ -245,9 +245,13 @@ public class ArrayUtil {
     }
 
     public static <T extends Comparable<T>> int partition(T[] arr, int low, int high) {
+        return partition(arr, low, high, Comparable<T>::compareTo);
+    }
+
+    public static <T> int partition(T[] arr, int low, int high, Comparator<T> comparator) {
         int j = low, i = low - 1;
         while (j < high) {
-            if (arr[j].compareTo(arr[high]) < 0) {
+            if (comparator.compare(arr[j], arr[high]) < 0) {
                 i++;
                 swap(arr, i, j);
             }
@@ -394,14 +398,18 @@ public class ArrayUtil {
     }
 
     public static <T extends Comparable<T>> void quickSort(T[] arr) {
-        quickSort(arr, 0, arr.length - 1);
+        quickSort(arr, 0, arr.length - 1, Comparable<T>::compareTo);
     }
 
-    private static <T extends Comparable<T>> void quickSort(T[] arr, int from, int to) {
+    public static <T> void quickSort(T[] arr, Comparator<T> comparator) {
+        quickSort(arr, 0, arr.length - 1, comparator);
+    }
+
+    private static <T> void quickSort(T[] arr, int from, int to, Comparator<T> comparator) {
         if (from >= to) return;
-        int p = partition(arr, from, to);
-        quickSort(arr, from, p - 1);
-        quickSort(arr, p + 1, to);
+        int p = partition(arr, from, to, comparator);
+        quickSort(arr, from, p - 1, comparator);
+        quickSort(arr, p + 1, to, comparator);
     }
 
     public static <T> void radixSort(T[] arr, int k, Character[] radix) {
