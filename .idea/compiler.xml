@@ -10,6 +10,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="leetcode" />
         <module name="commons" />
+        <module name="offer" />
         <module name="corporation" />
       </profile>
     </annotationProcessing>
@@ -18,6 +19,7 @@
       <module name="commons" target="1.8" />
       <module name="corporation" target="1.8" />
       <module name="leetcode" target="1.8" />
+      <module name="offer" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -18,7 +18,7 @@ do
 	case $opt in
 		h) host=$OPTARG;;
 		c) cmd=$OPTARG;;
-		?) echo "unknow args"; echo $show_usage; exit 1;;
+		?) echo "unknown args"; echo $show_usage; exit 1;;
 	esac
 done
 

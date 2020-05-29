@@ -15,6 +15,7 @@ import java.util.function.Consumer;
  * date :            2018-07-27 16:31
  */
 @Slf4j
+@SuppressWarnings("unused")
 public class ArrayUtil {
 
     public static String kthItemOfMirroredArr(int n, int k) {
@@ -127,9 +128,9 @@ public class ArrayUtil {
         combination(a, 1, a.length, consumer);
     }
 
-    public static <T> void combination(T[] a, int from, int to, Consumer<List<T>> consumer) {
-        assert from > 0 && to <= a.length;
-        for (int i = from; i <= to; i++)
+    public static <T> void combination(T[] a, int l, int r, Consumer<List<T>> consumer) {
+        assert l > 0 && r <= a.length;
+        for (int i = l; i <= r; i++)
             combination(a, i, consumer);
     }
 
@@ -137,25 +138,25 @@ public class ArrayUtil {
         combination(a, 0, n, new ArrayList<>(), consumer);
     }
 
-    private static <T> void combination(T[] a, int from, int n, List<T> pl, Consumer<List<T>> consumer) {
-        if (n < 0 || n > a.length - from || consumer == null) return;
+    private static <T> void combination(T[] a, int l, int n, List<T> pl, Consumer<List<T>> consumer) {
+        if (n < 0 || n > a.length - l || consumer == null) return;
         if (n == 0) consumer.accept(pl);
         if (n == 1)
-            for (int i = from; i < a.length; i++) {
+            for (int i = l; i < a.length; i++) {
                 List<T> cl = new ArrayList<>(pl);
                 cl.add(a[i]);
                 consumer.accept(cl);
             }
-        else if (n == a.length - from) {
+        else if (n == a.length - l) {
             List<T> cl = new ArrayList<>(pl);
-            cl.addAll(Arrays.asList(a).subList(from, a.length));
+            cl.addAll(Arrays.asList(a).subList(l, a.length));
             consumer.accept(cl);
         } else {
-            T t = a[from];
+            T t = a[l];
             List<T> cl = new ArrayList<>(pl);
             cl.add(t);
-            combination(a, from + 1, n - 1, cl, consumer);
-            combination(a, from + 1, n, pl, consumer);
+            combination(a, l + 1, n - 1, cl, consumer);
+            combination(a, l + 1, n, pl, consumer);
         }
     }
 
@@ -183,17 +184,16 @@ public class ArrayUtil {
         permutation(a, 0, a.length - 1, consumer);
     }
 
-    public static <T> void permutation(T[] a, int from, int to, Consumer<T[]> consumer) {
-        if (from == to) {
+    public static <T> void permutation(T[] a, int l, int r, Consumer<T[]> consumer) {
+        if (l == r) {
             consumer.accept(a);
             return;
         }
 
-        permutation(a, from + 1, to, consumer);
-        for (int i = from + 1; i <= to; i++) {
-            swap(a, from, i);
-            permutation(a, from + 1, to, consumer);
-            swap(a, from, i);
+        for (int i = l; i <= r; i++) {
+            swap(a, l, i);
+            permutation(a, l + 1, r, consumer);
+            swap(a, l, i);
         }
     }
 
@@ -209,19 +209,19 @@ public class ArrayUtil {
         return indexOfMinMax(a, 0, a.length - 1);
     }
 
-    public static int[] indexOfMinMax(int[] a, int from, int to) {
-        return indexOfMinMax(ArrayUtils.toObject(a), from, to);
+    public static int[] indexOfMinMax(int[] a, int l, int r) {
+        return indexOfMinMax(ArrayUtils.toObject(a), l, r);
     }
 
     public static int[] indexOfMinMax(Integer[] a) {
         return indexOfMinMax(a, 0, a.length - 1);
     }
 
-    public static int[] indexOfMinMax(Integer[] a, int from, int to) {
+    public static int[] indexOfMinMax(Integer[] a, int l, int r) {
         int[] imm = new int[2];
-        imm[0] = from;
-        imm[1] = from;
-        for (int i = from + 1; i <= to; i++) {
+        imm[0] = l;
+        imm[1] = l;
+        for (int i = l + 1; i <= r; i++) {
             if (a[i] < a[imm[0]]) imm[0] = i;
             if (a[i] > a[imm[1]]) imm[1] = i;
         }
@@ -262,6 +262,16 @@ public class ArrayUtil {
         return i + 1;
     }
 
+    public static <T extends Comparable<T>> int randomizedPartition(T[] arr, int low, int high) {
+        return randomizedPartition(arr, low, high, Comparable<T>::compareTo);
+    }
+
+    public static <T> int randomizedPartition(T[] arr, int low, int high, Comparator<T> comparator) {
+        int i = (int) (Math.random() * (high - low + 1) + low);
+        swap(arr, i, high);
+        return partition(arr, low, high, comparator);
+    }
+
     public static String reverse(String s) {
         char[] a = s.toCharArray();
         ArrayUtils.reverse(a);
@@ -272,9 +282,9 @@ public class ArrayUtil {
         reverse(a, 0, a.length - 1);
     }
 
-    public static <T> void reverse(T[] a, int from, int to) {
-        while (from < to)
-            swap(a, from++, to--);
+    public static <T> void reverse(T[] a, int l, int r) {
+        while (l < r)
+            swap(a, l++, r--);
     }
 
     public static <T> void swap(T[] arr, int i, int j) {
@@ -363,26 +373,26 @@ public class ArrayUtil {
     }
 
     public static <T extends Comparable<T>> void mergeSort(T[] arr) {
-        int from = 0;
-        mergeSort(arr, from, arr.length - 1);
+        int l = 0;
+        mergeSort(arr, l, arr.length - 1);
     }
 
-    private static <T extends Comparable<T>> void mergeSort(T[] arr, int from, int to) {
-        if (from == to) return;
-        int mid = (from + to) / 2;
+    private static <T extends Comparable<T>> void mergeSort(T[] arr, int l, int r) {
+        if (l == r) return;
+        int mid = (l + r) / 2;
 
-        mergeSort(arr, from, mid);
-        mergeSort(arr, mid + 1, to);
-        merge(arr, from, mid, to);
+        mergeSort(arr, l, mid);
+        mergeSort(arr, mid + 1, r);
+        merge(arr, l, mid, r);
 
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Comparable<T>> void merge(T[] arr, int from, int mid, int to) {
-        T[] t = (T[]) Array.newInstance(arr[0].getClass(), to - from + 1);
-        int i = from, j = mid + 1, k = 0;
+    private static <T extends Comparable<T>> void merge(T[] arr, int l, int mid, int r) {
+        T[] t = (T[]) Array.newInstance(arr[0].getClass(), r - l + 1);
+        int i = l, j = mid + 1, k = 0;
 
-        while (i <= mid && j <= to)
+        while (i <= mid && j <= r)
             if (arr[i].compareTo(arr[j]) < 0)
                 t[k++] = arr[i++];
             else
@@ -390,10 +400,10 @@ public class ArrayUtil {
 
         while (i <= mid)
             t[k++] = arr[i++];
-        while (j <= to)
+        while (j <= r)
             t[k++] = arr[j++];
 
-        System.arraycopy(t, 0, arr, from, to - from + 1);
+        System.arraycopy(t, 0, arr, l, r - l + 1);
 
     }
 
@@ -405,11 +415,11 @@ public class ArrayUtil {
         quickSort(arr, 0, arr.length - 1, comparator);
     }
 
-    private static <T> void quickSort(T[] arr, int from, int to, Comparator<T> comparator) {
-        if (from >= to) return;
-        int p = partition(arr, from, to, comparator);
-        quickSort(arr, from, p - 1, comparator);
-        quickSort(arr, p + 1, to, comparator);
+    private static <T> void quickSort(T[] arr, int l, int r, Comparator<T> comparator) {
+        if (l >= r) return;
+        int p = partition(arr, l, r, comparator);
+        quickSort(arr, l, p - 1, comparator);
+        quickSort(arr, p + 1, r, comparator);
     }
 
     public static <T> void radixSort(T[] arr, int k, Character[] radix) {
