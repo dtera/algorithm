@@ -21,13 +21,13 @@ public class DFA {
 
 
     public boolean accept(String content) {
-        return accept(content, c -> CharType.of(c).ordinal());
+        return accept(content, CharType::of);
     }
 
-    public boolean accept(String content, Function<Character, Integer> function) {
+    public <E extends Enum<E>> boolean accept(String content, Function<Character, Enum<E>> function) {
         int state = 0;
         for (int i = 0; i < content.length(); i++) {
-            int col = function.apply(content.charAt(i));
+            int col = function.apply(content.charAt(i)).ordinal();
             state = transTable[state][col];
             if (state == -1) return false;
         }
