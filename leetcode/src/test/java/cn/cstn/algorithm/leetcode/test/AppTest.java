@@ -6,7 +6,7 @@ public class AppTest {
 
     @Test
     public void test() {
-        System.out.println("leetcode");
+        System.out.println("leetcode~");
     }
 
 }
