@@ -2,15 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>algorithm</artifactId>
+        <groupId>cn.cstn.algorithm</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>leetcode</artifactId>
 
-    <parent>
-        <groupId>cn.cstn.algorithm</groupId>
-        <artifactId>algorithm</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
 
     <dependencies>
         <dependency>
@@ -39,5 +39,4 @@
             <artifactId>javatuples</artifactId>
         </dependency>
     </dependencies>
-
 </project>

@@ -57,7 +57,7 @@ public class WorldCupOpeningCeremony {
         //method1:union find
         UF2D uf2d = new UF2D(a);
         uf2d.buildConnectedComponent();
-        int[] nums = uf2d.getNums();
+        Integer[] nums = uf2d.getSizeOfComponents();
         System.out.println(uf2d.getNumOfComponent() + "," + nums[ArrayUtil.indexOfMinMax(nums)[1]]);
         System.out.println("======================================================================");
 
