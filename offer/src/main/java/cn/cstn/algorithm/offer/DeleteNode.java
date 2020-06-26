@@ -31,6 +31,7 @@ package cn.cstn.algorithm.offer;
  * 题目保证链表中节点的值互不相同
  * <p>
  * 若使用 C 或 C++ 语言，你不需要 free 或 delete 被删除的节点
+ * <p>
  *
  * @author zhaohuiqiang
  * @date 2020/6/22 10:36
@@ -42,9 +43,9 @@ public class DeleteNode {
         head.next = new ListNode(5);
         head.next.next = new ListNode(1);
         head.next.next.next = new ListNode(9);
-        printListNode(head);
+        head.println();
         ListNode node = deleteNode(head, 1);
-        printListNode(node);
+        node.println();
     }
 
     public static ListNode deleteNode(ListNode head, int val) {
@@ -58,31 +59,6 @@ public class DeleteNode {
             cur.next = cur.next.next;
         }
         return head;
-    }
-
-    public static void printListNode(ListNode head) {
-        StringBuilder sb = new StringBuilder("[");
-        ListNode cur = head;
-        if (cur != null) {
-            sb.append(cur.val);
-            cur = cur.next;
-        }
-        while (cur != null) {
-            sb.append(", ").append(cur.val);
-            cur = cur.next;
-        }
-        sb.append("]");
-        System.out.println(sb.toString());
-    }
-
-    //Definition for singly-linked list.
-    public static class ListNode {
-        int val;
-        ListNode next;
-
-        ListNode(int x) {
-            val = x;
-        }
     }
 
 }

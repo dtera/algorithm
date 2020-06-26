@@ -18,6 +18,7 @@ import java.util.Stack;
  * 限制：
  * <p>
  * 0 <= 链表长度 <= 10000
+ * <p>
  *
  * @author zhaohuiqiang
  * @date 2020/5/29 16:20
@@ -61,15 +62,6 @@ public class ReversePrint {
             res[i] = stack.pop();
         }
         return res;
-    }
-
-    public static class ListNode {
-        int val;
-        ListNode next;
-
-        ListNode(int x) {
-            val = x;
-        }
     }
 
 }
