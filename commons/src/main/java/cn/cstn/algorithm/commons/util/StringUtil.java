@@ -64,4 +64,12 @@ public class StringUtil {
         return false;
     }
 
+    public static String repeat(String sep, int n) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            sb.append(sep);
+        }
+        return sb.toString();
+    }
+
 }

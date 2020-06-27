@@ -1,8 +1,10 @@
 package cn.cstn.algorithm.offer;
 
-import org.apache.commons.lang3.tuple.Pair;
+import cn.cstn.algorithm.commons.tree.TreeNode;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * 输入某二叉树的前序遍历和中序遍历的结果，请重建该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。
@@ -31,6 +33,7 @@ import java.util.*;
  * 限制：
  * <p>
  * 0 <= 节点个数 <= 5000
+ * <p>
  *
  * @author zhaohuiqiang
  * @date 2020/5/29 16:47
@@ -38,15 +41,19 @@ import java.util.*;
 public class BuildTree {
 
     public static void main(String[] args) {
-        int[] preorder = {3, 9, 2, 8, 20, 15, 7};
-        int[] inorder = {2, 9, 8, 3, 15, 20, 7};
+        int[] preorder = {3, 9, 2, 1, 0, 8, 20, 15, 7};
+        int[] inorder = {0, 1, 2, 9, 8, 3, 15, 20, 7};
         TreeNode tree = buildTree(preorder, inorder);
-        System.out.println(tree);
-        System.out.println("depth=" + depth(tree));
-        print(tree);
+        System.out.println(tree.toString(1));
+        System.out.println("depth=" + TreeNode.depth(tree));
+        System.out.println("width=" + TreeNode.width(tree));
+        TreeNode.print(tree);
+        System.out.println("=========================================");
+        TreeNode.show(tree);
         System.out.println("=========================================");
         tree = _buildTree(preorder, inorder);
-        print(tree);
+        System.out.println("=========================================");
+        TreeNode.print(tree);
     }
 
     public static TreeNode _buildTree(int[] preorder, int[] inorder) {
@@ -105,63 +112,5 @@ public class BuildTree {
         return root;
     }
 
-    public static void print(TreeNode tree) {
-        if (tree == null) {
-            return;
-        }
-        Queue<Pair<Integer, TreeNode>> queue = new LinkedList<Pair<Integer, TreeNode>>() {{
-            add(Pair.of(depth(tree) - 1, tree));
-        }};
-        while (!queue.isEmpty()) {
-            int offset = 0;
-            for (int i = queue.size(); i > 0; i--) {
-                Pair<Integer, TreeNode> node = queue.poll();
-                assert node != null;
-                String sep = "\t";
-                System.out.print(repeat(sep, node.getLeft() - offset) + " " + node.getRight().val);
-
-                if (node.getRight().left != null) {
-                    queue.add(Pair.of(node.getLeft() - 1, node.getRight().left));
-                }
-                if (node.getRight().right != null) {
-                    queue.add(Pair.of(node.getLeft() + 1, node.getRight().right));
-                }
-                offset = node.getLeft();
-            }
-            System.out.println();
-        }
-    }
-
-    public static int depth(TreeNode tree) {
-        if (tree == null) return 0;
-        return Math.max(depth(tree.left), depth(tree.left)) + 1;
-    }
-
-    private static String repeat(String sep, int n) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < n; i++) {
-            sb.append(sep);
-        }
-        return sb.toString();
-    }
-
-    public static class TreeNode {
-        int val;
-        TreeNode left;
-        TreeNode right;
-
-        TreeNode(int x) {
-            val = x;
-        }
-
-        @Override
-        public String toString() {
-            return "TreeNode{" +
-                    "val=" + val +
-                    ", left=" + (left == null ? "null" : left.toString()) +
-                    ", right=" + (right == null ? "null" : right.toString()) +
-                    "}";
-        }
-    }
 
 }

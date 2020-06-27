@@ -1,4 +1,4 @@
-package cn.cstn.algorithm.offer;
+package cn.cstn.algorithm.commons.list;
 
 import lombok.RequiredArgsConstructor;
 

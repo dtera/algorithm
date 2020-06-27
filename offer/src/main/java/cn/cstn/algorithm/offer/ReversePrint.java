@@ -1,5 +1,6 @@
 package cn.cstn.algorithm.offer;
 
+import cn.cstn.algorithm.commons.list.ListNode;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
 
 import java.util.Stack;
