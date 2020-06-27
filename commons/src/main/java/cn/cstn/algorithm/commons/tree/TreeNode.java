@@ -71,16 +71,36 @@ public class TreeNode {
         return Math.max(depth(tree.left), depth(tree.right)) + ("" + tree.val).length();
     }
 
+    public static boolean isSymmetric(TreeNode root) {
+        return root == null || isSymmetric(root.left, root.right);
+    }
+
+    private static boolean isSymmetric(TreeNode left, TreeNode right) {
+        if (left == null && right == null) return true;
+        if (left == null || right == null || left.val != right.val) return false;
+
+        return isSymmetric(left.left, right.right) && isSymmetric(left.right, right.left);
+    }
+
+    public static TreeNode mirrorTree(TreeNode root) {
+        if (root == null) return null;
+
+        TreeNode node = new TreeNode(root.val);
+        node.left = mirrorTree(root.right);
+        node.right = mirrorTree(root.left);
+        return node;
+    }
+
     public static boolean isSubStructure(TreeNode A, TreeNode B) {
-        return A != null && B != null && (dfs(A, B) ||
+        return A != null && B != null && (subStructure(A, B) ||
                 isSubStructure(A.left, B) || isSubStructure(A.right, B));
     }
 
-    private static boolean dfs(TreeNode a, TreeNode b) {
+    private static boolean subStructure(TreeNode a, TreeNode b) {
         if (b == null) return true;
         if (a == null || a.val != b.val) return false;
 
-        return dfs(a.left, b.left) && dfs(a.right, b.right);
+        return subStructure(a.left, b.left) && subStructure(a.right, b.right);
     }
 
     public String toString(int layer) {

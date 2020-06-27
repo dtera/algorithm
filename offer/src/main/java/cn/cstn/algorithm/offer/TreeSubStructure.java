@@ -67,11 +67,7 @@ public class TreeSubStructure {
 
         TreeNode B = new TreeNode(4);
         B.left = new TreeNode(1);
-        System.out.println(isSubStructure(A, B));
-    }
-
-    public static boolean isSubStructure(TreeNode A, TreeNode B) {
-        return TreeNode.isSubStructure(A, B);
+        System.out.println(TreeNode.isSubStructure(A, B));
     }
 
 }
