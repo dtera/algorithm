@@ -4,7 +4,9 @@ import cn.cstn.algorithm.commons.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -69,6 +71,53 @@ public class TreeNode {
     public static int depth(TreeNode tree) {
         if (tree == null) return 0;
         return Math.max(depth(tree.left), depth(tree.right)) + ("" + tree.val).length();
+    }
+
+    public static List<List<Integer>> levelOrderII(TreeNode root, boolean cross) {
+        if (root == null) return new ArrayList<>();
+        Queue<TreeNode> queue = new LinkedList<TreeNode>() {{
+            add(root);
+        }};
+        List<List<Integer>> res = new ArrayList<>();
+
+        int k = 1;
+        while (!queue.isEmpty()) {
+            LinkedList<Integer> tmp = new LinkedList<>();
+            for (int i = queue.size(); i > 0; i--) {
+                TreeNode node = queue.poll();
+                assert node != null;
+                if (cross && k % 2 == 0) tmp.addFirst(node.val);
+                else tmp.add(node.val);
+                if (node.left != null) queue.add(node.left);
+                if (node.right != null) queue.add(node.right);
+            }
+            res.add(tmp);
+            k++;
+        }
+
+        return res;
+    }
+
+    public static int[] levelOrderI(TreeNode root) {
+        if (root == null) return new int[0];
+        Queue<TreeNode> queue = new LinkedList<TreeNode>() {{
+            add(root);
+        }};
+        List<Integer> list = new ArrayList<>();
+
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            list.add(node.val);
+            if (node.left != null) queue.add(node.left);
+            if (node.right != null) queue.add(node.right);
+        }
+
+        int[] res = new int[list.size()];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = list.get(i);
+        }
+
+        return res;
     }
 
     public static boolean isSymmetric(TreeNode root) {
