@@ -73,6 +73,21 @@ public class TreeNode {
         return Math.max(depth(tree.left), depth(tree.right)) + ("" + tree.val).length();
     }
 
+    public static boolean verifyPostOrder(int[] postOrder) {
+        if (postOrder == null) return false;
+        return verifyPostOrder(postOrder, 0, postOrder.length - 1);
+    }
+
+    private static boolean verifyPostOrder(int[] postOrder, int i, int j) {
+        if (i >= j) return true;
+        int k = i;
+        while (postOrder[k] < postOrder[j]) k++;
+        int m = k;
+        while (postOrder[k] > postOrder[j]) k++;
+
+        return k == j && verifyPostOrder(postOrder, i, m - 1) && verifyPostOrder(postOrder, m, j - 1);
+    }
+
     public static List<List<Integer>> levelOrderII(TreeNode root, boolean cross) {
         if (root == null) return new ArrayList<>();
         Queue<TreeNode> queue = new LinkedList<TreeNode>() {{
