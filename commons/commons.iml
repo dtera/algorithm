@@ -19,5 +19,7 @@
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.9" level="project" />
     <orderEntry type="library" name="Maven: org.javatuples:javatuples:1.2" level="project" />
+    <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.70" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.11.0" level="project" />
   </component>
 </module>
