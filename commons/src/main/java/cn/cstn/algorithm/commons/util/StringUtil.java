@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 
 /**
  * description :        StringUtil class
+ *
  * @author :            zhaohq
  * date :               2018/9/5 0005 20:29
  */
@@ -13,7 +14,7 @@ public class StringUtil {
 
     public static int longestPalindrome(String s) {
         if (s == null || s.length() == 0) return 0;
-        int mx =1, ml = 1, n = s.length(), id = 0;
+        int mx = 1, ml = 1, n = s.length(), id = 0;
         char[] cs = new char[2 * n + 1];
         for (int i = 0; i < n; i++) {
             cs[2 * i] = '*';
@@ -27,7 +28,7 @@ public class StringUtil {
             dp[i] = i < mx ? Math.min(dp[2 * id - i], mx - i) : 1;
 
             if (i + dp[i] >= mx) {
-                while (i - dp[i] >=0 && i + dp[i] < cs.length && cs[i - dp[i]] == cs[i + dp[i]])
+                while (i - dp[i] >= 0 && i + dp[i] < cs.length && cs[i - dp[i]] == cs[i + dp[i]])
                     dp[i] += 1;
                 mx = i + dp[i];
                 id = i;
@@ -62,6 +63,25 @@ public class StringUtil {
             if (j == n) return true;
         }
         return false;
+    }
+
+    public static String factorial(int n) {
+        StringBuilder result = new StringBuilder("1");
+        int c = 0;
+        for (int i = 2; i <= n; i++) {
+            for (int j = result.length() - 1; j >= 0; j--) {
+                int k = result.charAt(j) - '0';
+                int t = k * i + c;
+                c = t / 10;
+                result.setCharAt(j, (char) (t % 10 + '0'));
+            }
+
+            while (c != 0) {
+                result.insert(0, c % 10);
+                c /= 10;
+            }
+        }
+        return result.toString();
     }
 
     public static String repeat(String sep, int n) {
