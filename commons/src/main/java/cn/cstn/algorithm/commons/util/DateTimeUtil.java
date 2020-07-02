@@ -51,7 +51,7 @@ public class DateTimeUtil {
     }
 
     public static Date[] getQuarterRange(Date date, int amount) {
-        Calendar calendar = DateTimeUtil.getCalendarFromStart(date);
+        Calendar calendar = getCalendarFromStart(date);
         int curMonth = calendar.get(Calendar.MONTH);
         if (curMonth < 3)
             calendar.set(Calendar.MONTH, 0);
@@ -95,7 +95,7 @@ public class DateTimeUtil {
     }
 
     public static Date[] getMonthRange(Date date, int amount) {
-        Calendar calendar = DateTimeUtil.getCalendarFromStart(date);
+        Calendar calendar = getCalendarFromStart(date);
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
         Date cur = calendar.getTime();
         calendar.add(Calendar.MONTH, amount);
@@ -129,7 +129,7 @@ public class DateTimeUtil {
     }
 
     public static Date[] getWeekRange(Date date, int amount) {
-        Calendar calendar = DateTimeUtil.getCalendarFromStart(date);
+        Calendar calendar = getCalendarFromStart(date);
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         Date cur = calendar.getTime();
         calendar.add(Calendar.WEEK_OF_MONTH, amount);
@@ -164,7 +164,7 @@ public class DateTimeUtil {
     }
 
     public static Date[] getDayRange(Date date, int amount) {
-        Calendar calendar = DateTimeUtil.getCalendarFromStart(date);
+        Calendar calendar = getCalendarFromStart(date);
         Date cur = calendar.getTime();
         calendar.add(Calendar.DAY_OF_MONTH, amount);
 

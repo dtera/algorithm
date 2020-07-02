@@ -3,7 +3,6 @@ package cn.cstn.algorithm.commons.enums;
 import cn.cstn.algorithm.commons.util.DateTimeUtil;
 import com.alibaba.fastjson.annotation.JSONType;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -24,8 +23,13 @@ public enum PeriodTypeEnum {
 
     DAY("D", "日", 30) {
         @Override
-        public Date[][] getLastAndLastLastDateRange(Date date) {
-            return new Date[][]{DateTimeUtil.getLastDayRange(date), DateTimeUtil.getLastLastDayRange(date)};
+        public Date[] getLastDateRange(Date date) {
+            return DateTimeUtil.getLastDayRange(date);
+        }
+
+        @Override
+        public Date[] getLastLastDateRange(Date date) {
+            return DateTimeUtil.getLastLastDayRange(date);
         }
 
         @Override
@@ -35,14 +39,19 @@ public enum PeriodTypeEnum {
 
         @Override
         public Date[] getLatestDateRange(Date date) {
-            return DateTimeUtil.getMonthRange(date, -getAmount());
+            return DateTimeUtil.getDayRange(date, -getAmount());
         }
 
     },
     WEEK("W", "周", 12) {
         @Override
-        public Date[][] getLastAndLastLastDateRange(Date date) {
-            return new Date[][]{DateTimeUtil.getLastWeekRange(date), DateTimeUtil.getLastLastWeekRange(date)};
+        public Date[] getLastDateRange(Date date) {
+            return DateTimeUtil.getLastWeekRange(date);
+        }
+
+        @Override
+        public Date[] getLastLastDateRange(Date date) {
+            return DateTimeUtil.getLastLastWeekRange(date);
         }
 
         @Override
@@ -58,8 +67,13 @@ public enum PeriodTypeEnum {
     },
     MONTH("M", "月", 12) {
         @Override
-        public Date[][] getLastAndLastLastDateRange(Date date) {
-            return new Date[][]{DateTimeUtil.getLastMonthRange(date), DateTimeUtil.getLastLastMonthRange(date)};
+        public Date[] getLastDateRange(Date date) {
+            return DateTimeUtil.getLastMonthRange(date);
+        }
+
+        @Override
+        public Date[] getLastLastDateRange(Date date) {
+            return DateTimeUtil.getLastLastMonthRange(date);
         }
 
         @Override
@@ -75,8 +89,13 @@ public enum PeriodTypeEnum {
     },
     QUARTER("Q", "季度", 4) {
         @Override
-        public Date[][] getLastAndLastLastDateRange(Date date) {
-            return new Date[][]{DateTimeUtil.getLastQuarterRange(date), DateTimeUtil.getLastLastQuarterRange(date)};
+        public Date[] getLastDateRange(Date date) {
+            return DateTimeUtil.getLastQuarterRange(date);
+        }
+
+        @Override
+        public Date[] getLastLastDateRange(Date date) {
+            return DateTimeUtil.getLastLastQuarterRange(date);
         }
 
         @Override
@@ -95,11 +114,37 @@ public enum PeriodTypeEnum {
     private final String desc;
     private final int amount;
 
-    public abstract Date[][] getLastAndLastLastDateRange(Date date);
+    public abstract Date[] getLastDateRange(Date date);
+
+    public abstract Date[] getLastLastDateRange(Date date);
 
     public abstract Date[] getCurDateRange(Date date);
 
     public abstract Date[] getLatestDateRange(Date date);
+
+    public Date[][] getLastAndLastLastDateRange(Date date) {
+        return new Date[][]{getLastDateRange(date), getLastLastDateRange(date)};
+    }
+
+    public Date[][] getLatestIntervalDateRange(Date date) {
+        Date[][] latestIntervalDateRange = new Date[getAmount()][2];
+        if (getAmount() > 0) {
+            latestIntervalDateRange[0] = getLastDateRange(date);
+        }
+        for (int i = 1; i < getAmount(); i++) {
+            latestIntervalDateRange[i] = getLastDateRange(latestIntervalDateRange[i - 1][0]);
+        }
+        return latestIntervalDateRange;
+    }
+
+    public Date[] getIntervalDateRangeOf(Date[][] latestIntervalDateRange, Date date) {
+        for (Date[] dateRange : latestIntervalDateRange) {
+            if (isCurDateInRange(date, dateRange)) {
+                return dateRange;
+            }
+        }
+        return null;
+    }
 
     public Date getNowStartDate() {
         return getCurDateRange(new Date())[0];
@@ -107,6 +152,10 @@ public enum PeriodTypeEnum {
 
     public boolean isInNowRange(Date date) {
         return getCurDateRange(new Date())[0].equals(getCurDateRange(date)[0]);
+    }
+
+    public boolean isCurDateInRange(Date date, Date[] dateRange) {
+        return dateRange[0].equals(getCurDateRange(date)[0]);
     }
 
     public int getIndex() {
