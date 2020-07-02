@@ -67,11 +67,11 @@ public class StringUtil {
 
     public static String factorial(int n) {
         StringBuilder result = new StringBuilder("1");
-        int c = 0;
+        long c = 0;
         for (int i = 2; i <= n; i++) {
             for (int j = result.length() - 1; j >= 0; j--) {
                 int k = result.charAt(j) - '0';
-                int t = k * i + c;
+                long t = k * i + c;
                 c = t / 10;
                 result.setCharAt(j, (char) (t % 10 + '0'));
             }
