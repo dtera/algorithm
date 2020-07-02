@@ -16,22 +16,22 @@ import java.util.Queue;
  * @date 2020/6/26 10:27
  */
 @RequiredArgsConstructor
-public class TreeNode {
+public class BiTreeNode {
     public final int val;
-    public TreeNode left;
-    public TreeNode right;
+    public BiTreeNode left;
+    public BiTreeNode right;
 
-    public static void print(TreeNode tree) {
+    public static void print(BiTreeNode tree) {
         if (tree == null) {
             return;
         }
-        Queue<Pair<Integer, TreeNode>> queue = new LinkedList<Pair<Integer, TreeNode>>() {{
+        Queue<Pair<Integer, BiTreeNode>> queue = new LinkedList<Pair<Integer, BiTreeNode>>() {{
             add(Pair.of(depth(tree) - 1, tree));
         }};
         while (!queue.isEmpty()) {
             int offset = 0;
             for (int i = queue.size(); i > 0; i--) {
-                Pair<Integer, TreeNode> node = queue.poll();
+                Pair<Integer, BiTreeNode> node = queue.poll();
                 assert node != null;
                 String sep = "\t";
                 System.out.print(StringUtil.repeat(sep, node.getLeft() - offset) + " " + node.getRight().val);
@@ -48,11 +48,11 @@ public class TreeNode {
         }
     }
 
-    public static void show(TreeNode tree) {
+    public static void show(BiTreeNode tree) {
         show(null, tree, "|");
     }
 
-    public static void show(TreeNode parent, TreeNode tree, String prefix) {
+    public static void show(BiTreeNode parent, BiTreeNode tree, String prefix) {
         if (tree == null) return;
 
         System.out.println(prefix + "--" + tree.val);
@@ -63,14 +63,33 @@ public class TreeNode {
         show(tree, tree.right, prefix + "  |");
     }
 
-    public static int width(TreeNode tree) {
+    public static int width(BiTreeNode tree) {
         if (tree == null) return 0;
         return width(tree.left) + width(tree.right) + 1;
     }
 
-    public static int depth(TreeNode tree) {
+    public static int depth(BiTreeNode tree) {
         if (tree == null) return 0;
         return Math.max(depth(tree.left), depth(tree.right)) + ("" + tree.val).length();
+    }
+
+    public static List<List<Integer>> pathSum(BiTreeNode root, int sum) {
+        List<List<Integer>> res = new ArrayList<>();
+        LinkedList<Integer> path = new LinkedList<>();
+        dfs(root, sum, res, path);
+        return res;
+    }
+
+    private static void dfs(BiTreeNode root, int sum, List<List<Integer>> res, LinkedList<Integer> path) {
+        if (root == null) return;
+        sum -= root.val;
+        path.add(root.val);
+        if (sum == 0 && root.left == null && root.right == null) {
+            res.add(new ArrayList<>(path));
+        }
+        dfs(root.left, sum, res, path);
+        dfs(root.right, sum, res, path);
+        path.removeLast();
     }
 
     public static boolean verifyPostOrder(int[] postOrder) {
@@ -88,9 +107,9 @@ public class TreeNode {
         return k == j && verifyPostOrder(postOrder, i, m - 1) && verifyPostOrder(postOrder, m, j - 1);
     }
 
-    public static List<List<Integer>> levelOrderII(TreeNode root, boolean cross) {
+    public static List<List<Integer>> levelOrderII(BiTreeNode root, boolean cross) {
         if (root == null) return new ArrayList<>();
-        Queue<TreeNode> queue = new LinkedList<TreeNode>() {{
+        Queue<BiTreeNode> queue = new LinkedList<BiTreeNode>() {{
             add(root);
         }};
         List<List<Integer>> res = new ArrayList<>();
@@ -99,7 +118,7 @@ public class TreeNode {
         while (!queue.isEmpty()) {
             LinkedList<Integer> tmp = new LinkedList<>();
             for (int i = queue.size(); i > 0; i--) {
-                TreeNode node = queue.poll();
+                BiTreeNode node = queue.poll();
                 assert node != null;
                 if (cross && k % 2 == 0) tmp.addFirst(node.val);
                 else tmp.add(node.val);
@@ -113,15 +132,15 @@ public class TreeNode {
         return res;
     }
 
-    public static int[] levelOrderI(TreeNode root) {
+    public static int[] levelOrderI(BiTreeNode root) {
         if (root == null) return new int[0];
-        Queue<TreeNode> queue = new LinkedList<TreeNode>() {{
+        Queue<BiTreeNode> queue = new LinkedList<BiTreeNode>() {{
             add(root);
         }};
         List<Integer> list = new ArrayList<>();
 
         while (!queue.isEmpty()) {
-            TreeNode node = queue.poll();
+            BiTreeNode node = queue.poll();
             list.add(node.val);
             if (node.left != null) queue.add(node.left);
             if (node.right != null) queue.add(node.right);
@@ -135,32 +154,32 @@ public class TreeNode {
         return res;
     }
 
-    public static boolean isSymmetric(TreeNode root) {
+    public static boolean isSymmetric(BiTreeNode root) {
         return root == null || isSymmetric(root.left, root.right);
     }
 
-    private static boolean isSymmetric(TreeNode left, TreeNode right) {
+    private static boolean isSymmetric(BiTreeNode left, BiTreeNode right) {
         if (left == null && right == null) return true;
         if (left == null || right == null || left.val != right.val) return false;
 
         return isSymmetric(left.left, right.right) && isSymmetric(left.right, right.left);
     }
 
-    public static TreeNode mirrorTree(TreeNode root) {
+    public static BiTreeNode mirrorTree(BiTreeNode root) {
         if (root == null) return null;
 
-        TreeNode node = new TreeNode(root.val);
+        BiTreeNode node = new BiTreeNode(root.val);
         node.left = mirrorTree(root.right);
         node.right = mirrorTree(root.left);
         return node;
     }
 
-    public static boolean isSubStructure(TreeNode A, TreeNode B) {
+    public static boolean isSubStructure(BiTreeNode A, BiTreeNode B) {
         return A != null && B != null && (subStructure(A, B) ||
                 isSubStructure(A.left, B) || isSubStructure(A.right, B));
     }
 
-    private static boolean subStructure(TreeNode a, TreeNode b) {
+    private static boolean subStructure(BiTreeNode a, BiTreeNode b) {
         if (b == null) return true;
         if (a == null || a.val != b.val) return false;
 

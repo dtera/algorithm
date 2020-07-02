@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.offer;
 
-import cn.cstn.algorithm.commons.tree.TreeNode;
+import cn.cstn.algorithm.commons.tree.BiTreeNode;
 
 /**
  * 输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。如果是则返回 true，否则返回 false。
@@ -46,9 +46,9 @@ public class BiTreePostOrder {
 
     public static void main(String[] args) {
         int[] postOrder = {1, 6, 3, 2, 5};
-        System.out.println(TreeNode.verifyPostOrder(postOrder));
+        System.out.println(BiTreeNode.verifyPostOrder(postOrder));
         postOrder = new int[]{1, 3, 2, 6, 5};
-        System.out.println(TreeNode.verifyPostOrder(postOrder));
+        System.out.println(BiTreeNode.verifyPostOrder(postOrder));
 
     }
 

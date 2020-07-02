@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.offer;
 
-import cn.cstn.algorithm.commons.tree.TreeNode;
+import cn.cstn.algorithm.commons.tree.BiTreeNode;
 
 /**
  * 请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，那么它是对称的。
@@ -58,14 +58,14 @@ import cn.cstn.algorithm.commons.tree.TreeNode;
 public class SymmetricTree {
 
     public static void main(String[] args) {
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        root.right = new TreeNode(2);
-        root.left.left = new TreeNode(3);
-        root.left.right = new TreeNode(4);
-        root.right.left = new TreeNode(4);
-        root.right.right = new TreeNode(3);
-        TreeNode.print(root);
-        System.out.println(TreeNode.isSymmetric(root));
+        BiTreeNode root = new BiTreeNode(1);
+        root.left = new BiTreeNode(2);
+        root.right = new BiTreeNode(2);
+        root.left.left = new BiTreeNode(3);
+        root.left.right = new BiTreeNode(4);
+        root.right.left = new BiTreeNode(4);
+        root.right.right = new BiTreeNode(3);
+        BiTreeNode.print(root);
+        System.out.println(BiTreeNode.isSymmetric(root));
     }
 }

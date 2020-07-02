@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.offer;
 
-import cn.cstn.algorithm.commons.tree.TreeNode;
+import cn.cstn.algorithm.commons.tree.BiTreeNode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,30 +43,30 @@ public class BuildTree {
     public static void main(String[] args) {
         int[] preorder = {3, 9, 2, 1, 0, 8, 20, 15, 7};
         int[] inorder = {0, 1, 2, 9, 8, 3, 15, 20, 7};
-        TreeNode tree = buildTree(preorder, inorder);
+        BiTreeNode tree = buildTree(preorder, inorder);
         System.out.println(tree.toString(1));
-        System.out.println("depth=" + TreeNode.depth(tree));
-        System.out.println("width=" + TreeNode.width(tree));
-        TreeNode.print(tree);
+        System.out.println("depth=" + BiTreeNode.depth(tree));
+        System.out.println("width=" + BiTreeNode.width(tree));
+        BiTreeNode.print(tree);
         System.out.println("=========================================");
-        TreeNode.show(tree);
+        BiTreeNode.show(tree);
         System.out.println("=========================================");
         tree = _buildTree(preorder, inorder);
         System.out.println("=========================================");
-        TreeNode.print(tree);
+        BiTreeNode.print(tree);
     }
 
-    public static TreeNode _buildTree(int[] preorder, int[] inorder) {
+    public static BiTreeNode _buildTree(int[] preorder, int[] inorder) {
         if (preorder == null || preorder.length == 0) return null;
 
         int inorderIndex = 0;
-        TreeNode root = new TreeNode(preorder[0]);
-        Stack<TreeNode> stack = new Stack<TreeNode>() {{
+        BiTreeNode root = new BiTreeNode(preorder[0]);
+        Stack<BiTreeNode> stack = new Stack<BiTreeNode>() {{
             push(root);
         }};
         for (int i = 1; i < preorder.length; i++) {
-            TreeNode cur = new TreeNode(preorder[i]);
-            TreeNode node = stack.peek();
+            BiTreeNode cur = new BiTreeNode(preorder[i]);
+            BiTreeNode node = stack.peek();
             if (node.val != inorder[inorderIndex]) {
                 node.left = cur;
                 stack.add(node.left);
@@ -82,7 +82,7 @@ public class BuildTree {
         return root;
     }
 
-    public static TreeNode buildTree(int[] preorder, int[] inorder) {
+    public static BiTreeNode buildTree(int[] preorder, int[] inorder) {
         if (preorder == null || preorder.length == 0) return null;
 
         Map<Integer, Integer> inorderMap = new HashMap<>();
@@ -93,11 +93,11 @@ public class BuildTree {
                 inorderMap);
     }
 
-    private static TreeNode buildTree(int[] preorder, int preStart, int preEnd, int inStart, int inEnd,
-                                      Map<Integer, Integer> inorderMap) {
+    private static BiTreeNode buildTree(int[] preorder, int preStart, int preEnd, int inStart, int inEnd,
+                                        Map<Integer, Integer> inorderMap) {
         if (preStart > preEnd) return null;
         int rootVal = preorder[preStart];
-        TreeNode root = new TreeNode(rootVal);
+        BiTreeNode root = new BiTreeNode(rootVal);
         int rootIndex = inorderMap.get(rootVal);
         if (preStart == preEnd) {
             return root;
