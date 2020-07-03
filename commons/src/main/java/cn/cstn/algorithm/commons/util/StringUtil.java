@@ -2,6 +2,8 @@ package cn.cstn.algorithm.commons.util;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Predicate;
 
 /**
@@ -90,6 +92,36 @@ public class StringUtil {
             sb.append(sep);
         }
         return sb.toString();
+    }
+
+    public static String deleteCharByDictSort(String s, int k) {
+        if (s == null) return null;
+
+        StringBuilder res = new StringBuilder();
+        TreeMap<Character, Integer> charMap = new TreeMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            charMap.put(s.charAt(i), charMap.getOrDefault(s.charAt(i), 0) + 1);
+        }
+        char t = 0;
+        for (Map.Entry<Character, Integer> entry : charMap.entrySet()) {
+            if (entry.getValue() <= k) {
+                k -= entry.getValue();
+                charMap.put(entry.getKey(), 0);
+                continue;
+            }
+            charMap.put(entry.getKey(), entry.getValue() - k);
+            t = entry.getKey();
+            break;
+        }
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (charMap.get(c) != 0) {
+                if (c == t) charMap.put(c, charMap.get(c) - 1);
+                res.append(c);
+            }
+        }
+
+        return res.toString();
     }
 
 }
