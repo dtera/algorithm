@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.offer;
 
-import cn.cstn.algorithm.commons.tree.BiTreeNode;
+import cn.cstn.algorithm.commons.Node;
 import cn.cstn.algorithm.commons.util.ArrayUtil;
 
 import java.util.List;
@@ -15,11 +15,11 @@ import java.util.List;
 public class BiTreeLevelOrder {
 
     public static void main(String[] args) {
-        BiTreeNode root = new BiTreeNode(3);
-        root.left = new BiTreeNode(9);
-        root.right = new BiTreeNode(20);
-        root.right.left = new BiTreeNode(15);
-        root.right.right = new BiTreeNode(7);
+        Node root = new Node(3);
+        root.left = new Node(9);
+        root.right = new Node(20);
+        root.right.left = new Node(15);
+        root.right.right = new Node(7);
 
         levelOrderI(root);
         levelOrderII(root);
@@ -62,8 +62,8 @@ public class BiTreeLevelOrder {
      *
      * @param root root
      */
-    private static void levelOrderIII(BiTreeNode root) {
-        List<List<Integer>> res = BiTreeNode.levelOrderII(root, true);
+    private static void levelOrderIII(Node root) {
+        List<List<Integer>> res = Node.levelOrderII(root, true);
         System.out.println(res);
     }
 
@@ -102,8 +102,8 @@ public class BiTreeLevelOrder {
      *
      * @param root root
      */
-    private static void levelOrderII(BiTreeNode root) {
-        List<List<Integer>> res = BiTreeNode.levelOrderII(root, false);
+    private static void levelOrderII(Node root) {
+        List<List<Integer>> res = Node.levelOrderII(root, false);
         System.out.println(res);
     }
 
@@ -134,8 +134,8 @@ public class BiTreeLevelOrder {
      *
      * @param root root
      */
-    private static void levelOrderI(BiTreeNode root) {
-        int[] arr = BiTreeNode.levelOrderI(root);
+    private static void levelOrderI(Node root) {
+        int[] arr = Node.levelOrderI(root);
         ArrayUtil.println(arr);
     }
 

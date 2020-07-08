@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.offer;
 
-import cn.cstn.algorithm.commons.tree.BiTreeNode;
+import cn.cstn.algorithm.commons.Node;
 
 /**
  * 输入两棵二叉树A和B，判断B是不是A的子结构。(约定空树不是任意一个树的子结构)
@@ -59,15 +59,15 @@ import cn.cstn.algorithm.commons.tree.BiTreeNode;
 public class TreeSubStructure {
 
     public static void main(String[] args) {
-        BiTreeNode A = new BiTreeNode(3);
-        A.left = new BiTreeNode(4);
-        A.right = new BiTreeNode(5);
-        A.left.left = new BiTreeNode(1);
-        A.left.right = new BiTreeNode(2);
+        Node A = new Node(3);
+        A.left = new Node(4);
+        A.right = new Node(5);
+        A.left.left = new Node(1);
+        A.left.right = new Node(2);
 
-        BiTreeNode B = new BiTreeNode(4);
-        B.left = new BiTreeNode(1);
-        System.out.println(BiTreeNode.isSubStructure(A, B));
+        Node B = new Node(4);
+        B.left = new Node(1);
+        System.out.println(Node.isSubStructure(A, B));
     }
 
 }

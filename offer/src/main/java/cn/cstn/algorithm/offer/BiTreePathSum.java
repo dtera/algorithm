@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.offer;
 
-import cn.cstn.algorithm.commons.tree.BiTreeNode;
+import cn.cstn.algorithm.commons.Node;
 
 import java.util.List;
 
@@ -48,18 +48,18 @@ import java.util.List;
 public class BiTreePathSum {
 
     public static void main(String[] args) {
-        BiTreeNode root = new BiTreeNode(5);
-        root.left = new BiTreeNode(4);
-        root.right = new BiTreeNode(8);
-        root.left.left = new BiTreeNode(11);
-        root.right.left = new BiTreeNode(13);
-        root.right.right = new BiTreeNode(4);
-        root.left.left.left = new BiTreeNode(7);
-        root.left.left.right = new BiTreeNode(2);
-        root.right.right.left = new BiTreeNode(5);
-        root.right.right.right = new BiTreeNode(1);
+        Node root = new Node(5);
+        root.left = new Node(4);
+        root.right = new Node(8);
+        root.left.left = new Node(11);
+        root.right.left = new Node(13);
+        root.right.right = new Node(4);
+        root.left.left.left = new Node(7);
+        root.left.left.right = new Node(2);
+        root.right.right.left = new Node(5);
+        root.right.right.right = new Node(1);
 
-        List<List<Integer>> pathSum = BiTreeNode.pathSum(root, 22);
+        List<List<Integer>> pathSum = Node.pathSum(root, 22);
         System.out.println(pathSum);
     }
 

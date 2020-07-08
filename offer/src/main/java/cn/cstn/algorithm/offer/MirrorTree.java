@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.offer;
 
-import cn.cstn.algorithm.commons.tree.BiTreeNode;
+import cn.cstn.algorithm.commons.Node;
 
 /**
  * 请完成一个函数，输入一个二叉树，该函数输出它的镜像。
@@ -50,17 +50,17 @@ import cn.cstn.algorithm.commons.tree.BiTreeNode;
 public class MirrorTree {
 
     public static void main(String[] args) {
-        BiTreeNode root = new BiTreeNode(4);
-        root.left = new BiTreeNode(2);
-        root.right = new BiTreeNode(7);
-        root.left.left = new BiTreeNode(1);
-        root.left.right = new BiTreeNode(3);
-        root.right.left = new BiTreeNode(6);
-        root.right.right = new BiTreeNode(9);
-        BiTreeNode.print(root);
+        Node root = new Node(4);
+        root.left = new Node(2);
+        root.right = new Node(7);
+        root.left.left = new Node(1);
+        root.left.right = new Node(3);
+        root.right.left = new Node(6);
+        root.right.right = new Node(9);
+        Node.print(root);
         System.out.println("===============================");
-        BiTreeNode node = BiTreeNode.mirrorTree(root);
-        BiTreeNode.print(node);
+        Node node = Node.mirrorTree(root);
+        Node.print(node);
     }
 
 }
