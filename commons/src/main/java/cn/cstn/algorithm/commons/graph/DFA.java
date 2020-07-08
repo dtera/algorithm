@@ -1,5 +1,6 @@
 package cn.cstn.algorithm.commons.graph;
 
+import cn.cstn.algorithm.commons.util.ArrayUtil;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +22,13 @@ public class DFA {
 
 
     public boolean accept(String content) {
-        return accept(content, CharType::of);
+        return accept(ArrayUtil.primitiveToObj(content.toCharArray()), CharType::of);
     }
 
-    public <T, E extends Enum<E> & SymbolType<T>> boolean accept(String content, Function<Character, Enum<E>> function) {
+    public <T, E extends Enum<E> & SymbolType<T>> boolean accept(T[] content, Function<T, Enum<E>> function) {
         int state = 0;
-        for (int i = 0; i < content.length(); i++) {
-            int col = function.apply(content.charAt(i)).ordinal();
+        for (T t : content) {
+            int col = function.apply(t).ordinal();
             state = transTable[state][col];
             if (state == -1) return false;
         }

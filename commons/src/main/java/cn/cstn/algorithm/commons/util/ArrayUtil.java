@@ -311,6 +311,14 @@ public class ArrayUtil {
         return b;
     }
 
+    public static Character[] primitiveToObj(char[] a) {
+        Character[] b = new Character[a.length];
+        for (int i = 0; i < a.length; i++)
+            b[i] = a[i];
+
+        return b;
+    }
+
     public static void println(int[] a) {
         print(a, ", ", "[", "]\n");
     }
