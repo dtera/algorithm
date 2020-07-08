@@ -24,7 +24,7 @@ public class DFA {
         return accept(content, CharType::of);
     }
 
-    public <E extends Enum<E> & SymbolType> boolean accept(String content, Function<Character, Enum<E>> function) {
+    public <T, E extends Enum<E> & SymbolType<T>> boolean accept(String content, Function<Character, Enum<E>> function) {
         int state = 0;
         for (int i = 0; i < content.length(); i++) {
             int col = function.apply(content.charAt(i)).ordinal();
@@ -44,66 +44,66 @@ public class DFA {
 
     @RequiredArgsConstructor
     @Getter
-    public enum CharType implements SymbolType {
+    public enum CharType implements SymbolType<Character> {
         SIGN("sign(+/-)") {
             @Override
-            public boolean match(char c) {
+            public boolean match(Character c) {
                 return c == '+' || c == '-';
             }
         },
         DIGIT("digit(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)") {
             @Override
-            public boolean match(char c) {
+            public boolean match(Character c) {
                 return c >= '0' && c <= '9';
             }
         },
         EXP("exponent(e/E)") {
             @Override
-            public boolean match(char c) {
+            public boolean match(Character c) {
                 return c == 'e' || c == 'E';
             }
         },
         DOT("dot(.)") {
             @Override
-            public boolean match(char c) {
+            public boolean match(Character c) {
                 return c == '.';
             }
         },
         BLANK("blank( )") {
             @Override
-            public boolean match(char c) {
+            public boolean match(Character c) {
                 return c == ' ';
             }
         },
         OTHER("other(alphabet, _, -, * ...)") {
             @Override
-            public boolean match(char c) {
-                return matchOther(c, CharType.values(), CharType.OTHER);
+            public boolean match(Character c) {
+                return matchOther(c, CharType.values());
             }
         };
 
         private final String desc;
 
-        public static CharType of(char c) {
+        public static CharType of(Character c) {
             return SymbolType.of(c, CharType.values());
         }
 
     }
 
-    public interface SymbolType {
+    public interface SymbolType<T> {
 
-        boolean match(char c);
+        boolean match(T c);
 
-        default <E extends Enum<E> & SymbolType> boolean matchOther(char c, E[] symbolTypes, E otherType) {
+        default <E extends Enum<E> & SymbolType<T>> boolean matchOther(T c, E[] symbolTypes) {
             for (E symbolType : symbolTypes) {
-                if (symbolType != otherType && symbolType.match(c)) {
+                if (symbolType != this && symbolType.match(c)) {
                     return false;
                 }
             }
             return true;
         }
 
-        static <E extends Enum<E> & SymbolType> E of(char c, E[] symbolTypes) {
+        static <T, E extends Enum<E> & SymbolType<T>> E of(T c, E[] symbolTypes) {
             for (E symbolType : symbolTypes) {
                 if (symbolType.match(c)) {
                     return symbolType;
