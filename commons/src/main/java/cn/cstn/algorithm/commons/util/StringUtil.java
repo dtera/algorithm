@@ -2,8 +2,10 @@ package cn.cstn.algorithm.commons.util;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -13,6 +15,14 @@ import java.util.function.Predicate;
  * date :               2018/9/5 0005 20:29
  */
 public class StringUtil {
+
+    public static void permutation(String a, Consumer<String> consumer) {
+        ArrayUtil.permutation(ArrayUtil.primitiveToObj(a.toCharArray()), characters -> {
+            StringBuilder sb = new StringBuilder();
+            Arrays.stream(characters).forEach(sb::append);
+            consumer.accept(sb.toString());
+        });
+    }
 
     public static int longestPalindrome(String s) {
         if (s == null || s.length() == 0) return 0;

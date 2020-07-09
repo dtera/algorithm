@@ -190,10 +190,13 @@ public class ArrayUtil {
             return;
         }
 
+        Set<T> visited = new HashSet<>();
         for (int i = l; i <= r; i++) {
+            if (visited.contains(a[i])) continue;
             swap(a, l, i);
             permutation(a, l + 1, r, consumer);
             swap(a, l, i);
+            visited.add(a[i]);
         }
     }
 
