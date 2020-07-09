@@ -1,6 +1,5 @@
 package cn.cstn.algorithm.commons;
 
-import cn.cstn.algorithm.commons.list.ListNode;
 import cn.cstn.algorithm.commons.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.MutablePair;
