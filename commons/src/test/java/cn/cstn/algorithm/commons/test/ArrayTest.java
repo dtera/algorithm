@@ -135,7 +135,8 @@ public class ArrayTest {
             System.out.println("===================================================================");
         }
         Integer[] arr = {92, 63, 42, 35, 74, 13, 89, 6, 48, 46, 23, 72, 17, 54};
-        ArrayUtil.partition(arr, 0, arr.length - 1);
+        int p = ArrayUtil.partition(arr, 0, arr.length - 1);
+        System.out.println(p);
 
     }
 

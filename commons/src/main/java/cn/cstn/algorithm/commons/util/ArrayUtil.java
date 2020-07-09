@@ -241,46 +241,81 @@ public class ArrayUtil {
     }
 
     public static int kthMin(int[] a, int k) {
-        return kthMin(ArrayUtils.toObject(a), k);
+        return a[indexOfKthMin(a, k)];
+    }
+
+    @SuppressWarnings("DuplicatedCode")
+    public static int indexOfKthMin(int[] a, int k) {
+        int ki = randomizedPartition(a, 0, a.length - 1);
+        while (ki != k - 1) {
+            if (ki < k - 1) ki = randomizedPartition(a, ki + 1, a.length - 1);
+            if (ki > k - 1) ki = randomizedPartition(a, 0, ki - 1);
+        }
+
+        return ki;
     }
 
     public static int kthMin(Integer[] a, int k) {
-        //System.arraycopy(ArrayUtils.toObject(a), 0, b, 0, a.length);
-        int ki = partition(a, 0, a.length - 1);
+        return a[indexOfKthMin(a, k)];
+    }
+
+    @SuppressWarnings("DuplicatedCode")
+    public static int indexOfKthMin(Integer[] a, int k) {
+        int ki = randomizedPartition(a, 0, a.length - 1);
         while (ki != k - 1) {
-            if (ki < k - 1) ki = partition(a, ki + 1, a.length - 1);
-            if (ki > k - 1) ki = partition(a, 0, ki - 1);
+            if (ki < k - 1) ki = randomizedPartition(a, ki + 1, a.length - 1);
+            if (ki > k - 1) ki = randomizedPartition(a, 0, ki - 1);
         }
 
-        return a[ki];
+        return ki;
     }
 
-    public static <T extends Comparable<T>> int partition(T[] arr, int low, int high) {
-        return partition(arr, low, high, Comparable<T>::compareTo);
+    public static int randomizedPartition(int[] arr, int l, int r) {
+        int i = (int) (Math.random() * (r - l + 1) + l);
+        swap(arr, i, r);
+        return partition(arr, l, r);
     }
 
-    public static <T> int partition(T[] arr, int low, int high, Comparator<T> comparator) {
-        int j = low, i = low - 1;
-        while (j < high) {
-            if (comparator.compare(arr[j], arr[high]) < 0) {
+    public static int partition(int[] arr, int l, int r) {
+        int j = l, i = l - 1;
+        while (j < r) {
+            if (arr[j] < arr[r]) {
                 i++;
                 swap(arr, i, j);
             }
             j++;
         }
-        swap(arr, i + 1, high);
+        swap(arr, i + 1, r);
 
         return i + 1;
     }
 
-    public static <T extends Comparable<T>> int randomizedPartition(T[] arr, int low, int high) {
-        return randomizedPartition(arr, low, high, Comparable<T>::compareTo);
+    public static <T extends Comparable<T>> int partition(T[] arr, int l, int r) {
+        return partition(arr, l, r, Comparable<T>::compareTo);
     }
 
-    public static <T> int randomizedPartition(T[] arr, int low, int high, Comparator<T> comparator) {
-        int i = (int) (Math.random() * (high - low + 1) + low);
-        swap(arr, i, high);
-        return partition(arr, low, high, comparator);
+    public static <T> int partition(T[] arr, int l, int r, Comparator<T> comparator) {
+        int j = l, i = l - 1;
+        while (j < r) {
+            if (comparator.compare(arr[j], arr[r]) < 0) {
+                i++;
+                swap(arr, i, j);
+            }
+            j++;
+        }
+        swap(arr, i + 1, r);
+
+        return i + 1;
+    }
+
+    public static <T extends Comparable<T>> int randomizedPartition(T[] arr, int l, int r) {
+        return randomizedPartition(arr, l, r, Comparable<T>::compareTo);
+    }
+
+    public static <T> int randomizedPartition(T[] arr, int l, int r, Comparator<T> comparator) {
+        int i = (int) (Math.random() * (r - l + 1) + l);
+        swap(arr, i, r);
+        return partition(arr, l, r, comparator);
     }
 
     public static String reverse(String s) {
@@ -585,42 +620,42 @@ public class ArrayUtil {
 
     //=================================search algorithm=====================================================
     public static <T extends Comparable<T>> int rotatedArrFind(T[] arr, T target) {
-        int low = 0;
-        int high = arr.length - 1;
+        int l = 0;
+        int r = arr.length - 1;
 
-        while (low <= high) {
-            if (target.compareTo(arr[low]) == 0) return low;
-            final int mid = (low + high) / 2;
+        while (l <= r) {
+            if (target.compareTo(arr[l]) == 0) return l;
+            final int mid = (l + r) / 2;
             if (target.compareTo(arr[mid]) == 0) return mid;
 
             //method1:
-            if (arr[mid].compareTo(arr[low]) > 0)
-                if (target.compareTo(arr[low]) >= 0 && target.compareTo(arr[mid]) < 0)
-                    return BS(arr, target, low, mid - 1);
+            if (arr[mid].compareTo(arr[l]) > 0)
+                if (target.compareTo(arr[l]) >= 0 && target.compareTo(arr[mid]) < 0)
+                    return BS(arr, target, l, mid - 1);
                 else
-                    low = mid + 1;
-            else if (arr[mid].compareTo(arr[low]) < 0) {
-                if (target.compareTo(arr[mid]) > 0 && target.compareTo(arr[high]) <= 0)
-                    return BS(arr, target, mid + 1, high);
+                    l = mid + 1;
+            else if (arr[mid].compareTo(arr[l]) < 0) {
+                if (target.compareTo(arr[mid]) > 0 && target.compareTo(arr[r]) <= 0)
+                    return BS(arr, target, mid + 1, r);
                 else
-                    high = mid - 1;
-            } else low++;
+                    r = mid - 1;
+            } else l++;
 
             //method2:
             /*else if (target < arr[mid]) {
-                if (arr[mid] > arr[low])
-                    if (target >= arr[low])
-                        return BS(arr, target, low, mid - 1);
+                if (arr[mid] > arr[l])
+                    if (target >= arr[l])
+                        return BS(arr, target, l, mid - 1);
                     else
-                        low = mid + 1;
-                else high = mid - 1;
+                        l = mid + 1;
+                else r = mid - 1;
             } else {
-                if (arr[mid] < arr[high])
-                    if (target <= arr[high])
-                        return BS(arr, target, mid + 1, high);
+                if (arr[mid] < arr[r])
+                    if (target <= arr[r])
+                        return BS(arr, target, mid + 1, r);
                     else
-                        high = mid - 1;
-                else low = mid + 1;
+                        r = mid - 1;
+                else l = mid + 1;
             }*/
 
         }
@@ -632,15 +667,15 @@ public class ArrayUtil {
         return BS(arr, target, 0, arr.length - 1);
     }
 
-    public static <T extends Comparable<T>> int BS(T[] arr, T target, int low, int high) {
-        int mid = (low + high) / 2;
-        while (low <= high) {
+    public static <T extends Comparable<T>> int BS(T[] arr, T target, int l, int r) {
+        int mid = (l + r) / 2;
+        while (l <= r) {
             if (arr[mid].compareTo(target) == 0) return mid;
             else if (target.compareTo(arr[mid]) < 0)
-                high = mid - 1;
+                r = mid - 1;
             else
-                low = mid + 1;
-            mid = (low + high) / 2;
+                l = mid + 1;
+            mid = (l + r) / 2;
         }
         return -1;
     }
