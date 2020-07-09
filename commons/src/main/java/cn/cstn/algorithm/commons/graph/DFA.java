@@ -22,10 +22,10 @@ public class DFA {
 
 
     public boolean accept(String content) {
-        return accept(ArrayUtil.primitiveToObj(content.toCharArray()), CharType::of);
+        return accept(ArrayUtil.asList(content.toCharArray()), CharType::of);
     }
 
-    public <T, E extends Enum<E> & SymbolType<T>> boolean accept(T[] content, Function<T, Enum<E>> function) {
+    public <T, E extends Enum<E> & SymbolType<T>> boolean accept(Iterable<T> content, Function<T, Enum<E>> function) {
         int state = 0;
         for (T t : content) {
             int col = function.apply(t).ordinal();

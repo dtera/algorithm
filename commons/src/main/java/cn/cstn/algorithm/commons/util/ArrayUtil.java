@@ -205,6 +205,14 @@ public class ArrayUtil {
         return res;
     }
 
+    public static List<Character> asList(char... a) {
+        List<Character> res = new ArrayList<>();
+        for (char ai : a)
+            res.add(ai);
+
+        return res;
+    }
+
     public static int[] indexOfMinMax(int[] a) {
         return indexOfMinMax(a, 0, a.length - 1);
     }
