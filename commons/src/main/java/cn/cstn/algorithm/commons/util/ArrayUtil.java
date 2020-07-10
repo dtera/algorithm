@@ -18,6 +18,23 @@ import java.util.function.Consumer;
 @SuppressWarnings("unused")
 public class ArrayUtil {
 
+    public static int maxSubArray(int[] nums) {
+        /*int[] dp = new int[nums.length];
+        int res = dp[0] = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            dp[i] = Math.max(dp[i - 1], 0) + nums[i];
+            if (res < dp[i]) res = dp[i];
+        }
+        return res;*/
+
+        int res = nums[0], curMax = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            curMax = Math.max(curMax, 0) + nums[i];
+            if (res < curMax) res = curMax;
+        }
+        return res;
+    }
+
     public static String kthItemOfMirroredArr(int n, int k) {
         int len = (int) Math.pow(2, n);
         if (n < 1 || k < 0 || k >= len) return "not exists";
