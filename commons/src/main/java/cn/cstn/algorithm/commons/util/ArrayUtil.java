@@ -290,13 +290,24 @@ public class ArrayUtil {
     public static int randomizedPartition(int[] arr, int l, int r) {
         int i = (int) (Math.random() * (r - l + 1) + l);
         swap(arr, i, r);
-        return partition(arr, l, r);
+        return randomizedPartition(arr, l, r, Integer::compareTo);
+    }
+
+    public static <T> int randomizedPartition(int[] arr, int l, int r, Comparator<Integer> comparator) {
+        int i = (int) (Math.random() * (r - l + 1) + l);
+        swap(arr, i, r);
+        return partition(arr, l, r, comparator);
     }
 
     public static int partition(int[] arr, int l, int r) {
+        return partition(arr, l, r, Integer::compareTo);
+    }
+
+    @SuppressWarnings("DuplicatedCode")
+    public static int partition(int[] arr, int l, int r, Comparator<Integer> comparator) {
         int j = l, i = l - 1;
         while (j < r) {
-            if (arr[j] < arr[r]) {
+            if (comparator.compare(arr[j], arr[r]) < 0) {
                 i++;
                 swap(arr, i, j);
             }
@@ -311,6 +322,7 @@ public class ArrayUtil {
         return partition(arr, l, r, Comparable<T>::compareTo);
     }
 
+    @SuppressWarnings("DuplicatedCode")
     public static <T> int partition(T[] arr, int l, int r, Comparator<T> comparator) {
         int j = l, i = l - 1;
         while (j < r) {
@@ -484,8 +496,23 @@ public class ArrayUtil {
 
     }
 
+    public static void quickSort(int[] arr) {
+        quickSort(arr, Integer::compareTo);
+    }
+
+    public static void quickSort(int[] arr, Comparator<Integer> comparator) {
+        quickSort(arr, 0, arr.length - 1, comparator);
+    }
+
+    private static void quickSort(int[] arr, int l, int r, Comparator<Integer> comparator) {
+        if (l >= r) return;
+        int p = randomizedPartition(arr, l, r, comparator);
+        quickSort(arr, l, p - 1, comparator);
+        quickSort(arr, p + 1, r, comparator);
+    }
+
     public static <T extends Comparable<T>> void quickSort(T[] arr) {
-        quickSort(arr, 0, arr.length - 1, Comparable<T>::compareTo);
+        quickSort(arr, Comparable<T>::compareTo);
     }
 
     public static <T> void quickSort(T[] arr, Comparator<T> comparator) {
@@ -494,7 +521,7 @@ public class ArrayUtil {
 
     private static <T> void quickSort(T[] arr, int l, int r, Comparator<T> comparator) {
         if (l >= r) return;
-        int p = partition(arr, l, r, comparator);
+        int p = randomizedPartition(arr, l, r, comparator);
         quickSort(arr, l, p - 1, comparator);
         quickSort(arr, p + 1, r, comparator);
     }
