@@ -41,9 +41,9 @@ import java.util.Stack;
 public class BuildTree {
 
     public static void main(String[] args) {
-        int[] preorder = {3, 9, 2, 1, 0, 8, 20, 15, 7};
-        int[] inorder = {0, 1, 2, 9, 8, 3, 15, 20, 7};
-        Node tree = buildTree(preorder, inorder);
+        int[] preOrder = {3, 9, 2, 1, 0, 8, 20, 15, 7};
+        int[] inOrder = {0, 1, 2, 9, 8, 3, 15, 20, 7};
+        Node tree = Node.buildTree(preOrder, inOrder);
         System.out.println(tree.toString(1));
         System.out.println("depth=" + Node.depth(tree));
         System.out.println("width=" + Node.width(tree));
@@ -51,66 +51,9 @@ public class BuildTree {
         System.out.println("=========================================");
         Node.showTree(tree);
         System.out.println("=========================================");
-        tree = _buildTree(preorder, inorder);
+        tree = Node._buildTree(preOrder, inOrder);
         System.out.println("=========================================");
         Node.print(tree);
     }
-
-    public static Node _buildTree(int[] preorder, int[] inorder) {
-        if (preorder == null || preorder.length == 0) return null;
-
-        int inorderIndex = 0;
-        Node root = new Node(preorder[0]);
-        Stack<Node> stack = new Stack<Node>() {{
-            push(root);
-        }};
-        for (int i = 1; i < preorder.length; i++) {
-            Node cur = new Node(preorder[i]);
-            Node node = stack.peek();
-            if (node.val != inorder[inorderIndex]) {
-                node.left = cur;
-                stack.add(node.left);
-            } else {
-                while (!stack.isEmpty() && stack.peek().val == inorder[inorderIndex]) {
-                    node = stack.pop();
-                    inorderIndex++;
-                }
-                node.right = cur;
-                stack.add(node.right);
-            }
-        }
-        return root;
-    }
-
-    public static Node buildTree(int[] preorder, int[] inorder) {
-        if (preorder == null || preorder.length == 0) return null;
-
-        Map<Integer, Integer> inorderMap = new HashMap<>();
-        for (int i = 0; i < inorder.length; i++) {
-            inorderMap.put(inorder[i], i);
-        }
-        return buildTree(preorder, 0, preorder.length - 1, 0, inorder.length - 1,
-                inorderMap);
-    }
-
-    private static Node buildTree(int[] preorder, int preStart, int preEnd, int inStart, int inEnd,
-                                  Map<Integer, Integer> inorderMap) {
-        if (preStart > preEnd) return null;
-        int rootVal = preorder[preStart];
-        Node root = new Node(rootVal);
-        int rootIndex = inorderMap.get(rootVal);
-        if (preStart == preEnd) {
-            return root;
-        }
-
-        int leftNodes = rootIndex - inStart, rightNodes = inEnd - rootIndex;
-        root.left = buildTree(preorder, preStart + 1, preStart + leftNodes,
-                inStart, rootIndex - 1, inorderMap);
-        root.right = buildTree(preorder, preEnd - rightNodes + 1, preEnd,
-                rootIndex + 1, inEnd, inorderMap);
-
-        return root;
-    }
-
 
 }

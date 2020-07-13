@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * Node
@@ -275,6 +272,62 @@ public class Node {
         if (a == null || a.val != b.val) return false;
 
         return subStructure(a.left, b.left) && subStructure(a.right, b.right);
+    }
+
+    public static Node _buildTree(int[] preOrder, int[] inOrder) {
+        if (preOrder == null || preOrder.length == 0) return null;
+
+        int inOrderIndex = 0;
+        Node root = new Node(preOrder[0]);
+        Stack<Node> stack = new Stack<Node>() {{
+            push(root);
+        }};
+        for (int i = 1; i < preOrder.length; i++) {
+            Node cur = new Node(preOrder[i]);
+            Node node = stack.peek();
+            if (node.val != inOrder[inOrderIndex]) {
+                node.left = cur;
+                stack.add(node.left);
+            } else {
+                while (!stack.isEmpty() && stack.peek().val == inOrder[inOrderIndex]) {
+                    node = stack.pop();
+                    inOrderIndex++;
+                }
+                node.right = cur;
+                stack.add(node.right);
+            }
+        }
+        return root;
+    }
+
+    public static Node buildTree(int[] preOrder, int[] inOrder) {
+        if (preOrder == null || preOrder.length == 0) return null;
+
+        Map<Integer, Integer> inOrderMap = new HashMap<>();
+        for (int i = 0; i < inOrder.length; i++) {
+            inOrderMap.put(inOrder[i], i);
+        }
+        return buildTree(preOrder, 0, preOrder.length - 1, 0, inOrder.length - 1,
+                inOrderMap);
+    }
+
+    private static Node buildTree(int[] preOrder, int preStart, int preEnd, int inStart, int inEnd,
+                                  Map<Integer, Integer> inOrderMap) {
+        if (preStart > preEnd) return null;
+        int rootVal = preOrder[preStart];
+        Node root = new Node(rootVal);
+        int rootIndex = inOrderMap.get(rootVal);
+        if (preStart == preEnd) {
+            return root;
+        }
+
+        int leftNodes = rootIndex - inStart, rightNodes = inEnd - rootIndex;
+        root.left = buildTree(preOrder, preStart + 1, preStart + leftNodes,
+                inStart, rootIndex - 1, inOrderMap);
+        root.right = buildTree(preOrder, preEnd - rightNodes + 1, preEnd,
+                rootIndex + 1, inEnd, inOrderMap);
+
+        return root;
     }
 
     public String toString(int layer) {
