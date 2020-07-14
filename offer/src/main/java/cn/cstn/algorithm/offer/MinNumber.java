@@ -45,7 +45,7 @@ public class MinNumber {
     }
 
     public static String minNumber(int[] nums) {
-        ArrayUtil.quickSort(nums, (x, y) -> Integer.parseInt(x + "" + y) - Integer.parseInt(y + "" + x));
+        ArrayUtil.quickSort(nums, (x, y) -> (int)(Long.parseLong(x + "" + y) - Long.parseLong(y + "" + x)));
         StringBuilder res = new StringBuilder();
         Arrays.stream(nums).forEach(res::append);
         return res.toString();
