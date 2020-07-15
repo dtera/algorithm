@@ -16,6 +16,44 @@ import java.util.function.Predicate;
  */
 public class StringUtil {
 
+    public static String lcs(String a, String b) {
+        if (a == null || b == null) return null;
+
+        int m = a.length(), n = b.length();
+        int[][] dp = new int[m + 1][n + 1];
+        int[][] status = new int[m + 1][n + 1];
+
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (a.charAt(i - 1) == b.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                    status[i][j] = 1;
+                } else {
+                    if (dp[i][j - 1] >= dp[i - 1][j]) {
+                        dp[i][j] = dp[i][j - 1];
+                        status[i][j] = 2;
+                    } else {
+                        dp[i][j] = dp[i - 1][j];
+                        status[i][j] = 3;
+                    }
+                }
+            }
+        }
+
+        int k = dp[m][n], i = m, j = n;
+        char[] res = new char[dp[m][n]];
+        while (i > 0 && j > 0) {
+            if (status[i][j] == 1) {
+                res[--k] = a.charAt(i - 1);
+                i--;
+                j--;
+            } else if (status[i][j] == 2) j--;
+            else i--;
+        }
+
+        return new String(res);
+    }
+
     public static void permutation(String a, Consumer<String> consumer) {
         ArrayUtil.permutation(ArrayUtil.primitiveToObj(a.toCharArray()), characters -> {
             StringBuilder sb = new StringBuilder();
