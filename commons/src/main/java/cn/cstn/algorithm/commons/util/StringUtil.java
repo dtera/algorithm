@@ -3,6 +3,7 @@ package cn.cstn.algorithm.commons.util;
 import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
@@ -15,6 +16,21 @@ import java.util.function.Predicate;
  * date :               2018/9/5 0005 20:29
  */
 public class StringUtil {
+
+    public static int lengthOfLongestSubstring(String s) {
+        if (s == null || s.length() == 0) return 0;
+
+        int res = 0, p = 0, n = s.length();
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            int j = map.getOrDefault(s.charAt(i), -1);
+            p = i - j > p ? p + 1 : i - j;
+            if (p > res) res = p;
+            map.put(s.charAt(i), i);
+        }
+
+        return res;
+    }
 
     public static String lcs(String a, String b) {
         if (a == null || b == null) return null;
