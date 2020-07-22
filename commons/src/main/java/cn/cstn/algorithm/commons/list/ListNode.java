@@ -30,6 +30,18 @@ public class ListNode {
         System.out.println(sb.toString());
     }
 
+    public static ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) return null;
+
+        ListNode a = headA, b = headB;
+        while (a != b) {
+            a = a == null ? headB : a.next;
+            b = b == null ? headA : b.next;
+        }
+
+        return a;
+    }
+
     public static ListNode copyRandomList(ListNode head) {
         if (head == null) return null;
         Map<ListNode, ListNode> visited = new HashMap<>();
