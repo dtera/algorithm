@@ -468,31 +468,50 @@ public class ArrayUtil {
 
     private static <T extends Comparable<T>> void mergeSort(T[] arr, int l, int r) {
         if (l == r) return;
-        int mid = (l + r) / 2;
+        int m = (l + r) / 2;
 
-        mergeSort(arr, l, mid);
-        mergeSort(arr, mid + 1, r);
-        merge(arr, l, mid, r);
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
 
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Comparable<T>> void merge(T[] arr, int l, int mid, int r) {
+    public static <T extends Comparable<T>> void merge(T[] arr, int l, int m, int r) {
         T[] t = (T[]) Array.newInstance(arr[0].getClass(), r - l + 1);
-        int i = l, j = mid + 1, k = 0;
+        int i = l, j = m + 1, k = 0;
 
-        while (i <= mid && j <= r)
+        while (i <= m && j <= r)
             if (arr[i].compareTo(arr[j]) < 0)
                 t[k++] = arr[i++];
             else
                 t[k++] = arr[j++];
 
-        while (i <= mid)
+        while (i <= m)
             t[k++] = arr[i++];
         while (j <= r)
             t[k++] = arr[j++];
 
         System.arraycopy(t, 0, arr, l, r - l + 1);
+
+    }
+
+    public static void merge(int[] arr, int l, int m, int r) {
+        int i = l, j = m + 1, k = 0, len = r - l + 1;
+        int[] t = new int[len];
+
+        while (i <= m && j <= r)
+            if (arr[i] < arr[j])
+                t[k++] = arr[i++];
+            else
+                t[k++] = arr[j++];
+
+        while (i <= m)
+            t[k++] = arr[i++];
+        while (j <= r)
+            t[k++] = arr[j++];
+
+        System.arraycopy(t, 0, arr, l, len);
 
     }
 
@@ -669,37 +688,37 @@ public class ArrayUtil {
 
         while (l <= r) {
             if (target.compareTo(arr[l]) == 0) return l;
-            final int mid = (l + r) / 2;
-            if (target.compareTo(arr[mid]) == 0) return mid;
+            final int m = (l + r) / 2;
+            if (target.compareTo(arr[m]) == 0) return m;
 
             //method1:
-            if (arr[mid].compareTo(arr[l]) > 0)
-                if (target.compareTo(arr[l]) >= 0 && target.compareTo(arr[mid]) < 0)
-                    return BS(arr, target, l, mid - 1);
+            if (arr[m].compareTo(arr[l]) > 0)
+                if (target.compareTo(arr[l]) >= 0 && target.compareTo(arr[m]) < 0)
+                    return BS(arr, target, l, m - 1);
                 else
-                    l = mid + 1;
-            else if (arr[mid].compareTo(arr[l]) < 0) {
-                if (target.compareTo(arr[mid]) > 0 && target.compareTo(arr[r]) <= 0)
-                    return BS(arr, target, mid + 1, r);
+                    l = m + 1;
+            else if (arr[m].compareTo(arr[l]) < 0) {
+                if (target.compareTo(arr[m]) > 0 && target.compareTo(arr[r]) <= 0)
+                    return BS(arr, target, m + 1, r);
                 else
-                    r = mid - 1;
+                    r = m - 1;
             } else l++;
 
             //method2:
-            /*else if (target < arr[mid]) {
-                if (arr[mid] > arr[l])
+            /*else if (target < arr[m]) {
+                if (arr[m] > arr[l])
                     if (target >= arr[l])
-                        return BS(arr, target, l, mid - 1);
+                        return BS(arr, target, l, m - 1);
                     else
-                        l = mid + 1;
-                else r = mid - 1;
+                        l = m + 1;
+                else r = m - 1;
             } else {
-                if (arr[mid] < arr[r])
+                if (arr[m] < arr[r])
                     if (target <= arr[r])
-                        return BS(arr, target, mid + 1, r);
+                        return BS(arr, target, m + 1, r);
                     else
-                        r = mid - 1;
-                else l = mid + 1;
+                        r = m - 1;
+                else l = m + 1;
             }*/
 
         }
@@ -712,14 +731,14 @@ public class ArrayUtil {
     }
 
     public static <T extends Comparable<T>> int BS(T[] arr, T target, int l, int r) {
-        int mid = (l + r) / 2;
+        int m = (l + r) / 2;
         while (l <= r) {
-            if (arr[mid].compareTo(target) == 0) return mid;
-            else if (target.compareTo(arr[mid]) < 0)
-                r = mid - 1;
+            if (arr[m].compareTo(target) == 0) return m;
+            else if (target.compareTo(arr[m]) < 0)
+                r = m - 1;
             else
-                l = mid + 1;
-            mid = (l + r) / 2;
+                l = m + 1;
+            m = (l + r) / 2;
         }
         return -1;
     }
