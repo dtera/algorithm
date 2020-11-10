@@ -9,19 +9,19 @@ package cn.cstn.algorithm.commons.state;
 public interface State {
 
     /**
-     * return state
+     * get the state index in dfa transition table {@link cn.cstn.algorithm.commons.graph.DFA}
      *
-     * @return state
+     * @return the index
      */
-    int getState();
+    int getIndex();
 
     /**
-     * state
+     * fetch state enum by index {@link cn.cstn.algorithm.commons.state.enums.StateEnum}
      *
-     * @param state state
-     * @param <S>   <S>
-     * @return state
+     * @param index state index in transition table
+     * @param <S> the type
+     * @return state enum
      */
-    <S extends State> S of(int state);
+    <S extends State> S fetch(int index);
 
 }

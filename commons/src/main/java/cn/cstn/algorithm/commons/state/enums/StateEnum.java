@@ -5,15 +5,17 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * state
+ * StateEnum
+ * @author zhaohuiqiang
+ * @date   2020/11/10
  */
 @Getter
 @RequiredArgsConstructor
 public enum StateEnum implements State {
     /**
-     * all
+     * new
      */
-    ALL(0, "all"),
+    NEW(0, "new"),
     /**
      * draft
      */
@@ -33,12 +35,12 @@ public enum StateEnum implements State {
     /**
      * delete
      */
-    DELETE(5, "DELETE");
+    DELETE(5, "delete");
 
     /**
-     * state
+     * index
      */
-    private final Integer state;
+    private final Integer index;
     /**
      * desc
      */
@@ -46,9 +48,9 @@ public enum StateEnum implements State {
 
     @SuppressWarnings("unchecked")
     @Override
-    public StateEnum of(int state) {
+    public StateEnum fetch(int state) {
         for (StateEnum stateEnum : values()) {
-            if (stateEnum.getState() == state)
+            if (stateEnum.getIndex() == state)
                 return stateEnum;
         }
         throw new IllegalStateException("state of [" + state + "] is not supported");

@@ -10,6 +10,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * DFA
@@ -28,6 +30,35 @@ public class DFA {
      * legal states
      */
     private final List<Integer> legalStates;
+
+    /**
+     * whether accepts while transiting from a state to anther
+     *
+     * @param fromState fromState
+     * @param toState   toState
+     * @return pair of transitive and symbols
+     */
+    public <S extends State> Pair<Boolean, List<CharType>> accept(S fromState, S toState) {
+        return accept(fromState, toState, CharType::of);
+    }
+
+    /**
+     * whether accepts while transiting from a state to anther
+     *
+     * @param fromState  fromState
+     * @param toState    toState
+     * @param map2Symbol map2Symbol
+     * @return pair of transitive and symbols
+     */
+    public <S extends State, R extends SymbolType<?>> Pair<Boolean, List<R>> accept(S fromState, S toState,
+                                                                                    Function<Integer, R> map2Symbol) {
+        int[] states = transTable[fromState.getIndex()];
+        List<R> symbols = IntStream.range(0, transTable[0].length)
+                .filter(i -> states[i] == toState.getIndex())
+                .mapToObj(map2Symbol::apply)
+                .collect(Collectors.toList());
+        return Pair.of(!symbols.isEmpty(), symbols);
+    }
 
     /**
      * whether accepts while emitting an operation from a state to anther
@@ -49,8 +80,8 @@ public class DFA {
      * @return pair of transitive and next state
      */
     public <T, S extends State> Pair<Boolean, S> accept(S fromState, SymbolType<T> symbolType, Predicate<S> p) {
-        Pair<Boolean, Integer> pair = accept(fromState.getState(), symbolType.index());
-        S nextState = fromState.of(pair.getRight());
+        Pair<Boolean, Integer> pair = accept(fromState.getIndex(), symbolType.getIndex());
+        S nextState = fromState.fetch(pair.getRight());
         return Pair.of((p == null || p.test(nextState)) && pair.getLeft(), nextState);
     }
 
@@ -155,8 +186,12 @@ public class DFA {
         private final String desc;
 
         @Override
-        public int index() {
+        public int getIndex() {
             return ordinal();
+        }
+
+        public static CharType of(Integer i) {
+            return values()[i];
         }
 
         public static CharType of(Character c) {
@@ -180,7 +215,7 @@ public class DFA {
         /**
          * @return index
          */
-        int index();
+        int getIndex();
 
         /**
          * @param t           t
