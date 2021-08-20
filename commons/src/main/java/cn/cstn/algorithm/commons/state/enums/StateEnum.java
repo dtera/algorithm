@@ -40,7 +40,7 @@ public enum StateEnum implements State {
     /**
      * index
      */
-    private final Integer index;
+    private final int index;
     /**
      * desc
      */
