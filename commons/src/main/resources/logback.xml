@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
     <!--specify logfile dir-->
-    <property name="LOG_HOME" value="/var/log/algorithm"/>
+    <property name="LOG_HOME" value="/tmp/algorithm"/>
     <!-- output to console -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -30,7 +30,7 @@
     </appender>
 
     <!-- level for log output -->
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
