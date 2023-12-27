@@ -56,7 +56,7 @@ def set_feats(f_path, feats, mn, offset, feat_offset):
                 i += 1
 
 
-def df2csv(sample_ids, labels, feats, feat_names, out_path, is_label_before, label_name='label', id_name='sample_id'):
+def df2csv(sample_ids, labels, feats, feat_names, out_path, is_label_before, label_name='label', id_name='example_id'):
     label_df = pd.DataFrame(labels, columns=[label_name])
     feats_df = pd.DataFrame(feats, columns=feat_names)
     if len(labels) != 0:
