@@ -21,8 +21,9 @@ class EccCurve:
         self.a = a
         self.b = b
         self.points = self._ecc_all_points()
-        self.GS = [(x, (-1 * y) % self.p) for x, y in self.points]
         self.ecc_points_print()
+        self.neg_points = [(x, (-1 * y) % self.p) for x, y in self.points]
+        self.GS = self.points + self.neg_points
         self.G = self.GS[random.randrange(1, len(self.GS))] if G is None else G
         self._set_order()
         self._ec_elgamal_generator(sk, pk)
@@ -113,23 +114,24 @@ class EccCurve:
         self.pk = self.ecc_point_np(self.sk, self.G) if pk is None else pk
         print(f'G = {self.G} \t n = {self.n} \t sk = {self.sk} \t pk = {self.pk}\n')
 
-    def ec_elgamal_encrypt(self, m, r=None):
+    def ec_elgamal_encrypt(self, m, lookup=True, r=None):
         r = random.randrange(1, self.n) if r is None else r
         C1 = self.ecc_point_np(r, self.G)
         mG = m if isinstance(m, tuple) else self.ecc_point_np(m, self.G)
-        C2 = self.ecc_point_add(mG, self.ecc_point_np(r, self.pk))
+        rPK = self.ecc_point_np(r, self.pk)
+        C2 = self.ecc_point_add(mG, rPK) if lookup else m * rPK[0]
         print(f'mG: {mG} \t C1: {C1} \t C2: {C2}')
         return C1, C2
 
-    def ec_elgamal_decrypt(self, C1, C2):
+    def ec_elgamal_decrypt(self, C1, C2, lookup=True):
         xC1 = self.ecc_point_np(self.sk, C1)
-        mG = self.ecc_point_sub(C2, xC1)
-        return self._table[mG]
+        mG = self.ecc_point_sub(C2, xC1) if lookup else (C2 * self.mod_inverse(xC1[0]) % self.p)
+        return self._table[mG] if lookup else mG
 
 
 if __name__ == '__main__':
     # ec = EccCurve(11, 1, 6)
-    ec = EccCurve(37, 2, 5)
+    ec = EccCurve(37, 2, 5, (3, 1), 11)
     p1, p2 = ec.points[1], ec.points[3]
     add_res = ec.ecc_point_add(p1, p2)
     _2p_res = ec.ecc_point_np(2, p1)
@@ -138,7 +140,8 @@ if __name__ == '__main__':
         print(f'{i}{p1} =', ec.ecc_point_np(i, p1))
 
     m = 9
+    lookup = True
     print(f'\nm: {m}')
-    C1, C2 = ec.ec_elgamal_encrypt(m)
-    decrpted_m = ec.ec_elgamal_decrypt(C1, C2)
+    C1, C2 = ec.ec_elgamal_encrypt(m, lookup)
+    decrpted_m = ec.ec_elgamal_decrypt(C1, C2, lookup)
     print(f'decrpted_m: {decrpted_m}')
