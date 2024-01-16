@@ -18,8 +18,9 @@ def libsvm_splits(p, in_path, out_path):
                     if feat_index > p.guest_feat_size:
                         split_index = i + 1
                         break
-                guest_data.append(' '.join(tokens[:split_index]))
-                host_data.append(' '.join(tokens[split_index:]))
+                if p.limit == -1 or len(guest_data) < p.limit:
+                    guest_data.append(' '.join(tokens[:split_index]))
+                    host_data.append(' '.join(tokens[split_index:]))
     if not (out_path.strip() == '' or os.path.exists(out_path)):
         os.makedirs(out_path)
     in_file_name = in_path.split('/')[-1]
@@ -39,6 +40,7 @@ if __name__ == '__main__':
     parser.add_argument("--in_path", type=str, default='../data/a9a.train', help="input data path.")
     parser.add_argument("--out_path", type=str, default='../out', help="output data path.")
     parser.add_argument("--guest_feat_size", type=int, default=10, help="feat size of guest.")
+    parser.add_argument("--limit", type=int, default=-1, help="feat size of guest.")
     parser.add_argument("--is_out_example_id", type=int, default=1, help="whether out example id.")
     p = parser.parse_args()
     libsvm_splits(p, p.in_path, p.out_path)
