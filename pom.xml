@@ -15,6 +15,7 @@
         <module>corporation</module>
         <module>offer</module>
         <module>tests</module>
+        <module>security</module>
     </modules>
 
     <properties>
@@ -39,7 +40,7 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.2.9</version>
+                <version>1.4.12</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
