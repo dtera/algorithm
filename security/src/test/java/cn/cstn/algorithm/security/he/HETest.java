@@ -9,10 +9,41 @@ import java.util.Random;
 public class HETest {
 
   @Test
-  public void paillier() {
+  public void paillierTest() {
     heTest1(HeSchemaType.PAILLIER, 2048);
     heTest2(HeSchemaType.PAILLIER, 2048);
     heTest3(HeSchemaType.PAILLIER, 2048);
+  }
+
+  @Test
+  public void paillierBatchTest() {
+    heBatchTest(HeSchemaType.PAILLIER, 2048);
+  }
+
+  private void heBatchTest(HeSchemaType schema, int keySize) {
+    HeSession session = HeSession.openSession(schema, keySize);
+    Random random = new Random();
+    BigInteger[] ms1 = new BigInteger[10000], ms2 = new BigInteger[10000];
+    for (int i = 0; i < ms1.length; i++) {
+      ms1[i] = BigInteger.valueOf(random.nextInt(10000));
+      ms2[i] = BigInteger.valueOf(random.nextInt(1000));
+    }
+    Ciphertext[] cs1 = session.encrypt(ms1);
+    Ciphertext[] cs2 = session.encrypt(ms2);
+    Ciphertext[] addCipher = session.add(cs1, cs2);
+    BigInteger[] addRes = session.decrypt(addCipher);
+    Ciphertext[] subCipher = session.sub(cs1, cs2);
+    BigInteger[] subRes = session.decrypt(subCipher);
+    Ciphertext[] mulCipher = session.mulPlaintext(cs1, ms2);
+    BigInteger[] mulRes = session.decrypt(mulCipher);
+    for (int i = 0; i < cs1.length; i++) {
+      if ((i + 1) % (cs1.length / 10) == 0) {
+        System.out.printf("[%1$d]: %2$d + %3$d = %4$d\t", i, ms1[i], ms2[i], ms1[i].add(ms2[i]));
+        System.out.printf("[%1$d]: %2$d - %3$d = %4$d\t", i, ms1[i], ms2[i], ms1[i].subtract(ms2[i]));
+        System.out.printf("[%1$d]: %2$d * %3$d = %4$d\t\n", i, ms1[i], ms2[i], ms1[i].multiply(ms2[i]));
+        System.out.printf("\taddRes: %1$d\tsubRes: %2$d\tmulRes: %3$d\n", addRes[i], subRes[i], mulRes[i]);
+      }
+    }
   }
 
   private void heTest3(HeSchemaType schema, int keySize) {
@@ -43,7 +74,7 @@ public class HETest {
     m = -m;
     System.out.printf("m = %d \t decrypt_m = %s\n", m, session.decrypt(session.encrypt(BigInteger.valueOf(m))));
     System.out.println("========================evaluator========================");
-    int m1 = random.nextInt(10000), m2 = random.nextInt(100);
+    int m1 = random.nextInt(10000), m2 = random.nextInt(1000);
     Ciphertext c1 = session.encrypt(BigInteger.valueOf(m1));
     Ciphertext c2 = session.encrypt(BigInteger.valueOf(m2));
     Ciphertext addCipher = session.add(c1, c2);
