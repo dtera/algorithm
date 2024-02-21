@@ -134,4 +134,11 @@ public class HeSession {
     return res;
   }
 
+  @Override
+  public String toString() {
+    return "HeSession{" +
+           "\npk=" + pk +
+           "\nsk=" + sk +
+           "\n}\n";
+  }
 }
