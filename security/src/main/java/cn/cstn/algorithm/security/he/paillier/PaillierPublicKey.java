@@ -17,7 +17,7 @@ import java.util.Random;
 public class PaillierPublicKey implements HePublicKey {
   private BigInteger n;
   private BigInteger nSquared;
-  private BigInteger g;
+  // private BigInteger g; // g = n + 1
 
   @Override
   public Ciphertext encrypt(BigInteger m) {
@@ -25,7 +25,9 @@ public class PaillierPublicKey implements HePublicKey {
     do {
       r = new BigInteger(n.bitLength(), new Random());
     } while (r.compareTo(n) >= 0 || !r.gcd(n).equals(BigInteger.ONE));
-    return Ciphertext.valueOf(g.modPow(m, getModulus()).multiply(r.modPow(n, getModulus())).mod(getModulus()));
+    // BigInteger gm = g.modPow(m, getModulus());
+    BigInteger gm = m.multiply(n).add(BigInteger.ONE);
+    return Ciphertext.valueOf(gm.multiply(r.modPow(n, getModulus())).mod(getModulus()));
   }
 
   @Override
@@ -43,7 +45,7 @@ public class PaillierPublicKey implements HePublicKey {
   public void encode(DerOutputStream dos) {
     dos.putInteger(n);
     dos.putInteger(nSquared);
-    dos.putInteger(g);
+    // dos.putInteger(g);
   }
 
   @Override
@@ -61,7 +63,7 @@ public class PaillierPublicKey implements HePublicKey {
     return "PaillierPublicKey{" +
            "\nn=" + n +
            "\nnSquared=" + nSquared +
-           "\ng=" + g +
+           //"\ng=" + g +
            "\n}";
   }
 
@@ -69,7 +71,8 @@ public class PaillierPublicKey implements HePublicKey {
   public static HePublicKey decodeToPublicKey(DerInputStream dis) {
     BigInteger n = dis.getBigInteger();
     BigInteger nSquared = dis.getBigInteger();
-    BigInteger g = dis.getBigInteger();
-    return new PaillierPublicKey(n, nSquared, g);
+    // BigInteger g = dis.getBigInteger();
+    // return new PaillierPublicKey(n, nSquared, g);
+    return new PaillierPublicKey(n, nSquared);
   }
 }

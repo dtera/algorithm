@@ -37,11 +37,12 @@ public class HETest {
     Ciphertext[] mulCipher = session.mulPlaintext(cs1, ms2);
     BigInteger[] mulRes = session.decrypt(mulCipher);
     for (int i = 0; i < cs1.length; i++) {
-      if ((i + 1) % (cs1.length / 10) == 0) {
+      if (i != 0 && i % (cs1.length / 10) == 0) {
         System.out.printf("[%1$d]: %2$d + %3$d = %4$d\t", i, ms1[i], ms2[i], ms1[i].add(ms2[i]));
         System.out.printf("[%1$d]: %2$d - %3$d = %4$d\t", i, ms1[i], ms2[i], ms1[i].subtract(ms2[i]));
         System.out.printf("[%1$d]: %2$d * %3$d = %4$d\t\n", i, ms1[i], ms2[i], ms1[i].multiply(ms2[i]));
-        System.out.printf("\taddRes: %1$d\tsubRes: %2$d\tmulRes: %3$d\n", addRes[i], subRes[i], mulRes[i]);
+        System.out.printf("\t\t\taddRes = %1$d\t\t\t\tsubRes = %2$d\t\t\t\tmulRes = %3$d\n",
+          addRes[i], subRes[i], mulRes[i]);
       }
     }
   }
