@@ -11,7 +11,7 @@ import java.lang.reflect.Constructor;
 @RequiredArgsConstructor
 public enum HeSchemaType {
 
-  PAILLIER;
+  PAILLIER, OU;
 
   private int keySize = HeKeyPairGenerator.DEFAULT_KEY_SIZE;
   private HeKeyPairGenerator keyGen;

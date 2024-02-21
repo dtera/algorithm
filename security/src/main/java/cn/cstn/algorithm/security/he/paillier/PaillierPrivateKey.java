@@ -24,7 +24,7 @@ public class PaillierPrivateKey implements HePrivateKey {
 
   @Override
   public BigInteger decrypt(HeCiphertext c) {
-    BigInteger m = L(c.c.modPow(lambda, getModulus()), n).mod(n).multiply(mu).mod(n);
+    BigInteger m = L(c.c.modPow(lambda, getModulus()), n).multiply(mu).mod(n);
     if (m.compareTo(n.divide(valueOf(2))) > 0) {
       m = m.subtract(n);
     }
