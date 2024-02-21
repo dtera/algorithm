@@ -9,6 +9,18 @@ import java.util.Random;
 public class HETest {
 
   @Test
+  public void ouTest() {
+    heTest1(HeSchemaType.OU, 2048);
+    heTest2(HeSchemaType.OU, 2048);
+    heTest3(HeSchemaType.OU, 2048);
+  }
+
+  @Test
+  public void ouBatchTest() {
+    heBatchTest(HeSchemaType.OU, 2048);
+  }
+
+  @Test
   public void paillierTest() {
     heTest1(HeSchemaType.PAILLIER, 2048);
     heTest2(HeSchemaType.PAILLIER, 2048);
