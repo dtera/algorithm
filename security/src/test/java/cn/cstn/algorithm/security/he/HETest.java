@@ -28,13 +28,13 @@ public class HETest {
       ms1[i] = BigInteger.valueOf(random.nextInt(10000));
       ms2[i] = BigInteger.valueOf(random.nextInt(1000));
     }
-    Ciphertext[] cs1 = session.encrypt(ms1);
-    Ciphertext[] cs2 = session.encrypt(ms2);
-    Ciphertext[] addCipher = session.add(cs1, cs2);
+    HeCiphertext[] cs1 = session.encrypt(ms1);
+    HeCiphertext[] cs2 = session.encrypt(ms2);
+    HeCiphertext[] addCipher = session.add(cs1, cs2);
     BigInteger[] addRes = session.decrypt(addCipher);
-    Ciphertext[] subCipher = session.sub(cs1, cs2);
+    HeCiphertext[] subCipher = session.sub(cs1, cs2);
     BigInteger[] subRes = session.decrypt(subCipher);
-    Ciphertext[] mulCipher = session.mulPlaintext(cs1, ms2);
+    HeCiphertext[] mulCipher = session.mulPlaintext(cs1, ms2);
     BigInteger[] mulRes = session.decrypt(mulCipher);
     for (int i = 0; i < cs1.length; i++) {
       if (i != 0 && i % (cs1.length / 10) == 0) {
@@ -70,17 +70,17 @@ public class HETest {
     System.out.println("====================encrypt & decrypt====================");
     Random random = new Random();
     int m = random.nextInt(10000);
-    Ciphertext cipher = session.encrypt(BigInteger.valueOf(m));
+    HeCiphertext cipher = session.encrypt(BigInteger.valueOf(m));
     System.out.printf("m = %d \t decrypt_m = %s\n", m, session.decrypt(cipher));
     m = -m;
     System.out.printf("m = %d \t decrypt_m = %s\n", m, session.decrypt(session.encrypt(BigInteger.valueOf(m))));
     System.out.println("========================evaluator========================");
     int m1 = random.nextInt(10000), m2 = random.nextInt(1000);
-    Ciphertext c1 = session.encrypt(BigInteger.valueOf(m1));
-    Ciphertext c2 = session.encrypt(BigInteger.valueOf(m2));
-    Ciphertext addCipher = session.add(c1, c2);
-    Ciphertext subCipher = session.sub(c1, c2);
-    Ciphertext mulPlianCipher = session.mulPlaintext(c1, BigInteger.valueOf(m2));
+    HeCiphertext c1 = session.encrypt(BigInteger.valueOf(m1));
+    HeCiphertext c2 = session.encrypt(BigInteger.valueOf(m2));
+    HeCiphertext addCipher = session.add(c1, c2);
+    HeCiphertext subCipher = session.sub(c1, c2);
+    HeCiphertext mulPlianCipher = session.mulPlaintext(c1, BigInteger.valueOf(m2));
     int add = m1 + m2, sub = m1 - m2, mulPlain = m1 * m2;
     BigInteger addDecrypted = session.decrypt(addCipher), subDecrypted = session.decrypt(subCipher),
       mulPlainDecrypted = session.decrypt(mulPlianCipher);

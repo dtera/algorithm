@@ -6,7 +6,7 @@ import sun.security.util.DerInputStream;
 import java.math.BigInteger;
 
 public interface HePublicKey extends HeKey {
-  Ciphertext encrypt(BigInteger m);
+  HeCiphertext encrypt(BigInteger m);
 
   HeEvaluator getEvaluator();
 

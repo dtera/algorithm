@@ -8,7 +8,7 @@ import java.math.BigInteger;
 import static java.math.BigInteger.ONE;
 
 public interface HePrivateKey extends HeKey {
-  BigInteger decrypt(Ciphertext c);
+  BigInteger decrypt(HeCiphertext c);
 
   /**
    * L function: L(x) = (x - 1) / n

@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.security.he.paillier;
 
-import cn.cstn.algorithm.security.he.Ciphertext;
+import cn.cstn.algorithm.security.he.HeCiphertext;
 import cn.cstn.algorithm.security.he.HePrivateKey;
 import cn.cstn.algorithm.security.he.HeSchemaType;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class PaillierPrivateKey implements HePrivateKey {
   private final BigInteger mu;
 
   @Override
-  public BigInteger decrypt(Ciphertext c) {
+  public BigInteger decrypt(HeCiphertext c) {
     BigInteger m = L(c.c.modPow(lambda, getModulus()), n).mod(n).multiply(mu).mod(n);
     if (m.compareTo(n.divide(valueOf(2))) > 0) {
       m = m.subtract(n);

@@ -9,20 +9,20 @@ public class HeEvaluator {
     this.publicKey = publicKey;
   }
 
-  public Ciphertext add(Ciphertext c1, Ciphertext c2) {
-    return Ciphertext.valueOf(add(c1.c, c2.c));
+  public HeCiphertext add(HeCiphertext c1, HeCiphertext c2) {
+    return HeCiphertext.valueOf(add(c1.c, c2.c));
   }
 
-  public Ciphertext sub(Ciphertext c1, Ciphertext c2) {
+  public HeCiphertext sub(HeCiphertext c1, HeCiphertext c2) {
     return add(c1, negate(c2));
   }
 
-  public Ciphertext mulPlaintext(Ciphertext c, BigInteger m) {
-    return Ciphertext.valueOf(mulPlaintext(c.c, m));
+  public HeCiphertext mulPlaintext(HeCiphertext c, BigInteger m) {
+    return HeCiphertext.valueOf(mulPlaintext(c.c, m));
   }
 
-  public Ciphertext negate(Ciphertext c) {
-    return Ciphertext.valueOf(negate(c.c));
+  public HeCiphertext negate(HeCiphertext c) {
+    return HeCiphertext.valueOf(negate(c.c));
   }
 
   // unwrap
