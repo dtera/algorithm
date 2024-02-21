@@ -4,12 +4,14 @@ import cn.cstn.algorithm.security.he.HeKeyPair;
 import cn.cstn.algorithm.security.he.HeKeyPairGenerator;
 import cn.cstn.algorithm.security.he.HePrivateKey;
 import cn.cstn.algorithm.security.he.HePublicKey;
+import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
 
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.valueOf;
 
+@NoArgsConstructor
 public class PaillierKeyPairGenerator extends HeKeyPairGenerator {
   private static final int kPQDifferenceBitLenSub = 2;
 
