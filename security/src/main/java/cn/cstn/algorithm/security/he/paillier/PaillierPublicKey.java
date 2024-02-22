@@ -1,7 +1,7 @@
 package cn.cstn.algorithm.security.he.paillier;
 
+import cn.cstn.algorithm.security.he.HeAbstractPublicKey;
 import cn.cstn.algorithm.security.he.HeCiphertext;
-import cn.cstn.algorithm.security.he.HeEvaluator;
 import cn.cstn.algorithm.security.he.HePublicKey;
 import cn.cstn.algorithm.security.he.HeSchemaType;
 import lombok.AllArgsConstructor;
@@ -10,21 +10,20 @@ import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;
 
 import java.math.BigInteger;
-import java.util.Random;
+import java.security.SecureRandom;
 
+import static cn.cstn.algorithm.security.he.HeUtils.randomLtAndCoPrimeN;
 
 @AllArgsConstructor
-public class PaillierPublicKey implements HePublicKey {
+public class PaillierPublicKey extends HeAbstractPublicKey {
   private BigInteger n;
   private BigInteger nSquared;
   // private BigInteger g; // g = n + 1
+  private final SecureRandom random = new SecureRandom();
 
   @Override
   public HeCiphertext encrypt(BigInteger m) {
-    BigInteger r;
-    do {
-      r = new BigInteger(n.bitLength(), new Random());
-    } while (r.compareTo(n) >= 0 || !r.gcd(n).equals(BigInteger.ONE));
+    BigInteger r = randomLtAndCoPrimeN(n, random);
     // BigInteger gm = g.modPow(m, getModulus());
     BigInteger gm = m.multiply(n).add(BigInteger.ONE);
     return HeCiphertext.valueOf(gm.multiply(r.modPow(n, getModulus())).mod(getModulus()));
@@ -33,11 +32,6 @@ public class PaillierPublicKey implements HePublicKey {
   @Override
   public BigInteger getModulus() {
     return nSquared;
-  }
-
-  @Override
-  public HeEvaluator getEvaluator() {
-    return new HeEvaluator(this);
   }
 
   @SneakyThrows

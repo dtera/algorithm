@@ -17,7 +17,7 @@ public class HeSession {
   }
 
   public static HeSession openSession(HeSchemaType schema) {
-    return new HeSession(schema, HeKeyPairGenerator.DEFAULT_KEY_SIZE);
+    return new HeSession(schema, HeAbstractKeyPairGenerator.DEFAULT_KEY_SIZE);
   }
 
   public static HeSession openSession(HePublicKey publicKey, HePrivateKey privateKey) {
@@ -37,7 +37,7 @@ public class HeSession {
   }
 
   private HeSession(HeSchemaType schema, int keySize) {
-    HeKeyPairGenerator keyGen = schema.keySize(keySize).getKeyPairGenerator();
+    HeAbstractKeyPairGenerator keyGen = schema.keySize(keySize).getKeyPairGenerator();
     HeKeyPair keyPair = keyGen.generateKeyPair();
     this.init(keyPair.getPublicKey(), keyPair.getPrivateKey());
   }

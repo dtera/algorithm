@@ -10,14 +10,14 @@ import sun.security.util.DerOutputStream;
 
 import java.math.BigInteger;
 
-import static cn.cstn.algorithm.security.he.HePrivateKey.L;
-import static java.math.BigInteger.valueOf;
+import static cn.cstn.algorithm.security.he.HeUtils.L;
 
 @RequiredArgsConstructor
 public class PaillierPrivateKey implements HePrivateKey {
   private final BigInteger p;
   private final BigInteger q;
   private final BigInteger n;
+  private final BigInteger nHalf;
   private final BigInteger nSquared;
   private final BigInteger lambda;
   private final BigInteger mu;
@@ -25,7 +25,7 @@ public class PaillierPrivateKey implements HePrivateKey {
   @Override
   public BigInteger decrypt(HeCiphertext c) {
     BigInteger m = L(c.c.modPow(lambda, getModulus()), n).multiply(mu).mod(n);
-    if (m.compareTo(n.divide(valueOf(2))) > 0) {
+    if (m.compareTo(nHalf) > 0) {
       m = m.subtract(n);
     }
     return m;
@@ -42,6 +42,7 @@ public class PaillierPrivateKey implements HePrivateKey {
     dos.putInteger(p);
     dos.putInteger(q);
     dos.putInteger(n);
+    dos.putInteger(nHalf);
     dos.putInteger(nSquared);
     dos.putInteger(lambda);
     dos.putInteger(mu);
@@ -72,9 +73,10 @@ public class PaillierPrivateKey implements HePrivateKey {
     BigInteger p = dis.getBigInteger();
     BigInteger q = dis.getBigInteger();
     BigInteger n = dis.getBigInteger();
+    BigInteger nHalf = dis.getBigInteger();
     BigInteger nSquared = dis.getBigInteger();
     BigInteger lambda = dis.getBigInteger();
     BigInteger mu = dis.getBigInteger();
-    return new PaillierPrivateKey(p, q, n, nSquared, lambda, mu);
+    return new PaillierPrivateKey(p, q, n, nHalf, nSquared, lambda, mu);
   }
 }

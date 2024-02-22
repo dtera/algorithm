@@ -1,7 +1,7 @@
 package cn.cstn.algorithm.security.he.paillier;
 
+import cn.cstn.algorithm.security.he.HeAbstractKeyPairGenerator;
 import cn.cstn.algorithm.security.he.HeKeyPair;
-import cn.cstn.algorithm.security.he.HeKeyPairGenerator;
 import cn.cstn.algorithm.security.he.HePrivateKey;
 import cn.cstn.algorithm.security.he.HePublicKey;
 import lombok.NoArgsConstructor;
@@ -12,11 +12,11 @@ import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.valueOf;
 
 @NoArgsConstructor
-public class PaillierKeyPairGenerator extends HeKeyPairGenerator {
+public class PaillierKeyPairGenerator extends HeAbstractKeyPairGenerator {
   private static final int kPQDifferenceBitLenSub = 2;
 
-  public PaillierKeyPairGenerator(int keysize) {
-    super(keysize);
+  public PaillierKeyPairGenerator(int keySize, int version) {
+    super(keySize, version);
   }
 
   @Override
@@ -44,7 +44,7 @@ public class PaillierKeyPairGenerator extends HeKeyPairGenerator {
     // mu = L(g.modPow(lambda, nSquared), n).modInverse(n); // mu = L(g^lambda mod n^2)^-1 mod n
     mu = lambda.modInverse(n);
     HePublicKey pk = new PaillierPublicKey(n, nSquared); // new PaillierPublicKey(n, nSquared, g);
-    HePrivateKey sk = new PaillierPrivateKey(p, q, n, nSquared, lambda, mu);
+    HePrivateKey sk = new PaillierPrivateKey(p, q, n, n.divide(valueOf(2)), nSquared, lambda, mu);
 
     return new HeKeyPair(pk, sk);
   }

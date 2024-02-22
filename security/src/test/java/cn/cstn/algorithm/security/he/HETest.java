@@ -9,6 +9,18 @@ import java.util.Random;
 public class HETest {
 
   @Test
+  public void ouV1Test() {
+    heTest1(HeSchemaType.OU_V1, 2048);
+    heTest2(HeSchemaType.OU_V1, 2048);
+    heTest3(HeSchemaType.OU_V1, 2048);
+  }
+
+  @Test
+  public void ouV1BatchTest() {
+    heBatchTest(HeSchemaType.OU_V1, 2048);
+  }
+
+  @Test
   public void ouTest() {
     heTest1(HeSchemaType.OU, 2048);
     heTest2(HeSchemaType.OU, 2048);
@@ -51,23 +63,22 @@ public class HETest {
     for (int i = 0; i < cs1.length; i++) {
       if (i != 0 && i % (cs1.length / 10) == 0) {
         System.out.printf("[%1$d]: %2$d + %3$d = %4$d\t", i, ms1[i], ms2[i], ms1[i].add(ms2[i]));
-        System.out.printf("[%1$d]: %2$d - %3$d = %4$d\t", i, ms1[i], ms2[i], ms1[i].subtract(ms2[i]));
-        System.out.printf("[%1$d]: %2$d * %3$d = %4$d\t\n", i, ms1[i], ms2[i], ms1[i].multiply(ms2[i]));
-        System.out.printf("\t\t\taddRes = %1$d\t\t\t\tsubRes = %2$d\t\t\t\tmulRes = %3$d\n",
-          addRes[i], subRes[i], mulRes[i]);
+        System.out.printf("%1$d - %2$d = %3$d\t", ms1[i], ms2[i], ms1[i].subtract(ms2[i]));
+        System.out.printf("%1$d * %2$d = %3$d\t\n", ms1[i], ms2[i], ms1[i].multiply(ms2[i]));
+        System.out.printf("\t\t\taddRes = %1$d\t\tsubRes = %2$d\t\tmulRes = %3$d\n", addRes[i], subRes[i], mulRes[i]);
       }
     }
   }
 
   private void heTest3(HeSchemaType schema, int keySize) {
-    HeKeyPairGenerator keyGen = schema.keySize(keySize).getKeyPairGenerator();
+    HeAbstractKeyPairGenerator keyGen = schema.keySize(keySize).getKeyPairGenerator();
     HeKeyPair keyPair = keyGen.generateKeyPair();
     HeSession session = HeSession.openSession(keyPair.getPublicKey().getEncoded(), keyPair.getPrivateKey().getEncoded());
     heSessionTest(session);
   }
 
   private void heTest2(HeSchemaType schema, int keySize) {
-    HeKeyPairGenerator keyGen = schema.keySize(keySize).getKeyPairGenerator();
+    HeAbstractKeyPairGenerator keyGen = schema.keySize(keySize).getKeyPairGenerator();
     HeKeyPair keyPair = keyGen.generateKeyPair();
     HeSession session = HeSession.openSession(keyPair.getPublicKey(), keyPair.getPrivateKey());
     heSessionTest(session);

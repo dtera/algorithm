@@ -10,20 +10,20 @@ import sun.security.util.DerOutputStream;
 
 import java.math.BigInteger;
 
-import static cn.cstn.algorithm.security.he.HePrivateKey.L;
-import static java.math.BigInteger.valueOf;
+import static cn.cstn.algorithm.security.he.HeUtils.L;
 
 @RequiredArgsConstructor
 public class OuPrivateKey implements HePrivateKey {
   private final BigInteger p;
-  private final BigInteger pMinusOne;
+  private final BigInteger pHalf;
+  private final BigInteger t;
   private final BigInteger pSquared;
   private final BigInteger gpInv;
 
   @Override
   public BigInteger decrypt(HeCiphertext c) {
-    BigInteger m = L(c.c.modPow(pMinusOne, getModulus()), p).multiply(gpInv).mod(p);
-    if (m.compareTo(p.divide(valueOf(2))) > 0) {
+    BigInteger m = L(c.c.mod(getModulus()).modPow(t, getModulus()), p).multiply(gpInv).mod(p);
+    if (m.compareTo(pHalf) > 0) {
       m = m.subtract(p);
     }
     return m;
@@ -38,7 +38,8 @@ public class OuPrivateKey implements HePrivateKey {
   @Override
   public void encode(DerOutputStream dos) {
     dos.putInteger(p);
-    dos.putInteger(pMinusOne);
+    dos.putInteger(pHalf);
+    dos.putInteger(t);
     dos.putInteger(pSquared);
     dos.putInteger(gpInv);
   }
@@ -57,8 +58,7 @@ public class OuPrivateKey implements HePrivateKey {
   public String toString() {
     return "PaillierPrivateKey{" +
            "\np=" + p +
-           "\np-1=" + pMinusOne +
-           "\np^2=" + pSquared +
+           "\nt=" + t +
            "\ngp-1=" + gpInv +
            "\n}";
   }
@@ -66,9 +66,10 @@ public class OuPrivateKey implements HePrivateKey {
   @SneakyThrows
   public static HePrivateKey decodeToPrivateKey(DerInputStream dis) {
     BigInteger p = dis.getBigInteger();
-    BigInteger pMinusOne = dis.getBigInteger();
+    BigInteger pHalf = dis.getBigInteger();
+    BigInteger t = dis.getBigInteger();
     BigInteger pSquared = dis.getBigInteger();
     BigInteger gpInv = dis.getBigInteger();
-    return new OuPrivateKey(p, pMinusOne, pSquared, gpInv);
+    return new OuPrivateKey(p, pHalf, t, pSquared, gpInv);
   }
 }
