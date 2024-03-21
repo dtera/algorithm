@@ -1,12 +1,50 @@
 package cn.cstn.algorithm.security.he;
 
 import org.junit.Test;
+import org.springframework.util.StopWatch;
 
 import java.math.BigInteger;
 import java.util.Random;
 
 @SuppressWarnings("SameParameterValue")
 public class HETest {
+
+  @Test
+  public void fixedBaseModPowSpaceTest() {
+    StopWatch sw = new StopWatch("HeFixedBaseModPowSpace");
+    BigInteger base = BigInteger.valueOf(2), modulus = BigInteger.valueOf(13);
+    int len = 10000000, step = len / 10;
+    int[] res = new int[len];
+
+    sw.start("makeCachedTable");
+    HeFixedBaseModPowSpace space = HeFixedBaseModPowSpace.getInstance(base, modulus, 16);
+    System.out.println(space);
+    sw.stop();
+
+
+    sw.start("[raw]modPow");
+    for (int i = 0; i < len; i++) {
+      res[i] = base.modPow(BigInteger.valueOf(i + 1), modulus).intValue();
+    }
+    sw.stop();
+
+    sw.start("[cached]modPow");
+    for (int i = 0; i < len; i++) {
+      int t = space.modPow(BigInteger.valueOf(i + 1)).intValue();
+      if (i % step == 0 && i != 0) {
+        System.out.printf("res[%d] = %d \t cached res[%d] = %d\n", i, res[i], i, t);
+      }
+      try {
+        assert res[i] == t;
+      } catch (AssertionError e) {
+        System.out.printf("res[%d] = %d \t cached res[%d] = %d\n", i, res[i], i, t);
+        throw e;
+      }
+    }
+    sw.stop();
+
+    System.out.println("\n" + sw.prettyPrint());
+  }
 
   @Test
   public void ouV1Test() {
@@ -17,7 +55,7 @@ public class HETest {
 
   @Test
   public void ouV1BatchTest() {
-    heBatchTest(HeSchemaType.OU_V1, 2048);
+    heBatchTest(HeSchemaType.OU_V1, 2048, true);
   }
 
   @Test
@@ -29,7 +67,7 @@ public class HETest {
 
   @Test
   public void ouBatchTest() {
-    heBatchTest(HeSchemaType.OU, 2048);
+    heBatchTest(HeSchemaType.OU, 2048, false);
   }
 
   @Test
@@ -41,11 +79,11 @@ public class HETest {
 
   @Test
   public void paillierBatchTest() {
-    heBatchTest(HeSchemaType.PAILLIER, 2048);
+    heBatchTest(HeSchemaType.PAILLIER, 2048, false);
   }
 
-  private void heBatchTest(HeSchemaType schema, int keySize) {
-    HeSession session = HeSession.openSession(schema, keySize);
+  private void heBatchTest(HeSchemaType schema, int keySize, boolean supportCached) {
+    HeSession session = HeSession.openSession(schema, keySize, supportCached);
     Random random = new Random();
     BigInteger[] ms1 = new BigInteger[10000], ms2 = new BigInteger[10000];
     for (int i = 0; i < ms1.length; i++) {

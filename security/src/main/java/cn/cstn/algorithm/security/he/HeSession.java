@@ -1,5 +1,6 @@
 package cn.cstn.algorithm.security.he;
 
+import lombok.Setter;
 import org.springframework.util.StopWatch;
 
 import java.math.BigInteger;
@@ -11,67 +12,102 @@ public class HeSession {
   private HePrivateKey sk;
   private HeEvaluator evaluator;
   private StopWatch sw;
+  @Setter
+  private boolean supportCached = true;
 
   public static HeSession openSession(HeSchemaType schema, int keySize) {
-    return new HeSession(schema, keySize);
+    return openSession(schema, keySize, true);
   }
 
   public static HeSession openSession(HeSchemaType schema) {
-    return new HeSession(schema, HeAbstractKeyPairGenerator.DEFAULT_KEY_SIZE);
+    return openSession(schema, HeAbstractKeyPairGenerator.DEFAULT_KEY_SIZE, true);
   }
 
   public static HeSession openSession(HePublicKey publicKey, HePrivateKey privateKey) {
-    return new HeSession(publicKey, privateKey);
+    return openSession(publicKey, privateKey, true);
   }
 
   public static HeSession openSession(HePublicKey publicKey) {
-    return new HeSession(publicKey);
+    return openSession(publicKey, true);
   }
 
   public static HeSession openSession(byte[] publicKeyEncoded, byte[] privateKeyEncoded) {
-    return new HeSession(publicKeyEncoded, privateKeyEncoded);
+    return openSession(publicKeyEncoded, privateKeyEncoded, true);
   }
 
-  public static HeSession openSession(byte[] publicKeyEncoded) {
-    return new HeSession(publicKeyEncoded);
+  public static HeSession openSession(HeSchemaType schema, int keySize, boolean supportCached) {
+    return new HeSession(schema, keySize, supportCached);
+  }
+
+  public static HeSession openSession(HeSchemaType schema, boolean supportCached) {
+    return new HeSession(schema, HeAbstractKeyPairGenerator.DEFAULT_KEY_SIZE, supportCached);
+  }
+
+  public static HeSession openSession(HePublicKey publicKey, HePrivateKey privateKey, boolean supportCached) {
+    return new HeSession(publicKey, privateKey, supportCached);
+  }
+
+  public static HeSession openSession(HePublicKey publicKey, boolean supportCached) {
+    return new HeSession(publicKey, supportCached);
+  }
+
+  public static HeSession openSession(byte[] publicKeyEncoded, byte[] privateKeyEncoded, boolean supportCached) {
+    return new HeSession(publicKeyEncoded, privateKeyEncoded, supportCached);
+  }
+
+  public static HeSession openSession(byte[] publicKeyEncoded, boolean supportCached) {
+    return new HeSession(publicKeyEncoded, supportCached);
+  }
+
+  private HeSession(HeSchemaType schema, int keySize, boolean supportCached) {
+    HeAbstractKeyPairGenerator keyGen = schema.keySize(keySize).getKeyPairGenerator();
+    HeKeyPair keyPair = keyGen.generateKeyPair();
+    this.init(keyPair.getPublicKey(), keyPair.getPrivateKey(), supportCached);
   }
 
   private HeSession(HeSchemaType schema, int keySize) {
-    HeAbstractKeyPairGenerator keyGen = schema.keySize(keySize).getKeyPairGenerator();
-    HeKeyPair keyPair = keyGen.generateKeyPair();
-    this.init(keyPair.getPublicKey(), keyPair.getPrivateKey());
+    this(schema, keySize, true);
   }
 
-  private HeSession(HePublicKey publicKey, HePrivateKey privateKey) {
-    this.init(publicKey, privateKey);
+  private HeSession(HePublicKey publicKey, HePrivateKey privateKey, boolean supportCached) {
+    this.init(publicKey, privateKey, supportCached);
   }
 
-  private HeSession(HePublicKey publicKey) {
-    this(publicKey, null);
+  private HeSession(HePublicKey publicKey, boolean supportCached) {
+    this(publicKey, null, supportCached);
   }
 
-  private HeSession(byte[] publicKeyEncoded, byte[] privateKeyEncoded) {
-    this.init(HePublicKey.decodeToPublicKey(publicKeyEncoded), HePrivateKey.decodeToPrivateKey(privateKeyEncoded));
+  private HeSession(byte[] publicKeyEncoded, byte[] privateKeyEncoded, boolean supportCached) {
+    this.init(HePublicKey.decodeToPublicKey(publicKeyEncoded), HePrivateKey.decodeToPrivateKey(privateKeyEncoded),
+      supportCached);
   }
 
-  private HeSession(byte[] publicKeyEncoded) {
-    this(publicKeyEncoded, null);
+  private HeSession(byte[] publicKeyEncoded, boolean supportCached) {
+    this(publicKeyEncoded, null, supportCached);
   }
 
-  private void init(HePublicKey publicKey, HePrivateKey privateKey) {
+  private void init(HePublicKey publicKey, HePrivateKey privateKey, boolean supportCached) {
     this.pk = publicKey;
+    this.pk.init();
     this.sk = privateKey;
     this.evaluator = this.pk.getEvaluator();
     this.sw = new StopWatch();
+    this.supportCached = supportCached;
   }
 
   public HeCiphertext encrypt(BigInteger m) {
-    return pk.encrypt(m);
+    if (supportCached && pk.supportCached()) {
+      return pk.encryptWithCachedSpace(m);
+    } else {
+      return pk.encrypt(m);
+    }
   }
 
   public HeCiphertext[] encrypt(BigInteger[] ms) {
     sw.start("encrypt");
-    HeCiphertext[] res = Arrays.stream(ms).parallel().map(pk::encrypt).toArray(HeCiphertext[]::new);
+    HeCiphertext[] res = supportCached && pk.supportCached() ?
+      Arrays.stream(ms).parallel().map(pk::encryptWithCachedSpace).toArray(HeCiphertext[]::new) :
+      Arrays.stream(ms).parallel().map(pk::encrypt).toArray(HeCiphertext[]::new);
     sw.stop();
     System.out.printf("%s costs %s ms\n", sw.getLastTaskName(), sw.getLastTaskTimeMillis());
     return res;
