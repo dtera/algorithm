@@ -172,8 +172,9 @@ public class HeSession {
 
   @Override
   public String toString() {
-    return "HeSession{" +
+    return "HeSession {" +
            "\npk=" + pk +
+           "\ncachedSpace=" + pk.getCachedSpace() +
            "\nsk=" + sk +
            "\n}\n";
   }

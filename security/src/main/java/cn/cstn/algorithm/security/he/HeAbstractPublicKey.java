@@ -29,12 +29,17 @@ public abstract class HeAbstractPublicKey implements HePublicKey {
     return new HeEvaluator(this);
   }
 
+  @Override
+  public HeFixedBaseModPowSpace getCachedSpace() {
+    return space;
+  }
+
   protected BigInteger getBase() {
     return null;
   }
 
   protected int getDensity() {
-    return 8;
+    return 10;
   }
 
   protected int getExpMaxBits() {

@@ -16,6 +16,8 @@ public interface HePublicKey extends HeKey {
 
   HeEvaluator getEvaluator();
 
+  HeFixedBaseModPowSpace getCachedSpace();
+
   /**
    * decode to PublicKey
    *

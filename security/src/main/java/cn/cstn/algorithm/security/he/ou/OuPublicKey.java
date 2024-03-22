@@ -36,6 +36,7 @@ public class OuPublicKey extends HeAbstractPublicKey {
     BigInteger r = randomLtN(n, random);
     BigInteger gm = space.modPow(m);
     BigInteger hr = h.modPow(r, getModulus());
+    // BigInteger hr = hSpace.modPow(r);
     return HeCiphertext.valueOf(gm.multiply(hr).mod(getModulus()));
   }
 
@@ -52,7 +53,7 @@ public class OuPublicKey extends HeAbstractPublicKey {
   @Override
   protected int getExpMaxBits() {
     // return n.bitLength();
-    return super.getExpMaxBits();
+    return 128;
   }
 
   @SneakyThrows

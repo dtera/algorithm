@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.springframework.util.StopWatch;
 
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Random;
 
 @SuppressWarnings("SameParameterValue")
@@ -12,12 +13,12 @@ public class HETest {
   @Test
   public void fixedBaseModPowSpaceTest() {
     StopWatch sw = new StopWatch("HeFixedBaseModPowSpace");
-    BigInteger base = BigInteger.valueOf(2), modulus = BigInteger.valueOf(13);
-    int len = 10000000, step = len / 10;
+    BigInteger base = BigInteger.valueOf(2), modulus = BigInteger.probablePrime(2048, new SecureRandom());
+    int len = 1000000, step = len / 10;
     int[] res = new int[len];
 
     sw.start("makeCachedTable");
-    HeFixedBaseModPowSpace space = HeFixedBaseModPowSpace.getInstance(base, modulus, 16);
+    HeFixedBaseModPowSpace space = HeFixedBaseModPowSpace.getInstance(base, modulus, 10, 128);
     System.out.println(space);
     sw.stop();
 
@@ -27,6 +28,7 @@ public class HETest {
       res[i] = base.modPow(BigInteger.valueOf(i + 1), modulus).intValue();
     }
     sw.stop();
+    double t1 = sw.getLastTaskTimeNanos();
 
     sw.start("[cached]modPow");
     for (int i = 0; i < len; i++) {
@@ -42,8 +44,10 @@ public class HETest {
       }
     }
     sw.stop();
+    double t2 = sw.getLastTaskTimeNanos();
 
     System.out.println("\n" + sw.prettyPrint());
+    System.out.println("\ntimes: " + t1 / t2);
   }
 
   @Test
@@ -55,7 +59,7 @@ public class HETest {
 
   @Test
   public void ouV1BatchTest() {
-    heBatchTest(HeSchemaType.OU_V1, 2048, true);
+    heBatchTest(HeSchemaType.OU_V1, 2048, false);
   }
 
   @Test

@@ -28,7 +28,7 @@ public class HeFixedBaseModPowSpace {
   }
 
   public static HeFixedBaseModPowSpace getInstance(BigInteger base, BigInteger modulus) {
-    return getInstance(base, modulus, 8);
+    return getInstance(base, modulus, 10);
   }
 
   public void makeCachedTable() {
@@ -67,14 +67,23 @@ public class HeFixedBaseModPowSpace {
       m = m.shiftRight(expUnitBits);
       j = m.and(mask).intValue();
       if (j != 0) {
-        res = res.multiply(stairs[i * maskSize + j - 1]).mod(modulus);
+        res = res.multiply(stairs[i * maskSize + j - 1]);
       }
     }
-    return res;
+    return res.mod(modulus);
   }
 
   @Override
   public String toString() {
+    int mem = memSize / 8;
+    String menUseInfo = mem + "B";
+    if (mem >= (1 << 30)) {
+      menUseInfo = mem / (1 << 30) + "G";
+    } else if (mem >= (1 << 20)) {
+      menUseInfo = mem / (1 << 20) + "M";
+    } else if (mem >= (1 << 10)) {
+      menUseInfo = mem / (1 << 10) + "K";
+    }
     return "HeFixedBaseModPowSpace {" +
            "\nbase = " + base +
            "\nmodulus = " + modulus +
@@ -83,7 +92,7 @@ public class HeFixedBaseModPowSpace {
            "\nexpUnitSize = " + maskSize +
            "\ntotalStairLevel = " + totalStairLevel +
            "\nstairSize = " + stairs.length +
-           "\nmemSize = " + memSize +
+           "\nmemSize = " + menUseInfo +
            "\n}";
   }
 }
