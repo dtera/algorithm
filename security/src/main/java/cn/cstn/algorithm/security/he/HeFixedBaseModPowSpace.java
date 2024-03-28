@@ -79,10 +79,10 @@ public class HeFixedBaseModPowSpace {
       m = m.shiftRight(expUnitBits);
       j = m.and(mask).intValue();
       if (j != 0) {
-        res = res.multiply(stairs[i * maskSize + j - 1]);
+        res = res.multiply(stairs[i * maskSize + j - 1]).mod(modulus);
       }
     }
-    return res.mod(modulus);
+    return res;
   }
 
   @Override
