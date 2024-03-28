@@ -31,6 +31,16 @@ public class HeFixedBaseModPowSpace {
     return getInstance(base, modulus, 10);
   }
 
+  /**
+   * About stair storage format:
+   * Assuming expUnitBits = 3, then out_table stores:
+   * g^1, g^2, g^3, g^4, g^5, g^6, g^7
+   * g^8，g^16, g^24, g^32, g^40, g^48, g^56,
+   * g^64，g^128, g^192, ...
+   * g^512, ...
+   * ...
+   * Each group (line) has 2^expUnitBits - 1, flattened into a one-dimensional array for storage
+   */
   public void makeCachedTable() {
     int stairSize = 1 << expUnitBits;
     maskSize = stairSize - 1;
@@ -38,23 +48,25 @@ public class HeFixedBaseModPowSpace {
     stairs = new BigInteger[maskSize * (totalStairLevel - 1) +
                             (expMaxBits % expUnitBits == 0 ? maskSize : ((1 << (expMaxBits % expUnitBits)) - 1))];
 
-    for (int i = 0; i < (totalStairLevel > 1 ? maskSize : stairs.length); i++) {
-      stairs[i] = base.modPow(BigInteger.valueOf(i + 1), modulus);
-      memSize += stairs[i].bitLength();
-    }
+    saveLevelCache(base, 0, totalStairLevel > 1 ? maskSize : stairs.length);
     for (int i = 1; i < totalStairLevel - 1; i++) {
       int offset = maskSize * i;
-      int offsetBits = expUnitBits * i;
-      for (int j = 0; j < maskSize; j++) {
-        stairs[offset + j] = base.modPow(BigInteger.valueOf((j + 1L) << offsetBits), modulus);
-        memSize += stairs[offset + j].bitLength();
-      }
+      BigInteger levelBase = stairs[offset - 1].multiply(base).mod(modulus);
+      saveLevelCache(levelBase, offset, maskSize);
     }
-    int offset = maskSize * (totalStairLevel - 1);
-    int offsetBits = expUnitBits * (totalStairLevel - 1);
-    for (int j = 0; j < stairs.length - offset; j++) {
-      stairs[offset + j] = base.modPow(BigInteger.valueOf((j + 1L) << offsetBits), modulus);
-      memSize += stairs[offset + j].bitLength();
+    if (totalStairLevel > 1) {
+      int offset = maskSize * (totalStairLevel - 1);
+      BigInteger levelBase = stairs[offset - 1].multiply(base).mod(modulus);
+      saveLevelCache(levelBase, offset, stairs.length - offset);
+    }
+  }
+
+  private void saveLevelCache(BigInteger levelBase, int offset, int levelSize) {
+    stairs[offset] = levelBase;
+    memSize += stairs[offset].bitLength();
+    for (int i = 1; i < levelSize; i++) {
+      stairs[offset + i] = levelBase.multiply(stairs[offset + i - 1]).mod(modulus);
+      memSize += stairs[offset + i].bitLength();
     }
   }
 

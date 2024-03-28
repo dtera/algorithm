@@ -13,7 +13,8 @@ public class HETest {
   @Test
   public void fixedBaseModPowSpaceTest() {
     StopWatch sw = new StopWatch("HeFixedBaseModPowSpace");
-    BigInteger base = BigInteger.valueOf(2), modulus = BigInteger.probablePrime(2048, new SecureRandom());
+    SecureRandom sr = new SecureRandom();
+    BigInteger base = BigInteger.probablePrime(1024, sr), modulus = BigInteger.probablePrime(2048, sr);
     int len = 1000000, step = len / 10;
     int[] res = new int[len];
 
@@ -59,7 +60,7 @@ public class HETest {
 
   @Test
   public void ouV1BatchTest() {
-    heBatchTest(HeSchemaType.OU_V1, 2048, false);
+    heBatchTest(HeSchemaType.OU_V1, 2048, true);
   }
 
   @Test
