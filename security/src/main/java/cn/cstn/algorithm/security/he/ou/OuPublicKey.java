@@ -1,6 +1,9 @@
 package cn.cstn.algorithm.security.he.ou;
 
-import cn.cstn.algorithm.security.he.*;
+import cn.cstn.algorithm.security.he.HeAbstractPublicKey;
+import cn.cstn.algorithm.security.he.HeCiphertext;
+import cn.cstn.algorithm.security.he.HePublicKey;
+import cn.cstn.algorithm.security.he.HeSchemaType;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import sun.security.util.DerInputStream;
@@ -8,7 +11,7 @@ import sun.security.util.DerOutputStream;
 
 import java.math.BigInteger;
 
-import static cn.cstn.algorithm.security.he.HeUtils.randomLtN;
+import static cn.cstn.algorithm.security.util.BigIntegerUtils.randomLtN;
 
 
 @RequiredArgsConstructor
@@ -16,7 +19,7 @@ public class OuPublicKey extends HeAbstractPublicKey {
   private final BigInteger n;
   private final BigInteger g; // G = g^u mod n
   private final BigInteger h; // h = g_^n mod n, H = g_^(nu) mod n
-  private HeFixedBaseModPowSpace hSpace;
+  //private HeFixedBaseModPowSpace hSpace;
 
   @Override
   public void init() {
@@ -36,7 +39,7 @@ public class OuPublicKey extends HeAbstractPublicKey {
     BigInteger r = randomLtN(n, random);
     BigInteger gm = space.modPow(m);
     BigInteger hr = h.modPow(r, getModulus());
-    // BigInteger hr = hSpace.modPow(r);
+    //BigInteger hr = space.modPow(r);
     return HeCiphertext.valueOf(gm.multiply(hr).mod(getModulus()));
   }
 

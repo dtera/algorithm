@@ -12,7 +12,7 @@ import sun.security.util.DerOutputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
-import static cn.cstn.algorithm.security.he.HeUtils.randomLtAndCoPrimeN;
+import static cn.cstn.algorithm.security.util.BigIntegerUtils.randomLtAndCoPrimeN;
 
 @AllArgsConstructor
 public class PaillierPublicKey extends HeAbstractPublicKey {

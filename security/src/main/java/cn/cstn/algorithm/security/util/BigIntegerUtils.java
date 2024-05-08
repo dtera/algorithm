@@ -1,4 +1,4 @@
-package cn.cstn.algorithm.security.he;
+package cn.cstn.algorithm.security.util;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -6,7 +6,27 @@ import java.security.SecureRandom;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
 
-public class HeUtils {
+public final class BigIntegerUtils {
+
+  public static int[] toIntArray(BigInteger m) {
+    byte[] bs = m.toByteArray();
+    int[] res = new int[(bs.length - 1) / 4 + 1];
+    for (int i = 0; i < res.length; i++) {
+      int offset = 4 * i;
+      res[i] = bs[offset];
+      if (bs.length > offset + 1) {
+        res[i] |= (bs[offset + 1] << 8);
+      }
+      if (bs.length > offset + 2) {
+        res[i] |= (bs[offset + 2] << 16);
+      }
+      if (bs.length > offset + 3) {
+        res[i] |= (bs[offset + 3] << 24);
+      }
+    }
+    return res;
+    //return m.mag;
+  }
 
   /**
    * L function: L(x) = (x - 1) / n

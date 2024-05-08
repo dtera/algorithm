@@ -10,7 +10,7 @@ import sun.security.util.DerOutputStream;
 
 import java.math.BigInteger;
 
-import static cn.cstn.algorithm.security.he.HeUtils.L;
+import static cn.cstn.algorithm.security.util.BigIntegerUtils.L;
 
 @RequiredArgsConstructor
 public class OuPrivateKey implements HePrivateKey {

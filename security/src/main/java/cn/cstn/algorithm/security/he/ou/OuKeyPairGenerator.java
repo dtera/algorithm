@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
 
-import static cn.cstn.algorithm.security.he.HeUtils.*;
+import static cn.cstn.algorithm.security.util.BigIntegerUtils.*;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.valueOf;
 

@@ -12,9 +12,9 @@ public class HeFixedBaseModPowSpace {
   private final int expUnitBits;
   private final int expMaxBits;
 
-  private int maskSize;
-  private int totalStairLevel;
-  private int memSize = 0;
+  private int expUnitMask;
+  private int totalStairs;
+  private long memSize = 0;
   private BigInteger[] stairs;
 
   public static HeFixedBaseModPowSpace getInstance(BigInteger base, BigInteger modulus, int density, int expMaxBits) {
@@ -32,54 +32,72 @@ public class HeFixedBaseModPowSpace {
   }
 
   /**
-   * About stair storage format:
-   * Assuming expUnitBits = 3, then out_table stores:
-   * g^1, g^2, g^3, g^4, g^5, g^6, g^7
-   * g^8，g^16, g^24, g^32, g^40, g^48, g^56,
-   * g^64，g^128, g^192, ...
-   * g^512, ...
-   * ...
-   * Each group (line) has 2^expUnitBits - 1, flattened into a one-dimensional array for storage
+   * About stair storage format: <br>
+   * Assuming expUnitBits = 3, then out_table stores: <br>
+   * g^1, g^2, g^3, g^4, g^5, g^6, g^7 <br>
+   * g^8，g^16, g^24, g^32, g^40, g^48, g^56, <br>
+   * g^64，g^128, g^192, ... <br>
+   * g^512, ... <br>
+   * ... <br>
+   * Each group (line) has 2^expUnitBits - 1, <br>
+   * flattened into a one-dimensional array for storage
    */
   public void makeCachedTable() {
     int stairSize = 1 << expUnitBits;
-    maskSize = stairSize - 1;
-    totalStairLevel = expMaxBits / expUnitBits + (expMaxBits % expUnitBits == 0 ? 0 : 1);
-    stairs = new BigInteger[maskSize * (totalStairLevel - 1) +
-                            (expMaxBits % expUnitBits == 0 ? maskSize : ((1 << (expMaxBits % expUnitBits)) - 1))];
+    expUnitMask = stairSize - 1;
+    totalStairs = (expMaxBits + expUnitBits - 1) / expUnitBits;
+    stairs = new BigInteger[expUnitMask * totalStairs];
 
-    saveLevelCache(base, 0, totalStairLevel > 1 ? maskSize : stairs.length);
-    for (int i = 1; i < totalStairLevel - 1; i++) {
-      int offset = maskSize * i;
-      BigInteger levelBase = stairs[offset - 1].multiply(base).mod(modulus);
-      saveLevelCache(levelBase, offset, maskSize);
-    }
-    if (totalStairLevel > 1) {
-      int offset = maskSize * (totalStairLevel - 1);
-      BigInteger levelBase = stairs[offset - 1].multiply(base).mod(modulus);
-      saveLevelCache(levelBase, offset, stairs.length - offset);
+    saveStairCache(base, 0);
+    BigInteger preStairBase = base;
+    for (int i = 1; i < totalStairs; i++) {
+      int offset = expUnitMask * i;
+      BigInteger stairBase = stairs[offset - 1].multiply(preStairBase).mod(modulus);
+      saveStairCache(stairBase, offset);
+      preStairBase = stairBase;
     }
   }
 
-  private void saveLevelCache(BigInteger levelBase, int offset, int levelSize) {
-    stairs[offset] = levelBase;
+  private void saveStairCache(BigInteger stairBase, int offset) {
+    stairs[offset] = stairBase;
     memSize += stairs[offset].bitLength();
-    for (int i = 1; i < levelSize; i++) {
-      stairs[offset + i] = levelBase.multiply(stairs[offset + i - 1]).mod(modulus);
+    for (int i = 1; i < expUnitMask; i++) {
+      stairs[offset + i] = stairBase.multiply(stairs[offset + i - 1]).mod(modulus);
       memSize += stairs[offset + i].bitLength();
     }
   }
 
   public BigInteger modPow(BigInteger m) {
-    BigInteger mask = BigInteger.valueOf(maskSize);
-    int j = m.and(mask).intValue();
+    return modPow1(m);
+  }
+
+  private BigInteger modPow2(BigInteger m) {
+    BigInteger res = BigInteger.ONE;
+    int[] dp = new int[]{m.intValue()};
+    int offset = 0, expUnit;
+    for (int d : dp) {
+      while (d != 0) {
+        expUnit = d & expUnitMask;
+        if (expUnit > 0) {
+          res = res.multiply(stairs[offset + expUnit - 1]).mod(modulus);
+        }
+        offset += expUnitMask;
+        d >>= expUnitBits;
+      }
+    }
+    return res;
+  }
+
+  private BigInteger modPow1(BigInteger m) {
+    BigInteger mask_ = BigInteger.valueOf(expUnitMask);
+    int j = m.and(mask_).intValue();
     BigInteger res = j == 0 ? BigInteger.ONE : stairs[j - 1];
     int len = m.bitLength() / expUnitBits + (m.bitLength() % expUnitBits == 0 ? 0 : 1);
     for (int i = 1; i < len; i++) {
       m = m.shiftRight(expUnitBits);
-      j = m.and(mask).intValue();
+      j = m.and(mask_).intValue();
       if (j != 0) {
-        res = res.multiply(stairs[i * maskSize + j - 1]).mod(modulus);
+        res = res.multiply(stairs[i * expUnitMask + j - 1]).mod(modulus);
       }
     }
     return res;
@@ -87,7 +105,7 @@ public class HeFixedBaseModPowSpace {
 
   @Override
   public String toString() {
-    int mem = memSize / 8;
+    long mem = memSize / 8;
     String menUseInfo = mem + "B";
     if (mem >= (1 << 30)) {
       menUseInfo = mem / (1 << 30) + "G";
@@ -101,8 +119,8 @@ public class HeFixedBaseModPowSpace {
            "\nmodulus = " + modulus +
            "\nexpUnitBits = " + expUnitBits +
            "\nexpMaxBits = " + expMaxBits +
-           "\nexpUnitSize = " + maskSize +
-           "\ntotalStairLevel = " + totalStairLevel +
+           "\nexpUnitSize = " + expUnitMask +
+           "\ntotalStairLevel = " + totalStairs +
            "\nstairSize = " + stairs.length +
            "\nmemSize = " + menUseInfo +
            "\n}";
