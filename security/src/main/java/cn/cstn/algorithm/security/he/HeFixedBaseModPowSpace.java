@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.math.BigInteger;
 
+@SuppressWarnings("unused")
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class HeFixedBaseModPowSpace {
   private final BigInteger base;

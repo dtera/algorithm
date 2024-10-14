@@ -6,6 +6,7 @@ import java.security.SecureRandom;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
 
+@SuppressWarnings("unused")
 public final class BigIntegerUtils {
 
   public static int[] toIntArray(BigInteger m) {

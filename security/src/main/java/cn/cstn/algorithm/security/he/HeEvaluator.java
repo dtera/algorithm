@@ -2,6 +2,7 @@ package cn.cstn.algorithm.security.he;
 
 import java.math.BigInteger;
 
+@SuppressWarnings("unused")
 public class HeEvaluator {
   protected HePublicKey publicKey;
 

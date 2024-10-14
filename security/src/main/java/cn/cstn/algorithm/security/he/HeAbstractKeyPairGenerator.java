@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.security.SecureRandom;
 
+@SuppressWarnings("unused")
 @RequiredArgsConstructor
 public abstract class HeAbstractKeyPairGenerator {
   public static final int DEFAULT_KEY_SIZE = 2048;

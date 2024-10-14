@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+@SuppressWarnings("unused")
 public class HeSession {
   private HePublicKey pk;
   private HePrivateKey sk;

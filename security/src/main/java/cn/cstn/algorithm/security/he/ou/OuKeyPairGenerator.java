@@ -12,6 +12,7 @@ import static cn.cstn.algorithm.security.util.BigIntegerUtils.*;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.valueOf;
 
+@SuppressWarnings("unused")
 @NoArgsConstructor
 public class OuKeyPairGenerator extends HeAbstractKeyPairGenerator {
   public static final int kPrimeFactorSize1024 = 160;

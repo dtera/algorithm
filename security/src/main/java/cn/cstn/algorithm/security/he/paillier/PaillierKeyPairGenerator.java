@@ -11,6 +11,7 @@ import java.math.BigInteger;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.valueOf;
 
+@SuppressWarnings("unused")
 @NoArgsConstructor
 public class PaillierKeyPairGenerator extends HeAbstractKeyPairGenerator {
   private static final int kPQDifferenceBitLenSub = 2;
@@ -40,8 +41,8 @@ public class PaillierKeyPairGenerator extends HeAbstractKeyPairGenerator {
 
     lambda = pMinusOne.multiply(qMinusOne).divide(valueOf(2));
     nSquared = n.multiply(n);
-    // g = n.add(ONE);
-    // mu = L(g.modPow(lambda, nSquared), n).modInverse(n); // mu = L(g^lambda mod n^2)^-1 mod n
+    /*// g = n.add(ONE);
+    // mu = L(g.modPow(lambda, nSquared), n).modInverse(n); // mu = L(g^lambda mod n^2)^-1 mod n*/
     mu = lambda.modInverse(n);
     HePublicKey pk = new PaillierPublicKey(n, nSquared); // new PaillierPublicKey(n, nSquared, g);
     HePrivateKey sk = new PaillierPrivateKey(p, q, n, n.divide(valueOf(2)), nSquared, lambda, mu);
