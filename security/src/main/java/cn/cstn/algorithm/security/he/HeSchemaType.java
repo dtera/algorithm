@@ -1,11 +1,11 @@
 package cn.cstn.algorithm.security.he;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import sun.security.util.DerInputStream;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 @SuppressWarnings("unchecked")
 @RequiredArgsConstructor
@@ -32,32 +32,44 @@ public enum HeSchemaType {
     return this;
   }
 
-  @SneakyThrows
   public HeAbstractKeyPairGenerator getKeyPairGenerator() {
     if (keyGen == null) {
       Class<HeAbstractKeyPairGenerator> clazz = getClazz(name, capitalizeName, "KeyPairGenerator");
-      Constructor<HeAbstractKeyPairGenerator> ctor = clazz.getConstructor(int.class, int.class);
-      keyGen = ctor.newInstance(keySize, version);
+      try {
+        Constructor<HeAbstractKeyPairGenerator> ctor = clazz.getConstructor(int.class, int.class);
+        keyGen = ctor.newInstance(keySize, version);
+      } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+        throw new RuntimeException(e);
+      }
     }
     return keyGen;
   }
 
-  @SneakyThrows
   public HePublicKey decodeToPublicKey(DerInputStream dis) {
     Class<HePublicKey> clazz = getClazz(name, capitalizeName, "PublicKey");
-    return (HePublicKey) clazz.getDeclaredMethod("decodeToPublicKey", DerInputStream.class).invoke(null, dis);
+    try {
+      return (HePublicKey) clazz.getDeclaredMethod("decodeToPublicKey", DerInputStream.class).invoke(null, dis);
+    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      throw new RuntimeException(e);
+    }
   }
 
-  @SneakyThrows
   public HePrivateKey decodeToPrivateKey(DerInputStream dis) {
     Class<HePrivateKey> clazz = getClazz(name, capitalizeName, "PrivateKey");
-    return (HePrivateKey) clazz.getDeclaredMethod("decodeToPrivateKey", DerInputStream.class)
-      .invoke(null, dis);
+    try {
+      return (HePrivateKey) clazz.getDeclaredMethod("decodeToPrivateKey", DerInputStream.class)
+        .invoke(null, dis);
+    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      throw new RuntimeException(e);
+    }
   }
 
-  @SneakyThrows
   private static <T> Class<T> getClazz(String name, String capitalizeName, String type) {
-    return (Class<T>) Class.forName(String.format("cn.cstn.algorithm.security.he.%s.%s%s", name, capitalizeName, type));
+    try {
+      return (Class<T>) Class.forName(String.format("cn.cstn.algorithm.security.he.%s.%s%s", name, capitalizeName, type));
+    } catch (ClassNotFoundException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 }

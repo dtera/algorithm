@@ -1,8 +1,8 @@
 package cn.cstn.algorithm.security.he;
 
-import lombok.SneakyThrows;
 import sun.security.util.DerInputStream;
 
+import java.io.IOException;
 import java.math.BigInteger;
 
 public interface HePublicKey extends HeKey {
@@ -24,11 +24,15 @@ public interface HePublicKey extends HeKey {
    * @param encoded encoded
    * @return PublicKey
    */
-  @SneakyThrows
   static HePublicKey decodeToPublicKey(byte[] encoded) {
-    DerInputStream dis = new DerInputStream(encoded);
-    HeSchemaType schema = HeSchemaType.valueOf(dis.getUTF8String());
-    return schema.decodeToPublicKey(dis);
+    try {
+      DerInputStream dis = new DerInputStream(encoded);
+      HeSchemaType schema = HeSchemaType.valueOf(dis.getUTF8String());
+      return schema.decodeToPublicKey(dis);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
   }
 
 }

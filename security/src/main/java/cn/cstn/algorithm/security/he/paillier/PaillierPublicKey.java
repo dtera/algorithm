@@ -5,15 +5,16 @@ import cn.cstn.algorithm.security.he.HeCiphertext;
 import cn.cstn.algorithm.security.he.HePublicKey;
 import cn.cstn.algorithm.security.he.HeSchemaType;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
 import static cn.cstn.algorithm.security.util.BigIntegerUtils.randomLtAndCoPrimeN;
 
+@SuppressWarnings("unused")
 @AllArgsConstructor
 public class PaillierPublicKey extends HeAbstractPublicKey {
   private BigInteger n;
@@ -34,7 +35,6 @@ public class PaillierPublicKey extends HeAbstractPublicKey {
     return nSquared;
   }
 
-  @SneakyThrows
   @Override
   public void encode(DerOutputStream dos) {
     dos.putInteger(n);
@@ -61,12 +61,15 @@ public class PaillierPublicKey extends HeAbstractPublicKey {
            "\n}";
   }
 
-  @SneakyThrows
   public static HePublicKey decodeToPublicKey(DerInputStream dis) {
-    BigInteger n = dis.getBigInteger();
-    BigInteger nSquared = dis.getBigInteger();
-    // BigInteger g = dis.getBigInteger();
-    // return new PaillierPublicKey(n, nSquared, g);
-    return new PaillierPublicKey(n, nSquared);
+    try {
+      BigInteger n = dis.getBigInteger();
+      BigInteger nSquared = dis.getBigInteger();
+      /*// BigInteger g = dis.getBigInteger();
+      // return new PaillierPublicKey(n, nSquared, g);*/
+      return new PaillierPublicKey(n, nSquared);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

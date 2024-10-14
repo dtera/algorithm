@@ -4,14 +4,15 @@ import cn.cstn.algorithm.security.he.HeCiphertext;
 import cn.cstn.algorithm.security.he.HePrivateKey;
 import cn.cstn.algorithm.security.he.HeSchemaType;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;
 
+import java.io.IOException;
 import java.math.BigInteger;
 
 import static cn.cstn.algorithm.security.util.BigIntegerUtils.L;
 
+@SuppressWarnings("unused")
 @RequiredArgsConstructor
 public class PaillierPrivateKey implements HePrivateKey {
   private final BigInteger p;
@@ -36,7 +37,6 @@ public class PaillierPrivateKey implements HePrivateKey {
     return nSquared;
   }
 
-  @SneakyThrows
   @Override
   public void encode(DerOutputStream dos) {
     dos.putInteger(p);
@@ -68,15 +68,18 @@ public class PaillierPrivateKey implements HePrivateKey {
            "\n}";
   }
 
-  @SneakyThrows
   public static HePrivateKey decodeToPrivateKey(DerInputStream dis) {
-    BigInteger p = dis.getBigInteger();
-    BigInteger q = dis.getBigInteger();
-    BigInteger n = dis.getBigInteger();
-    BigInteger nHalf = dis.getBigInteger();
-    BigInteger nSquared = dis.getBigInteger();
-    BigInteger lambda = dis.getBigInteger();
-    BigInteger mu = dis.getBigInteger();
-    return new PaillierPrivateKey(p, q, n, nHalf, nSquared, lambda, mu);
+    try {
+      BigInteger p = dis.getBigInteger();
+      BigInteger q = dis.getBigInteger();
+      BigInteger n = dis.getBigInteger();
+      BigInteger nHalf = dis.getBigInteger();
+      BigInteger nSquared = dis.getBigInteger();
+      BigInteger lambda = dis.getBigInteger();
+      BigInteger mu = dis.getBigInteger();
+      return new PaillierPrivateKey(p, q, n, nHalf, nSquared, lambda, mu);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

@@ -4,14 +4,16 @@ import cn.cstn.algorithm.security.he.HeCiphertext;
 import cn.cstn.algorithm.security.he.HePrivateKey;
 import cn.cstn.algorithm.security.he.HeSchemaType;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;
 
+import java.io.IOException;
 import java.math.BigInteger;
 
 import static cn.cstn.algorithm.security.util.BigIntegerUtils.L;
 
+//VM options: --add-exports java.base/sun.security.util=ALL-UNNAMED
+@SuppressWarnings("unused")
 @RequiredArgsConstructor
 public class OuPrivateKey implements HePrivateKey {
   private final BigInteger p;
@@ -34,7 +36,6 @@ public class OuPrivateKey implements HePrivateKey {
     return pSquared;
   }
 
-  @SneakyThrows
   @Override
   public void encode(DerOutputStream dos) {
     dos.putInteger(p);
@@ -63,13 +64,16 @@ public class OuPrivateKey implements HePrivateKey {
            "\n}";
   }
 
-  @SneakyThrows
   public static HePrivateKey decodeToPrivateKey(DerInputStream dis) {
-    BigInteger p = dis.getBigInteger();
-    BigInteger pHalf = dis.getBigInteger();
-    BigInteger t = dis.getBigInteger();
-    BigInteger pSquared = dis.getBigInteger();
-    BigInteger gpInv = dis.getBigInteger();
-    return new OuPrivateKey(p, pHalf, t, pSquared, gpInv);
+    try {
+      BigInteger p = dis.getBigInteger();
+      BigInteger pHalf = dis.getBigInteger();
+      BigInteger t = dis.getBigInteger();
+      BigInteger pSquared = dis.getBigInteger();
+      BigInteger gpInv = dis.getBigInteger();
+      return new OuPrivateKey(p, pHalf, t, pSquared, gpInv);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

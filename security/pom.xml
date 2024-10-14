@@ -9,6 +9,11 @@
 
     <artifactId>security</artifactId>
 
+    <properties>
+        <java.source.version>1.8</java.source.version>
+        <java.tarrget.version>1.8</java.tarrget.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>cn.cstn.algorithm</groupId>
@@ -29,4 +34,19 @@
             <artifactId>spring-context</artifactId>
         </dependency>
     </dependencies>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${java.source.version}</source>
+                    <target>${java.target.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

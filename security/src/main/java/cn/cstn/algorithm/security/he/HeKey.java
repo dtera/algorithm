@@ -1,8 +1,8 @@
 package cn.cstn.algorithm.security.he;
 
-import lombok.SneakyThrows;
 import sun.security.util.DerOutputStream;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.Key;
 
@@ -12,15 +12,18 @@ public interface HeKey extends Key {
 
   void encode(DerOutputStream dos);
 
-  @SneakyThrows
   @Override
   default byte[] getEncoded() {
-    DerOutputStream dos = new DerOutputStream();
-    dos.putUTF8String(getAlgorithm());
-    encode(dos);
-    dos.flush();
-    dos.close();
-    return dos.toByteArray();
+    try {
+      DerOutputStream dos = new DerOutputStream();
+      dos.putUTF8String(getAlgorithm());
+      encode(dos);
+      dos.flush();
+      dos.close();
+      return dos.toByteArray();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 }

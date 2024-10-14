@@ -5,15 +5,16 @@ import cn.cstn.algorithm.security.he.HeCiphertext;
 import cn.cstn.algorithm.security.he.HePublicKey;
 import cn.cstn.algorithm.security.he.HeSchemaType;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerOutputStream;
 
+import java.io.IOException;
 import java.math.BigInteger;
 
 import static cn.cstn.algorithm.security.util.BigIntegerUtils.randomLtN;
 
 
+@SuppressWarnings("unused")
 @RequiredArgsConstructor
 public class OuPublicKey extends HeAbstractPublicKey {
   private final BigInteger n;
@@ -59,7 +60,6 @@ public class OuPublicKey extends HeAbstractPublicKey {
     return 128;
   }
 
-  @SneakyThrows
   @Override
   public void encode(DerOutputStream dos) {
     dos.putInteger(n);
@@ -82,12 +82,15 @@ public class OuPublicKey extends HeAbstractPublicKey {
     return "OuPublicKey{" + "\nn=" + n + "\ng=" + g + "\nh=" + h + "\n}";
   }
 
-  @SneakyThrows
   public static HePublicKey decodeToPublicKey(DerInputStream dis) {
-    BigInteger n = dis.getBigInteger();
-    BigInteger g = dis.getBigInteger();
-    BigInteger h = dis.getBigInteger();
-    return new OuPublicKey(n, g, h);
+    try {
+      BigInteger n = dis.getBigInteger();
+      BigInteger g = dis.getBigInteger();
+      BigInteger h = dis.getBigInteger();
+      return new OuPublicKey(n, g, h);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 }

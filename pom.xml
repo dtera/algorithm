@@ -11,16 +11,29 @@
 
     <modules>
         <module>commons</module>
-        <module>leetcode</module>
         <module>corporation</module>
+        <module>leetcode</module>
+        <module>native</module>
         <module>offer</module>
-        <module>tests</module>
         <module>security</module>
+        <module>tests</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <java.source.version>23</java.source.version>
+        <java.tarrget.version>23</java.tarrget.version>
+        <junit.version>4.13.1</junit.version>
+        <lombok.version>1.18.34</lombok.version>
+        <logback.version>1.4.12</logback.version>
+        <commons.lang3.version>3.9</commons.lang3.version>
+        <javatuples.version>1.2</javatuples.version>
+        <fastjson.version>2.0.41</fastjson.version>
+        <jackson.annotations.version>2.11.0</jackson.annotations.version>
+        <spring.context.version>5.3.39</spring.context.version>
+        <javacpp.version>1.5.10</javacpp.version>
     </properties>
 
     <dependencyManagement>
@@ -28,44 +41,49 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.13.1</version>
+                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.20</version>
+                <version>${lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.4.12</version>
+                <version>${logback.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.9</version>
+                <version>${commons.lang3.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.javatuples</groupId>
                 <artifactId>javatuples</artifactId>
-                <version>1.2</version>
+                <version>${javatuples.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>2.0.41</version>
+                <version>${fastjson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>2.11.0</version>
+                <version>${jackson.annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
-                <version>5.3.32</version>
+                <version>${spring.context.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bytedeco</groupId>
+                <artifactId>javacpp</artifactId>
+                <version>${javacpp.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -75,10 +93,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.11.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${java.source.version}</source>
+                    <target>${java.target.version}</target>
                 </configuration>
             </plugin>
             <plugin>
