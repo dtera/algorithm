@@ -64,7 +64,7 @@ public class ArrayUtil {
     int n = g.length;
     boolean[] access = new boolean[n];
     for (int i = 0; i < n; i++) {
-      log.debug("g[" + i + "] = {" + i + " -> " + g[i].toString() + "}");
+      log.debug("g[{}] = {{} -> {}}", i, i, g[i].toString());
       if (access[i]) continue;
       access[i] = true;
       for (int j = 0; j < n; j++)
@@ -108,10 +108,10 @@ public class ArrayUtil {
     for (; dpi[i] != -1; i = dpi[i]) seq.addFirst(a[i % n]);
     seq.addFirst(a[i % n]);
 
-    log.debug("a = " + Arrays.toString(a));
-    log.debug("dp = " + Arrays.toString(dp));
-    log.debug("dpi = " + Arrays.toString(dpi));
-    log.debug("seq = " + seq);
+    log.debug("a = {}", Arrays.toString(a));
+    log.debug("dp = {}", Arrays.toString(dp));
+    log.debug("dpi = {}", Arrays.toString(dpi));
+    log.debug("seq = {}", seq);
 
     return Pair.of(dp[mi], seq);
   }

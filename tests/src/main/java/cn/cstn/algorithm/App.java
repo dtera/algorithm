@@ -1,8 +1,6 @@
 package cn.cstn.algorithm;
 
 
-import lombok.SneakyThrows;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,9 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@SuppressWarnings("DataFlowIssue")
+@SuppressWarnings({"DataFlowIssue", "ConstantValue", "unused"})
 public class App {
-  @SneakyThrows
+
   public static void main(String[] args) {
     // System.out.println(addStrings("356", "922"));
     // stream();

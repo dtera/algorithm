@@ -15,7 +15,7 @@
         <module>leetcode</module>
         <module>native</module>
         <module>offer</module>
-        <module>security</module>
+        <!--<module>security</module>-->
         <module>tests</module>
     </modules>
 
@@ -23,6 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+        <maven.compiler.plugin>3.13.0</maven.compiler.plugin>
         <maven.compiler.source>23</maven.compiler.source>
         <maven.compiler.target>23</maven.compiler.target>
         <maven.compiler.release>23</maven.compiler.release>
@@ -36,6 +37,8 @@
         <jackson.annotations.version>2.11.0</jackson.annotations.version>
         <spring.context.version>5.3.39</spring.context.version>
         <javacpp.version>1.5.10</javacpp.version>
+        <nativelib.loader.version>2.5.0</nativelib.loader.version>
+        <protobuf.version>4.28.2</protobuf.version>
     </properties>
 
     <dependencyManagement>
@@ -87,19 +90,231 @@
                 <artifactId>javacpp</artifactId>
                 <version>${javacpp.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.scijava</groupId>
+                <artifactId>native-lib-loader</artifactId>
+                <version>${nativelib.loader.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${protobuf.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>linuxos</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                </os>
+            </activation>
+            <properties>
+                <os.kernel>linux</os.kernel>
+                <os.name>linux</os.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-x86_64</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>amd64</arch>
+                </os>
+                <property>
+                    <name>!javacpp.platform.extension</name>
+                </property>
+            </activation>
+        </profile>
+        <profile>
+            <id>linux-x86_64-gpu</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>amd64</arch>
+                </os>
+                <property>
+                    <name>javacpp.platform.extension</name>
+                    <value>-gpu</value>
+                </property>
+            </activation>
+        </profile>
+        <profile>
+            <id>linux-arm64</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>aarch64</arch>
+                </os>
+                <property>
+                    <name>!javacpp.platform.extension</name>
+                </property>
+            </activation>
+        </profile>
+        <profile>
+            <id>macosx</id>
+            <activation>
+                <os>
+                    <name>mac os x</name>
+                </os>
+            </activation>
+            <properties>
+                <os.kernel>darwin</os.kernel>
+                <os.name>macosx</os.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>macosx-x86_64</id>
+            <activation>
+                <os>
+                    <name>mac os x</name>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+        </profile>
+        <profile>
+            <id>macosx-arm64</id>
+            <activation>
+                <os>
+                    <name>mac os x</name>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+        </profile>
+        <profile>
+            <id>windowsos</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <os.kernel>windows</os.kernel>
+                <os.name>windows</os.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows-x86_64</id>
+            <activation>
+                <os>
+                    <name>windows</name>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+        </profile>
+        <profile>
+            <id>arm</id>
+            <activation>
+                <os>
+                    <arch>arm</arch>
+                </os>
+            </activation>
+            <properties>
+                <os.arch>armhf</os.arch>
+            </properties>
+        </profile>
+        <profile>
+            <id>aarch64</id>
+            <activation>
+                <os>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os.arch>arm64</os.arch>
+            </properties>
+        </profile>
+        <profile>
+            <id>armv8</id>
+            <activation>
+                <os>
+                    <arch>armv8</arch>
+                </os>
+            </activation>
+            <properties>
+                <os.arch>arm64</os.arch>
+            </properties>
+        </profile>
+        <profile>
+            <id>amd64</id>
+            <activation>
+                <os>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os.arch>x86_64</os.arch>
+            </properties>
+        </profile>
+        <profile>
+            <id>x86-64</id>
+            <activation>
+                <os>
+                    <arch>x86-64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os.arch>x86_64</os.arch>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>Linux</name>
+                </os>
+            </activation>
+            <properties>
+                <os.adjusted.name>linux</os.adjusted.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>darwin</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>Mac OS X</name>
+                </os>
+            </activation>
+            <properties>
+                <os.adjusted.name>darwin</os.adjusted.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <os.adjusted.name>windows</os.adjusted.name>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>${maven.compiler.plugin}</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                     <release>${maven.compiler.release}</release>
+                    <fork>true</fork> <!-- Required for JDK16+ -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
@@ -109,6 +324,60 @@
                 <configuration>
                     <skipTests>true</skipTests>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <configuration>
+                            <rules>
+                                <dependencyConvergence/>
+                                <requireMavenVersion>
+                                    <version>3.6</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- GPG signed components: http://central.sonatype.org/pages/apache-maven.html#gpg-signed-components -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <gpgArguments>
+                        <arg>--pinentry-mode</arg>
+                        <arg>loopback</arg>
+                    </gpgArguments>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
