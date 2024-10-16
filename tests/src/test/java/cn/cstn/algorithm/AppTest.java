@@ -7,6 +7,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  */
+@SuppressWarnings("ConstantValue")
 public class AppTest extends TestCase {
   /**
    * Create the test case
