@@ -315,6 +315,12 @@
                             <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
+                    <excludes>
+                        <exclude>**/**/*.bazel</exclude>
+                        <exclude>**/**/*.cpp</exclude>
+                        <exclude>**/**/*.h</exclude>
+                        <exclude>**/**/*.sh</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
