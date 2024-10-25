@@ -35,7 +35,15 @@
         <javacpp.platform.windows-x86_64.extension>windows-x86_64${javacpp.platform.extension}
         </javacpp.platform.windows-x86_64.extension>
         <dist.download.folder>${project.build.directory}/dist/</dist.download.folder>
-        <native.source.directory>${project.basedir}/src/main/native/cn/cstn/algorithm/javacpp</native.source.directory>
+        <bazel.build.skip>true</bazel.build.skip>
+
+        <native.include.dir>${project.basedir}/../bazel-${project.parent.artifactId}</native.include.dir>
+        <native.include.src.dir>${native.include.dir}/native/src/main/native/cn/cstn/algorithm/javacpp
+        </native.include.src.dir>
+        <native.include.external.dir>${native.include.dir}/external</native.include.external.dir>
+        <native.lib.dir>${project.basedir}/../bazel-bin</native.lib.dir>
+        <native.lib.src.dir>${native.lib.dir}/native/src/main/native/cn/cstn/algorithm/javacpp</native.lib.src.dir>
+        <native.lib.external.dir>${native.lib.dir}/external</native.lib.external.dir>
     </properties>
 
     <dependencies>
@@ -54,8 +62,69 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <!-- Do a full native build using Bazel -->
+        <profile>
+            <id>native-build</id>
+            <activation>
+                <property>
+                    <name>native.build</name>
+                </property>
+            </activation>
+            <properties>
+                <bazel.build.skip>false</bazel.build.skip>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>bazel-build</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <skip>${bazel.build.skip}</skip>
+                            <executable>bash</executable>
+                            <arguments>
+                                <argument>../bazel/build.sh</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>cn.cstn.algorithm.javacpp.NativeDemo</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.bytedeco</groupId>
                 <artifactId>javacpp</artifactId>
@@ -79,13 +148,15 @@
                     <classPath>${project.build.outputDirectory}</classPath>
                     <includePaths>
                         <includePath>${dist.download.folder}/include/</includePath>
-                        <includePath>${native.source.directory}</includePath>
+                        <includePath>${native.include.src.dir}</includePath>
+                        <includePath>${native.include.external.dir}/com_dtera_heu</includePath>
                     </includePaths>
                     <linkPaths>
                         <linkPath>${dist.download.folder}/</linkPath>
                         <linkPath>${dist.download.folder}/lib/</linkPath>
                         <!-- additional link paths in case of a full native build -->
-                        <linkPath>${native.source.directory}/${native.classifier}/</linkPath>
+                        <linkPath>${native.lib.src.dir}</linkPath>
+                        <linkPath>${native.lib.external.dir}/com_dtera_heu</linkPath>
                     </linkPaths>
                     <resourcePaths>
                         <resourcePath>${project.basedir}/../</resourcePath>

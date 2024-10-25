@@ -1,9 +1,9 @@
-#include<iostream>
+#include <iostream>
 
 class MyFunc {
-public:
-	MyFunc() {};
-	~MyFunc() {};
-	int add(int a, int b);
-	int sub(int a, int b);
+ public:
+  MyFunc() = default;
+  ~MyFunc() = default;
+  int add(int a, int b);
+  int sub(int a, int b);
 };
