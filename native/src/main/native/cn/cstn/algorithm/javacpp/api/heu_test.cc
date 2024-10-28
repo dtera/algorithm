@@ -433,7 +433,7 @@ TEST(HEU, API_OU_Evaluate3) {
     cs2[i] = new heu::lib::phe::Ciphertext[row_size[i]];
   }
   TIME_STAT(CheckCall(Encrypt(handle, d2, len, row_size, cs2, 100), "Encrypt1"),
-            Encrypts);
+            Encrypts)
   CheckCall(Encrypt(handle, d1, len, cs1), "Encrypt1");
 
   std::cout << "============AddCiphersInplaceAxis02D=============="
@@ -873,7 +873,7 @@ TEST(HEU, API_ElGamal_Evaluate3) {
     cs2[i] = new heu::lib::phe::Ciphertext[row_size[i]];
   }
   TIME_STAT(CheckCall(Encrypt(handle, d2, len, row_size, cs2, 100), "Encrypt1"),
-            Encrypts);
+            Encrypts)
   CheckCall(Encrypt(handle, d1, len, cs1), "Encrypt1");
 
   std::cout << "============AddCiphersInplaceAxis0_==============" << std::endl;
