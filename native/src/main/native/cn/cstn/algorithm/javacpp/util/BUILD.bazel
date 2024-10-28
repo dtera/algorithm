@@ -22,7 +22,7 @@ algo_cc_library(
     hdrs = ["utils.h"],
     copts = OMP_CFLAGS,
     linkopts = OMP_LINKFLAGS,
-    deps = ["//bazel/third_party:gmp"] + OMP_DEPS,
+    deps = ["@gmp//:gmp"] + OMP_DEPS,
 )
 
 

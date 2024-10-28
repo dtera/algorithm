@@ -20,7 +20,7 @@ algo_cc_test(
     name = "gmp_test",
     srcs = ["gmp_test.cc"],
     deps = [
-        "//bazel/third_party:gmp",
+        "@gmp//:gmp",
         "//native/src/main/native/cn/cstn/algorithm/javacpp/util:stopwatch",
     ],
     

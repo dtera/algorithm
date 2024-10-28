@@ -17,14 +17,31 @@ load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
 package(default_visibility = ["//visibility:public"])
 
 filegroup(
-    name = "all",
-    srcs = glob(["**"]),
+    name = "all_srcs",
+    srcs = glob(
+        include = ["**"],
+        exclude = ["*.bazel"],
+    ),
 )
 
 configure_make(
     name = "gmp",
+    args = ["-j 4"],
+    configure_command = "Configure",
+    configure_in_place = True,
+    configure_options = [ "--enable-fat", "--enable-cxx", "CFLAGS=-Dredacted" ],
+    env = select({
+        "@platforms//os:macos": {
+            "AR": "",
+        },
+        "//conditions:default": {
+            "MODULESDIR": "",
+        },
+    }),
+    lib_name = "gmp",
+    lib_source = ":all_srcs",
+    linkopts = ["-ldl"],
+    out_static_libs = ["libgmp.a"],
+    targets = ["install"],
     visibility = ["//visibility:public"],
-    configure_options = [ "--enable-cxx", "CFLAGS=-Dredacted"],
-    lib_source = "@gmp//:all",
-    out_lib_dir = "lib",
 )
