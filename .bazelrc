@@ -34,7 +34,6 @@ build --linkopt -fvisibility=hidden
 build --linkopt -fvisibility-inlines-hidden
 build --linkopt -lm
 build --linkopt -ldl
-build --action_env=PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 
 
 # Binary safety flags
@@ -42,6 +41,7 @@ build --host_copt=-fPIE
 build --host_copt=-fstack-protector-strong
 build:linux --host_copt=-Wl,-z,noexecstack
 build:macos --host_copt=-Wa,--noexecstack
+build:macos --action_env=PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 
 # platform specific config
 # Bazel will automatic pick platform config since we have enable_platform_specific_config set
@@ -69,6 +69,9 @@ build:ubsan --copt -Og
 build:ubsan --copt -g
 build:ubsan --copt -fno-omit-frame-pointer
 build:ubsan --linkopt -fsanitize=undefined
+
+#build:monolithic --define framework_shared_object=false
+build:exp --experimental_cc_static_library
 
 test --keep_going
 test --test_output=errors

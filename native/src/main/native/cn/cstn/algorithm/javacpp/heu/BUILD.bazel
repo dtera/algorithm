@@ -12,26 +12,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("//bazel:algo.bzl", "algo_cc_library", "algo_cc_test")
+load("//bazel:algo.bzl", "algo_cc_library", "algo_cc_static_library", "algo_cc_test")
 
 test_suite(
-    name = "api_tests",
+    name = "phe_tests",
 )
 
 algo_cc_library(
-    name = "heu_api",
-    srcs = ["heu_api.cc"],
-    hdrs = ["heu_api.h"],
+    name = "phe_kit",
+    srcs = ["phe_kit.cc"],
+    hdrs = ["phe_kit.h"],
     deps = [
         "util:utils",
         "@com_dtera_heu//heu/library/phe",
     ],
 )
 
-algo_cc_test(
-    name = "heu_test",
-    srcs = ["heu_test.cc"],
+algo_cc_static_library(
+    name = "phe_kit_all",
     deps = [
-        ":heu_api",
+        ":phe_kit",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+algo_cc_test(
+    name = "phe_test",
+    srcs = ["phe_kit_test.cc"],
+    deps = [
+        ":phe_kit",
+        "util:stopwatch",
     ],
 )

@@ -27,9 +27,9 @@ filegroup(
 configure_make(
     name = "gmp",
     args = ["-j 4"],
-    configure_command = "Configure",
+    configure_command = "configure",
     configure_in_place = True,
-    configure_options = [ "--enable-fat", "--enable-cxx", "CFLAGS=-Dredacted" ],
+    configure_options = [ "--enable-fat" ],
     env = select({
         "@platforms//os:macos": {
             "AR": "",

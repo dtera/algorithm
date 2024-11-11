@@ -15,8 +15,12 @@
 """
 wrapper bazel cc_xx to modify flags.
 """
+#load("@_builtins//:common/cc/experimental_cc_static_library.bzl", "cc_static_library")
+load("//bazel:cc_static_library.bzl", "cc_static_library")
 load("@yacl//bazel:yacl.bzl", "yacl_cc_library", "yacl_cc_binary", "yacl_cc_test",
                               "yacl_cmake_external", "yacl_configure_make")
+
+load("@rules_cc//cc/private/toolchain:cc_configure.bzl", _cc_configure = "cc_configure")
 
 INCLUDE_COPTS = ["-Inative/src/main/native/cn/cstn/algorithm/javacpp"] + ["-Ibazel/third_party/include"]
 
@@ -24,6 +28,7 @@ WARNING_FLAGS = [
     "-Wall",
     "-Wextra",
     "-Werror",
+    "-Wno-unknown-pragmas",
 ]
 # set `SPDLOG_ACTIVE_LEVEL=1(SPDLOG_LEVEL_DEBUG)` to enable debug level log
 DEBUG_FLAGS = ["-DSPDLOG_ACTIVE_LEVEL=1", "-O0", "-g"]
@@ -38,12 +43,25 @@ def _algo_copts():
         "//conditions:default": FAST_FLAGS,
     }) + WARNING_FLAGS
 
+def add_prefix_for_local_deps(deps=[]):
+    prefix_deps=[]
+    if type(deps) == "list":
+        for dep in deps:
+            if not dep.startswith(("@", "//", ":")):
+                dep = "//native/src/main/native/cn/cstn/algorithm/javacpp/" + dep
+            prefix_deps.append(dep)
+        return prefix_deps
+    else:
+        return deps
+
 def algo_cc_binary(
         copts = [],
+        deps = [],
         linkopts = [],
         **kargs):
     yacl_cc_binary(
         copts = _algo_copts() + copts,
+        deps = add_prefix_for_local_deps(deps),
         linkopts = linkopts,
         **kargs
     )
@@ -54,7 +72,16 @@ def algo_cc_library(
         **kargs):
     yacl_cc_library(
         copts = _algo_copts() + copts,
-        deps = deps,
+        deps = add_prefix_for_local_deps(deps),
+        **kargs
+    )
+
+
+def algo_cc_static_library(
+        deps = [],
+        **kargs):
+    cc_static_library(
+        deps = add_prefix_for_local_deps(deps),
         **kargs
     )
 
@@ -65,7 +92,7 @@ def algo_cc_test(
         **kwargs):
     yacl_cc_test(
         copts = _algo_copts() + copts,
-        deps = deps,
+        deps = add_prefix_for_local_deps(deps),
         linkopts = linkopts,
         **kwargs
     )

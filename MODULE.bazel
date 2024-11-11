@@ -1,6 +1,15 @@
-###############################################################################
-# Bazel now uses Bzlmod by default to manage external dependencies.
-# Please consider migrating your external dependencies from WORKSPACE to MODULE.bazel.
-#
-# For more details, please check https://github.com/bazelbuild/bazel/issues/18958
-###############################################################################
+"""Bazel build and test dependencies."""
+
+# NOTE: When editing this file, also update the lockfile.
+#   bazel mod deps --lockfile_mode=update
+
+module(
+    name = "algo",
+    repo_name = "algorithm",
+)
+
+# =========================================
+# Bazel module dependencies
+# =========================================
+
+#bazel_dep(name = "rules_cc", version = "0.0.13")

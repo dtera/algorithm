@@ -15,7 +15,7 @@
 load("//bazel:algo.bzl", "algo_cc_binary")
 
 algo_cc_binary(
-    name = "phe",
+    name = "phe_bench",
     srcs = ["phe_bench.cc"],
     deps = [
         "@com_dtera_heu//heu/library/phe",

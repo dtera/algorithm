@@ -486,7 +486,7 @@ template <typename T,
     BlockedSpace2d blocked2D(
         len, [&](size_t i) { return row_size[i]; }, grain_size);
     ParallelFor2d(blocked2D, n_threads, [&](size_t i, const Range1d &r) {
-      for (int j = r.begin(); j < r.end(); ++j) {
+      for (unsigned long j = r.begin(); j < r.end(); ++j) {
         ciphers[i][j] = encrypter->Encrypt(encoder.Encode(data[i][j]));
       }
     });
@@ -777,7 +777,7 @@ template <typename T,
     BlockedSpace2d blocked2D(
         len, [&](size_t i) { return row_size[i]; }, grain_size);
     ParallelFor2d(blocked2D, n_threads, [&](size_t i, const Range1d &r) {
-      for (int j = r.begin(); j < r.end(); ++j) {
+      for (unsigned long j = r.begin(); j < r.end(); ++j) {
         ciphers[i][j] = encrypter->Encrypt(encoder.Encode(data[i][j]));
       }
     });
@@ -821,7 +821,7 @@ void DHeKitCiphersInit_(DestinationHeKitHandle handle,
                         std::vector<heu::lib::phe::Ciphertext *> &ciphers) {
   CheckCall(DestinationHeKitEncrypt(handle, 0, ciphers[0], 1), "DHeKitEncrypt");
   auto buf = ciphers[0]->Serialize();
-  for (int i = 1; i < ciphers.size(); ++i) {
+  for (unsigned long i = 1; i < ciphers.size(); ++i) {
     ciphers[i]->Deserialize(buf);
   }
 }

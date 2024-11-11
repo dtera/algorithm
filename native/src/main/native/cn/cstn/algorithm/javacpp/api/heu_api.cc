@@ -379,7 +379,7 @@ HEU_DLL
           BlockedSpace2d blocked2D(
               len, [&](size_t i) { return row_size[i]; }, grain_size);
           ParallelFor2d(blocked2D, n_threads, [&](size_t i, const Range1d &r) {
-            for (int j = r.begin(); j < r.end(); ++j) {
+            for (unsigned long j = r.begin(); j < r.end(); ++j) {
               evaluator->AddInplace(&cs1[i], cs2[i][j]);
             }
           });
@@ -402,7 +402,7 @@ HEU_DLL [[maybe_unused]] int AddCiphersInplaceAxis0__(
     API_DHEKIT_HANDLE({
       auto evaluator = dhekit->GetEvaluator();
       ParallelFor(cs1.size(), n_threads, [&](int i) {
-        for (int j = 0; j < cs2[i].size(); ++j) {
+        for (unsigned long j = 0; j < cs2[i].size(); ++j) {
           evaluator->AddInplace(cs1[i], *cs2[i][j]);
         }
       });
@@ -426,7 +426,7 @@ HEU_DLL [[maybe_unused]] int AddCiphersInplaceAxis0___(
     API_DHEKIT_HANDLE({
       auto evaluator = dhekit->GetEvaluator();
       ParallelFor(len, n_threads, [&](int i) {
-        for (int j = 0; j < cs2[i].size(); ++j) {
+        for (unsigned long j = 0; j < cs2[i].size(); ++j) {
           evaluator->AddInplace(&cs1[i], *cs2[i][j]);
         }
       });
@@ -576,7 +576,7 @@ int SumCiphers_(DestinationHeKitHandle handle,
                 heu::lib::phe::Ciphertext *out, int32_t min_work_size,
                 const int32_t n_threads) {
   CheckCall(DestinationHeKitEncrypt(handle, 0, out, 1), "DHeKitEncrypt");
-  auto len = ciphers.size();
+  int32_t len = ciphers.size();
   API_DHEKIT_HANDLE({
     auto evaluator = dhekit->GetEvaluator();
     auto add_op = [&](int size, std::vector<heu::lib::phe::Ciphertext *> &cs) {
