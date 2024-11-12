@@ -15,9 +15,6 @@
 """
 wrapper bazel cc_xx to modify flags.
 """
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
-load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake", "configure_make")
-
 INCLUDE_COPTS = ["-Inative/src/main/native/cn/cstn/algorithm/javacpp"] + ["-Ibazel/third_party/include"]
 
 WARNING_FLAGS = [
@@ -71,7 +68,7 @@ def algo_cc_binary(
         deps = [],
         linkopts = [],
         **kargs):
-    cc_binary(
+    native.cc_binary(
         copts = _algo_copts() + copts,
         deps = _add_prefix_for_local_deps(deps),
         linkopts = linkopts + ["-ldl"],
@@ -82,7 +79,7 @@ def algo_cc_library(
         copts = [],
         deps = [],
         **kargs):
-    cc_library(
+    native.cc_library(
         copts = _algo_copts() + copts,
         deps = _add_prefix_for_local_deps(deps) + [
             "@com_github_gabime_spdlog//:spdlog",
@@ -95,7 +92,7 @@ def algo_cc_test(
         deps = [],
         linkopts = [],
         **kwargs):
-    cc_test(
+    native.cc_test(
         copts = _algo_copts() + copts,
         deps = _add_prefix_for_local_deps(deps) + [
             "@com_google_googletest//:gtest_main",
@@ -107,9 +104,9 @@ def algo_cc_test(
 def algo_cmake_external(**attrs):
     if "generate_args" not in attrs:
         attrs["generate_args"] = ["-GNinja"]
-    return cmake(**attrs)
+    return native.cmake(**attrs)
 
 def algo_configure_make(**attrs):
     if "args" not in attrs:
         attrs["args"] = ["-j 8"]
-    return configure_make(**attrs)
+    return native.configure_make(**attrs)
