@@ -13,6 +13,7 @@
 # limitations under the License.
 
 load("//bazel:algo.bzl", "algo_cc_library", "algo_cc_test")
+#load("//bazel:cc_static_library.bzl", "cc_static_library")
 
 algo_cc_library(
     name = "phe_kit",
