@@ -14,6 +14,7 @@
 
 common --experimental_repo_remote_exec
 common --experimental_cc_shared_library
+common --enable_bzlmod
 
 build --verbose_failures
 

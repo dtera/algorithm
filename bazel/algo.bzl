@@ -15,12 +15,8 @@
 """
 wrapper bazel cc_xx to modify flags.
 """
-#load("@_builtins//:common/cc/experimental_cc_static_library.bzl", "cc_static_library")
-load("//bazel:cc_static_library.bzl", "cc_static_library")
-load("@yacl//bazel:yacl.bzl", "yacl_cc_library", "yacl_cc_binary", "yacl_cc_test",
-                              "yacl_cmake_external", "yacl_configure_make")
-
-load("@rules_cc//cc/private/toolchain:cc_configure.bzl", _cc_configure = "cc_configure")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake", "configure_make")
 
 INCLUDE_COPTS = ["-Inative/src/main/native/cn/cstn/algorithm/javacpp"] + ["-Ibazel/third_party/include"]
 
@@ -35,6 +31,22 @@ DEBUG_FLAGS = ["-DSPDLOG_ACTIVE_LEVEL=1", "-O0", "-g"]
 RELEASE_FLAGS = ["-O2"]
 FAST_FLAGS = ["-O1"]
 
+OMP_DEPS = select({
+    "@bazel_tools//src/conditions:darwin_x86_64": ["@macos_omp_x64//:openmp"],
+    "@bazel_tools//src/conditions:darwin_arm64": ["@macos_omp_arm64//:openmp"],
+    "//conditions:default": [],
+})
+
+OMP_CFLAGS = select({
+    "@platforms//os:macos": ["-Xclang", "-fopenmp"],
+    "//conditions:default": ["-fopenmp"],
+})
+
+OMP_LINKFLAGS = select({
+    "@platforms//os:macos": [],
+    "//conditions:default": ["-fopenmp"],
+})
+
 def _algo_copts():
     return INCLUDE_COPTS + select({
         "@algo//bazel:algo_build_as_release": RELEASE_FLAGS,
@@ -43,7 +55,7 @@ def _algo_copts():
         "//conditions:default": FAST_FLAGS,
     }) + WARNING_FLAGS
 
-def add_prefix_for_local_deps(deps=[]):
+def _add_prefix_for_local_deps(deps=[]):
     prefix_deps=[]
     if type(deps) == "list":
         for dep in deps:
@@ -59,10 +71,10 @@ def algo_cc_binary(
         deps = [],
         linkopts = [],
         **kargs):
-    yacl_cc_binary(
+    cc_binary(
         copts = _algo_copts() + copts,
-        deps = add_prefix_for_local_deps(deps),
-        linkopts = linkopts,
+        deps = _add_prefix_for_local_deps(deps),
+        linkopts = linkopts + ["-ldl"],
         **kargs
     )
 
@@ -70,18 +82,11 @@ def algo_cc_library(
         copts = [],
         deps = [],
         **kargs):
-    yacl_cc_library(
+    cc_library(
         copts = _algo_copts() + copts,
-        deps = add_prefix_for_local_deps(deps),
-        **kargs
-    )
-
-
-def algo_cc_static_library(
-        deps = [],
-        **kargs):
-    cc_static_library(
-        deps = add_prefix_for_local_deps(deps),
+        deps = _add_prefix_for_local_deps(deps) + [
+            "@com_github_gabime_spdlog//:spdlog",
+        ],
         **kargs
     )
 
@@ -90,19 +95,21 @@ def algo_cc_test(
         deps = [],
         linkopts = [],
         **kwargs):
-    yacl_cc_test(
+    cc_test(
         copts = _algo_copts() + copts,
-        deps = add_prefix_for_local_deps(deps),
-        linkopts = linkopts,
+        deps = _add_prefix_for_local_deps(deps) + [
+            "@com_google_googletest//:gtest_main",
+        ],
+        linkopts = linkopts + ["-ldl"],
         **kwargs
     )
 
 def algo_cmake_external(**attrs):
     if "generate_args" not in attrs:
         attrs["generate_args"] = ["-GNinja"]
-    return yacl_cmake_external(**attrs)
+    return cmake(**attrs)
 
 def algo_configure_make(**attrs):
     if "args" not in attrs:
         attrs["args"] = ["-j 8"]
-    return yacl_configure_make(**attrs)
+    return configure_make(**attrs)

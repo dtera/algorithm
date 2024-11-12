@@ -17,20 +17,10 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 
 def algo_deps():
-    #_bazel()
     _rules_cc()
     _heu()
     _spu()
     _gmp()
-
-def _bazel():
-    maybe(
-        http_archive,
-        name = "bazel",
-        sha256 = "2b75cc9aa0a23cf594b96c4ad1cbf5eae9360dba98949b1b42e5d37360333149",
-        strip_prefix = "bazel-7.4.0",
-        url = "https://github.com/bazelbuild/bazel/archive/refs/tags/7.4.0.tar.gz",
-    )
 
 def _rules_cc():
     maybe(

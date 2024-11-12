@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("//bazel:algo.bzl", "algo_cc_library")
-load("@yacl//bazel:yacl.bzl", "OMP_CFLAGS", "OMP_DEPS", "OMP_LINKFLAGS")
+load("//bazel:algo.bzl", "algo_cc_library", "OMP_CFLAGS", "OMP_DEPS", "OMP_LINKFLAGS")
 
 package(default_visibility = ["//visibility:public"])
 
