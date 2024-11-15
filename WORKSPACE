@@ -49,9 +49,6 @@ python_configure(
     python_version = "3",
 )
 
-load("@pybind11_bazel//:python_configure.bzl", "python_configure")
-python_configure(name = "local_config_python")
-
 #### for cpp ####
 load(
     "@rules_foreign_cc//foreign_cc:repositories.bzl",
@@ -69,3 +66,10 @@ bazel_features_deps()
 #### for jni ####
 load("@rules_jni//jni:repositories.bzl", "rules_jni_dependencies")
 rules_jni_dependencies()
+
+#### for apple_support ####
+load(
+    "@build_bazel_apple_support//lib:repositories.bzl",
+    "apple_support_dependencies",
+)
+apple_support_dependencies()

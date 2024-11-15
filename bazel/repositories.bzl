@@ -18,6 +18,7 @@ load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 
 def algo_deps():
     _rules_cc()
+    _build_bazel_apple_support()
     _heu()
     _spu()
     _gmp()
@@ -26,12 +27,17 @@ def _rules_cc():
     maybe(
         http_archive,
         name = "rules_cc",
-        #sha256 = "2037875b9a4456dce4a79d112a8ae885bbc4aad968e6587dca6e64f3a0900cdf",
-        #strip_prefix = "rules_cc-0.0.9",
-        #url = "https://github.com/bazelbuild/rules_cc/releases/download/0.0.9/rules_cc-0.0.9.tar.gz",
         sha256 = "906e89286acc67c20819c3c88b3283de0d5868afda33635d70acae0de9777bb7",
         strip_prefix = "rules_cc-0.0.14",
         url = "https://github.com/bazelbuild/rules_cc/releases/download/0.0.14/rules_cc-0.0.14.tar.gz",
+    )
+
+def _build_bazel_apple_support():
+    maybe(
+        http_archive,
+        name = "build_bazel_apple_support",
+        sha256 = "b53f6491e742549f13866628ddffcc75d1f3b2d6987dc4f14a16b242113c890b",
+        url = "https://github.com/bazelbuild/apple_support/releases/download/1.17.1/apple_support.1.17.1.tar.gz",
     )
 
 def _heu():
