@@ -8,7 +8,7 @@ echo "Current Directory: $CD"
 #"$CD"/third_party/build.sh
 
 cd ..
-OPTS="-c opt --config=exp"
+OPTS="-c opt"
 #SED_F="native/src/main/native/cn/cstn/algorithm/javacpp/heu/BUILD.bazel"
 #if [[ "$OSTYPE" == "darwin"* ]]; then
 #  echo 6.5.0 > .bazelversion
