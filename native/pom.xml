@@ -172,6 +172,7 @@
                         <!-- additional link paths in case of a full native build -->
                         <linkPath>${native.lib.src.dir}</linkPath>
                         <linkPath>${native.lib.src.dir}/heu</linkPath>
+                        <linkPath>${native.lib.external.dir}/com_github_libtom_libtommath/libtommath/lib</linkPath>
                         <!--<linkPath>${native.lib.external.dir}/com_dtera_heu</linkPath>
                         <linkPath>${native.lib.external.dir}/com_github_blake3team_blake3</linkPath>
                         <linkPath>${native.lib.external.dir}/com_github_fmtlib_fmt</linkPath>
@@ -190,54 +191,6 @@
                         <linkPath>${native.lib.external.dir}/gmp</linkPath>
                         <linkPath>${native.lib.external.dir}/org_interconnection</linkPath>
                         <linkPath>${native.lib.external.dir}/yacl</linkPath>
-                        <linkPath>${native.lib.external.dir}/zlib</linkPath>-->
-                        <!--<linkPath>${native.lib.external.dir}/com_dtera_heu/heu/library/algorithms/dgk</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_dtera_heu/heu/library/algorithms/dj</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_dtera_heu/heu/library/algorithms/elgamal</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_dtera_heu/heu/library/algorithms/elgamal/utils
-                        </linkPath>
-                        <linkPath>${native.lib.external.dir}/com_dtera_heu/heu/library/algorithms/mock</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_dtera_heu/heu/library/algorithms/ou</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_dtera_heu/heu/library/algorithms/paillier_float
-                        </linkPath>
-                        <linkPath>${native.lib.external.dir}/com_dtera_heu/heu/library/algorithms/paillier_ic</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_dtera_heu/heu/library/algorithms/paillier_zahlen
-                        </linkPath>
-                        <linkPath>${native.lib.external.dir}/com_dtera_heu/heu/library/phe</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_dtera_heu/heu/library/phe/base</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_dtera_heu/heu/library/phe/encoding</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_github_blake3team_blake3</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_github_gabime_spdlog/spdlog/lib</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_github_gflags_gflags</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_github_google_benchmark</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_github_herumi_mcl/mcl-cmake/lib</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_github_libsodium</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_github_libtom_libtommath/libtommath/lib</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_github_microsoft_FourQlib/FourQlib/lib</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_github_openssl_openssl/openssl/lib</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_google_absl/absl/base</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_google_absl/absl/debugging</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_google_absl/absl/numeric</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_google_absl/absl/strings</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_google_absl/absl/types</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_google_googletest</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_google_protobuf</linkPath>
-                        <linkPath>${native.lib.external.dir}/gmp/gmp/lib</linkPath>
-                        <linkPath>${native.lib.external.dir}/org_interconnection/interconnection/runtime</linkPath>
-                        <linkPath>${native.lib.external.dir}/yacl/yacl</linkPath>
-                        <linkPath>${native.lib.external.dir}/yacl/yacl/base</linkPath>
-                        <linkPath>${native.lib.external.dir}/yacl/yacl/crypto</linkPath>
-                        <linkPath>${native.lib.external.dir}/yacl/yacl/crypto/ecc</linkPath>
-                        <linkPath>${native.lib.external.dir}/yacl/yacl/crypto/ecc/FourQlib</linkPath>
-                        <linkPath>${native.lib.external.dir}/yacl/yacl/crypto/ecc/libsodium</linkPath>
-                        <linkPath>${native.lib.external.dir}/yacl/yacl/crypto/ecc/mcl</linkPath>
-                        <linkPath>${native.lib.external.dir}/yacl/yacl/crypto/ecc/openssl</linkPath>
-                        <linkPath>${native.lib.external.dir}/yacl/yacl/crypto/ecc/toy</linkPath>
-                        <linkPath>${native.lib.external.dir}/yacl/yacl/crypto/hash</linkPath>
-                        <linkPath>${native.lib.external.dir}/yacl/yacl/math/mpint</linkPath>
-                        <linkPath>${native.lib.external.dir}/yacl/yacl/utils</linkPath>
-                        <linkPath>${native.lib.external.dir}/yacl/yacl/utils/spi</linkPath>
-                        <linkPath>${native.lib.external.dir}/yacl/yacl/utils/spi/argument</linkPath>
                         <linkPath>${native.lib.external.dir}/zlib</linkPath>-->
                     </linkPaths>
                     <resourcePaths>
