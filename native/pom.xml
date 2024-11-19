@@ -173,7 +173,8 @@
                         <linkPath>${native.lib.src.dir}</linkPath>
                         <linkPath>${native.lib.src.dir}/heu</linkPath>
                         <linkPath>${native.lib.external.dir}/com_github_libtom_libtommath/libtommath/lib</linkPath>
-                        <!--<linkPath>${native.lib.external.dir}/com_dtera_heu</linkPath>
+                        <!--<linkPath>${project.basedir}/../bazel/third_party/lib</linkPath>
+                        <linkPath>${native.lib.external.dir}/com_dtera_heu</linkPath>
                         <linkPath>${native.lib.external.dir}/com_github_blake3team_blake3</linkPath>
                         <linkPath>${native.lib.external.dir}/com_github_fmtlib_fmt</linkPath>
                         <linkPath>${native.lib.external.dir}/com_github_gabime_spdlog</linkPath>
