@@ -13,6 +13,7 @@
         <javacpp.build.skip>false</javacpp.build.skip>
         <native.classifier>${javacpp.platform}${javacpp.platform.extension}</native.classifier>
         <javacpp.platform>${os.name}-${os.arch}</javacpp.platform>
+        <jar.name.suffix>-${javacpp.platform}</jar.name.suffix>
         <!--suppress CheckTagEmptyBody -->
         <javacpp.platform.extension></javacpp.platform.extension>
         <javacpp.platform.properties>${javacpp.platform}</javacpp.platform.properties>
@@ -67,16 +68,22 @@
     </dependencies>
 
     <profiles>
-        <!-- Do a full native build using Bazel -->
+        <profile>
+            <id>javacpp-build-skip</id>
+            <properties>
+                <javacpp.build.skip>true</javacpp.build.skip>
+            </properties>
+        </profile>
         <profile>
             <id>native-build-skip</id>
-            <activation>
-                <property>
-                    <name>native.build.skip</name>
-                </property>
-            </activation>
             <properties>
                 <bazel.build.skip>true</bazel.build.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>jar-name-no-os-info</id>
+            <properties>
+                <jar.name.suffix/>
             </properties>
         </profile>
     </profiles>
@@ -117,6 +124,7 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <finalName>${project.build.finalName}${jar.name.suffix}</finalName>
                 </configuration>
                 <executions>
                     <execution>
