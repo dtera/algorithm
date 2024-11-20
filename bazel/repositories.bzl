@@ -47,7 +47,7 @@ def _com_github_libtom_libtommath():
         urls = [
             "https://github.com/libtom/libtommath/archive/2e03dfd64dd7ae6bf0d43b665036da82e87f3fb2.tar.gz",
         ],
-        build_file = "//bazel/third_party:libtommath.BUILD",
+        build_file = "@yacl//bazel:libtommath.BUILD",
     )
 
 def _build_bazel_apple_support():

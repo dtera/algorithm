@@ -35,7 +35,7 @@
         <javacpp.platform.windows-x86_64.extension>windows-x86_64${javacpp.platform.extension}
         </javacpp.platform.windows-x86_64.extension>
         <dist.download.folder>${project.build.directory}/dist</dist.download.folder>
-        <bazel.build.skip>true</bazel.build.skip>
+        <bazel.build.skip>false</bazel.build.skip>
 
         <native.include.dir>${project.basedir}/../bazel-${project.parent.artifactId}</native.include.dir>
         <native.include.src.dir>${native.include.dir}/native/src/main/native/cn/cstn/algorithm/javacpp
@@ -69,14 +69,14 @@
     <profiles>
         <!-- Do a full native build using Bazel -->
         <profile>
-            <id>native-build</id>
+            <id>native-build-skip</id>
             <activation>
                 <property>
-                    <name>native.build</name>
+                    <name>native.build.skip</name>
                 </property>
             </activation>
             <properties>
-                <bazel.build.skip>false</bazel.build.skip>
+                <bazel.build.skip>true</bazel.build.skip>
             </properties>
         </profile>
     </profiles>
