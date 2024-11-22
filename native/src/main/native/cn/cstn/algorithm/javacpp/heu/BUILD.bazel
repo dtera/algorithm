@@ -29,7 +29,7 @@ cc_static_library(
     name = "phe_kit_all",
     deps = select({
          "@platforms//os:macos": [":phe_kit"],
-         "//conditions:default": [":phe_kit", "//native/src/main/native/cn/cstn/algorithm/javacpp/libtommath:tommath"],
+         "//conditions:default": [":phe_kit", "@libtommath//:tommath"],
     }),
 )
 

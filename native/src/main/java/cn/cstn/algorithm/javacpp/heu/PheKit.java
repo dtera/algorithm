@@ -1,21 +1,20 @@
 package cn.cstn.algorithm.javacpp.heu;
 
+import cn.cstn.algorithm.javacpp.preset.heu;
 import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.annotation.ByRef;
 import org.bytedeco.javacpp.annotation.Const;
 import org.bytedeco.javacpp.annotation.Platform;
+import org.bytedeco.javacpp.annotation.Properties;
 
-@SuppressWarnings("unused")
 @Platform(
-  value = {"linux", "macosx", "windows"},
-  compiler = "cpp17",
   include = {
     "heu/phe_kit.h",
   },
-  link = {"phe_kit_all", "tommath"},
-  define = {"MSGPACK_NO_BOOST", "SPDLOG_FMT_EXTERNAL", "SPDLOG_NO_TLS"}
+  link = {"phe_kit_all", "tommath"}
 )
+@Properties(inherit = heu.class)
 public class PheKit extends Pointer {
   static {
     Loader.load();

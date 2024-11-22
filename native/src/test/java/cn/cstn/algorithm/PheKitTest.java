@@ -36,7 +36,9 @@ public class PheKitTest extends TestCase {
       Ciphertext ct1 = pheKit.encrypt(2);
       Ciphertext ct2 = pheKit.encrypt(3);
       Ciphertext addRes = pheKit.add(ct1, ct2);
-      System.out.printf("addRes: %f", pheKit.decrypt(addRes));
+      System.out.printf("add: %f\n", pheKit.decrypt(addRes));
+      pheKit.addInplace(addRes, ct2);
+      System.out.printf("addInplace: %f\n", pheKit.decrypt(addRes));
 
     }
   }

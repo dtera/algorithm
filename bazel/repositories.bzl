@@ -19,6 +19,7 @@ load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 def algo_deps():
     _rules_cc()
     _build_bazel_apple_support()
+    _libtommath()
     _heu()
     _spu()
     _gmp()
@@ -38,6 +39,22 @@ def _build_bazel_apple_support():
         name = "build_bazel_apple_support",
         sha256 = "b53f6491e742549f13866628ddffcc75d1f3b2d6987dc4f14a16b242113c890b",
         url = "https://github.com/bazelbuild/apple_support/releases/download/1.17.1/apple_support.1.17.1.tar.gz",
+    )
+
+def _libtommath():
+    maybe(
+        http_archive,
+        name = "libtommath",
+        sha256 = "7cfbdb64431129de4257e7d3349200fdbd4f229b470ff3417b30d0f39beed41f",
+        type = "tar.gz",
+        strip_prefix = "libtommath-42b3fb07e7d504f61a04c7fca12e996d76a25251",
+        patch_args = ["-p1"],
+        patches = [
+            "//bazel:patches/libtommath.patch",
+        ],
+        urls = [
+            "https://github.com/libtom/libtommath/archive/42b3fb07e7d504f61a04c7fca12e996d76a25251.tar.gz",
+        ],
     )
 
 def _heu():
