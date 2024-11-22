@@ -25,4 +25,9 @@ public class Ciphertext extends Pointer {
 
   private native void allocate();
 
+  @SuppressWarnings("removal")
+  @Override
+  protected void finalize() {
+    close();
+  }
 }

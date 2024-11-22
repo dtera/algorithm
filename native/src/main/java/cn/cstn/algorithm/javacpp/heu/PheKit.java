@@ -42,4 +42,9 @@ public class PheKit extends Pointer {
 
   public native void addInplace(@ByRef Ciphertext ct1, @Const @ByRef Ciphertext ct2);
 
+  @SuppressWarnings("removal")
+  @Override
+  protected void finalize() {
+    close();
+  }
 }
