@@ -27,9 +27,10 @@ algo_cc_library(
 
 cc_static_library(
     name = "phe_kit_all",
-    deps = [
-        ":phe_kit",
-    ],
+    deps = select({
+         "@platforms//os:macos": [":phe_kit"],
+         "//conditions:default": [":phe_kit", "//native/src/main/native/cn/cstn/algorithm/javacpp/libtommath:tommath"],
+    }),
 )
 
 test_suite(

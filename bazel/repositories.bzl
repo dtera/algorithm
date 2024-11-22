@@ -18,7 +18,6 @@ load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 
 def algo_deps():
     _rules_cc()
-    _com_github_libtom_libtommath()
     _build_bazel_apple_support()
     _heu()
     _spu()
@@ -31,23 +30,6 @@ def _rules_cc():
         sha256 = "906e89286acc67c20819c3c88b3283de0d5868afda33635d70acae0de9777bb7",
         strip_prefix = "rules_cc-0.0.14",
         url = "https://github.com/bazelbuild/rules_cc/releases/download/0.0.14/rules_cc-0.0.14.tar.gz",
-    )
-
-def _com_github_libtom_libtommath():
-    maybe(
-        http_archive,
-        name = "com_github_libtom_libtommath",
-        sha256 = "6c7a6732daeefda3826e6c5321d60d820655fb9f3f1a1f59049b0e7cab3c9079",
-        type = "tar.gz",
-        strip_prefix = "libtommath-2e03dfd64dd7ae6bf0d43b665036da82e87f3fb2",
-        patch_args = ["-p1"],
-        patches = [
-            "//bazel:patches/libtommath.patch",
-        ],
-        urls = [
-            "https://github.com/libtom/libtommath/archive/2e03dfd64dd7ae6bf0d43b665036da82e87f3fb2.tar.gz",
-        ],
-        build_file = "@yacl//bazel:libtommath.BUILD",
     )
 
 def _build_bazel_apple_support():
