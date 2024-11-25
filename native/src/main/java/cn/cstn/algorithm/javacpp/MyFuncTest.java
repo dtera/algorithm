@@ -4,7 +4,7 @@ package cn.cstn.algorithm.javacpp;
  * Native Demo
  */
 
-public class NativeDemo {
+public class MyFuncTest {
 
   public static void main(String[] args) {
     try (MyFunc myFunc = new MyFunc()) {
