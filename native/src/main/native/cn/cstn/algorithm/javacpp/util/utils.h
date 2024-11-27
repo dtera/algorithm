@@ -151,6 +151,11 @@ void ParallelFor(Index size, int32_t n_threads, Func fn) {
 
 template <typename Index, typename Func>
 void ParallelFor(Index size, Func fn) {
+  ParallelFor(size, omp_get_num_procs(), fn);
+}
+
+template <typename Index, typename Func>
+void ParallelFor_(Index size, Func fn) {
 #pragma omp parallel num_threads(1)
 #pragma omp for
   for (int i = 0; i < size; ++i) {

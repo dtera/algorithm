@@ -16,6 +16,10 @@ load("//bazel:algo.bzl", "algo_cc_library", "algo_cc_test")
 
 package(default_visibility = ["//visibility:public"])
 
+test_suite(
+    name = "tests",
+)
+
 algo_cc_test(
     name = "gmp_test",
     srcs = ["gmp_test.cc"],
@@ -23,5 +27,13 @@ algo_cc_test(
         "@gmp//:gmp",
         "//native/src/main/native/cn/cstn/algorithm/javacpp/util:stopwatch",
     ],
-    
+)
+
+algo_cc_test(
+    name = "omp_test",
+    srcs = ["omp_test.cc"],
+    deps = [
+        "util:utils",
+        "util:stopwatch",
+    ],
 )

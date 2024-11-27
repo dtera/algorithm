@@ -31,6 +31,7 @@ build:gpu --@rules_cuda//cuda:archs=compute_80:compute_80
 build:gpu --@rules_cuda//cuda:enable=true
 
 build --cxxopt=-std=c++17
+build --cxxopt=-fopenmp
 build --host_cxxopt=-std=c++17
 build --linkopt -fvisibility=hidden
 build --linkopt -fvisibility-inlines-hidden
@@ -42,6 +43,7 @@ build --linkopt -ldl
 build --host_copt=-fPIE
 build --host_copt=-fstack-protector-strong
 build:linux --host_copt=-Wl,-z,noexecstack
+build:linux --linkopt -fopenmp
 build:macos --host_copt=-Wa,--noexecstack
 build:macos --action_env=PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 
