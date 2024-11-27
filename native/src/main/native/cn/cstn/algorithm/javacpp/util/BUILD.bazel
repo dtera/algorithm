@@ -12,21 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("//bazel:algo.bzl", "algo_cc_library", "OMP_CFLAGS", "OMP_DEPS", "OMP_LINKFLAGS")
+load("//bazel:algo.bzl", "OMP_DEPS", "algo_cc_library")
 
 package(default_visibility = ["//visibility:public"])
 
 algo_cc_library(
     name = "utils",
     hdrs = ["utils.h"],
-    copts = OMP_CFLAGS,
-    linkopts = OMP_LINKFLAGS,
-    deps = ["@gmp//:gmp"] + OMP_DEPS,
+    deps = ["@gmp"] + OMP_DEPS,
 )
-
 
 algo_cc_library(
     name = "stopwatch",
     hdrs = ["stopwatch.hpp"],
 )
-

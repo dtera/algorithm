@@ -23,6 +23,7 @@ WARNING_FLAGS = [
     "-Werror",
     "-Wno-unknown-pragmas",
 ]
+
 # set `SPDLOG_ACTIVE_LEVEL=1(SPDLOG_LEVEL_DEBUG)` to enable debug level log
 DEBUG_FLAGS = ["-DSPDLOG_ACTIVE_LEVEL=1", "-O0", "-g"]
 RELEASE_FLAGS = ["-O2"]
@@ -52,8 +53,8 @@ def _algo_copts():
         "//conditions:default": FAST_FLAGS,
     }) + WARNING_FLAGS
 
-def _add_prefix_for_local_deps(deps=[]):
-    prefix_deps=[]
+def _add_prefix_for_local_deps(deps = []):
+    prefix_deps = []
     if type(deps) == "list":
         for dep in deps:
             if not dep.startswith(("@", "//", ":")):
@@ -69,21 +70,23 @@ def algo_cc_binary(
         linkopts = [],
         **kargs):
     native.cc_binary(
-        copts = _algo_copts() + copts,
+        copts = _algo_copts() + copts + OMP_CFLAGS,
         deps = _add_prefix_for_local_deps(deps),
-        linkopts = linkopts + ["-ldl"],
+        linkopts = linkopts + OMP_LINKFLAGS + ["-ldl"],
         **kargs
     )
 
 def algo_cc_library(
         copts = [],
         deps = [],
+        linkopts = [],
         **kargs):
     native.cc_library(
-        copts = _algo_copts() + copts,
+        copts = _algo_copts() + copts + OMP_CFLAGS,
         deps = _add_prefix_for_local_deps(deps) + [
             "@com_github_gabime_spdlog//:spdlog",
         ],
+        linkopts = linkopts + OMP_LINKFLAGS + ["-ldl"],
         **kargs
     )
 
@@ -93,11 +96,11 @@ def algo_cc_test(
         linkopts = [],
         **kwargs):
     native.cc_test(
-        copts = _algo_copts() + copts,
+        copts = _algo_copts() + copts + OMP_CFLAGS,
         deps = _add_prefix_for_local_deps(deps) + [
             "@com_google_googletest//:gtest_main",
         ],
-        linkopts = linkopts + ["-ldl"],
+        linkopts = linkopts + OMP_LINKFLAGS + ["-ldl"],
         **kwargs
     )
 
