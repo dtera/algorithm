@@ -6,11 +6,9 @@
 
 #include <iostream>
 
-#include "util/stopwatch.hpp"
-
 #include "heu/phe_kit.h"
 
-TEST(phe_kit, t1) {
+TEST(phe_kit, single_op) {
   StopWatch sw;
 
   sw.Mark("init");
@@ -30,4 +28,71 @@ TEST(phe_kit, t1) {
   auto res = pheKit.decrypt(*ct);
   sw.PrintWithMills("decrypt");
   std::cout << "real: " << a + b << ", res: " << res << std::endl;
+}
+
+TEST(phe_kit, pair_op) {
+  StopWatch sw;
+
+  sw.Mark("init");
+  PheKit pheKit(SchemaType::OU);
+  sw.PrintWithMills("init");
+  std::cout << pheKit.getPublicKey()->ToString() << std::endl;
+
+  double a1 = 2.36, a2 = 5.12, b1 = 3.12, b2 = 7.45;
+  sw.Mark("encryptPair");
+  auto ct1 = pheKit.encryptPair(a1, a2);
+  auto ct2 = pheKit.encryptPair(b1, b2);
+  sw.PrintWithMills("encryptPair");
+  sw.Mark("add");
+  auto ct = pheKit.add(*ct1, *ct2);
+  sw.PrintWithMills("add");
+  sw.Mark("decryptPair");
+  auto res = pheKit.decryptPair(*ct);
+  sw.PrintWithMills("decryptPair");
+  std::cout << "real: [" << a1 + b1 << " " << a2 + b2 << "], res: [" << res[0] << " " << res[1] << "]" << std::endl;
+}
+
+TEST(phe_kit, batch_op) {
+  PheKit pheKit(SchemaType::OU);
+  std::cout << pheKit.getPublicKey()->ToString() << std::endl;
+
+  const int len = 100000, freq = 3;
+  double *ms1 = new double[len];
+  for (int i = 0; i < len; ++i) {
+    ms1[i] = i * 10 + i / 10;
+  }
+
+  auto ct1 = pheKit.encrypt(ms1, len);
+  auto res = pheKit.decrypt(ct1, len);
+
+  for (int i = 0; i < len; ++i) {
+    if (i % (len / freq) == 0) {
+      std::cout << "real: " << ms1[i] << ", res: " << res[i] << std::endl;
+    }
+  }
+
+}
+
+TEST(phe_kit, batch_pair_op) {
+  PheKit pheKit(SchemaType::OU);
+  std::cout << pheKit.getPublicKey()->ToString() << std::endl;
+
+  const int len = 100000, freq = 3;
+  double *ms1 = new double[len];
+  double *ms2 = new double[len];
+  for (int i = 0; i < len; ++i) {
+    ms1[i] = i * 10 + i / 10;
+    ms2[i] = i * 100 + (i + 3) / 10;
+  }
+
+  auto ct = pheKit.encryptPair(ms1, ms2, len);
+  auto res = pheKit.decryptPair(ct, len);
+
+  for (int i = 0; i < len; ++i) {
+    if (i % (len / freq) == 0) {
+      std::cout << "real: [" << ms1[i] << " " << ms2[i] << "], res: [" << res[i][0] << " " << res[i][1] << "]"
+                << std::endl;
+    }
+  }
+
 }

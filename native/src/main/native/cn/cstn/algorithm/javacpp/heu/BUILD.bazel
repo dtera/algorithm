@@ -20,6 +20,7 @@ algo_cc_library(
     srcs = ["phe_kit.cc"],
     hdrs = ["phe_kit.h"],
     deps = [
+        "util:stopwatch",
         "util:utils",
         "@com_dtera_heu//heu/library/phe",
     ],
@@ -28,8 +29,11 @@ algo_cc_library(
 cc_static_library(
     name = "phe_kit_all",
     deps = select({
-         "@platforms//os:macos": [":phe_kit"],
-         "//conditions:default": [":phe_kit", "@libtommath//:tommath"],
+        "@platforms//os:macos": [":phe_kit"],
+        "//conditions:default": [
+            ":phe_kit",
+            "@libtommath//:tommath",
+        ],
     }),
 )
 
@@ -42,6 +46,5 @@ algo_cc_test(
     srcs = ["phe_kit_test.cc"],
     deps = [
         ":phe_kit",
-        "util:stopwatch",
     ],
 )

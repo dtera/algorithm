@@ -58,7 +58,7 @@ class OMPException {
   /*!
    * \brief Parallel OMP blocks should be placed within Run to save exception
    */
-  template <typename Function, typename... Parameters>
+  template<typename Function, typename... Parameters>
   void Run(Function f, Parameters... params) {
     try {
       f(params...);
@@ -83,7 +83,7 @@ class OMPException {
   }
 };
 
-template <typename Index, typename Func>
+template<typename Index, typename Func>
 void ParallelFor(Index size, [[maybe_unused]] int32_t n_threads, Sched sched,
                  Func fn) {
 #if defined(_MSC_VER)
@@ -144,21 +144,26 @@ void ParallelFor(Index size, [[maybe_unused]] int32_t n_threads, Sched sched,
   exc.Rethrow();
 }
 
-template <typename Index, typename Func>
+template<typename Index, typename Func>
 void ParallelFor(Index size, int32_t n_threads, Func fn) {
   ParallelFor(size, n_threads, Sched::Static(), fn);
 }
 
-template <typename Index, typename Func>
+template<typename Index, typename Func>
+void ParallelFor(Index size, Sched sched, Func fn) {
+  ParallelFor(size, omp_get_num_procs(), sched, fn);
+}
+
+template<typename Index, typename Func>
 void ParallelFor(Index size, Func fn) {
   ParallelFor(size, omp_get_num_procs(), fn);
 }
 
-template <typename Index, typename Func>
+template<typename Index, typename Func>
 void ParallelFor_(Index size, Func fn) {
 #pragma omp parallel num_threads(1)
 #pragma omp for
-  for (int i = 0; i < size; ++i) {
+  for ([[maybe_unused]] int i = 0; i < size; ++i) {
     fn(i);
   }
 }
@@ -174,9 +179,9 @@ class Range1d {
  public:
   Range1d(size_t begin, size_t end)
       : begin_(begin),
-        end_(end){CHECK_LT(begin, end)}
+        end_(end) { CHECK_LT(begin, end) }
 
-        size_t begin() const {  // NOLINT
+  size_t begin() const {  // NOLINT
     return begin_;
   }
 
@@ -214,7 +219,7 @@ class BlockedSpace2d {
   // values) Arguments: dim1 - size of the first dimension in the space
   // getter_size_dim2 - functor to get the second dimensions for each 'row' by
   // row-index grain_size - max size of produced blocks
-  template <typename Func>
+  template<typename Func>
   BlockedSpace2d(size_t dim1, Func getter_size_dim2, size_t grain_size) {
     for (size_t i = 0; i < dim1; ++i) {
       const size_t size = getter_size_dim2(i);
@@ -253,7 +258,7 @@ class BlockedSpace2d {
 };
 
 // Wrapper to implement nested parallelism with simple omp parallel for
-template <typename Func>
+template<typename Func>
 void ParallelFor2d(const BlockedSpace2d &space, int nthreads, Func func) {
   const size_t num_blocks_in_space = space.Size();
   CHECK_GE(nthreads, 1)
