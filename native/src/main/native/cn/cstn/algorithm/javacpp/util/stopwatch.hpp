@@ -12,7 +12,7 @@
 
 class StopWatch {
  public:
-  StopWatch(bool mark_defaut = false) {
+  StopWatch(bool mark_defaut = false, bool print_on = true) : print_on(print_on) {
     if (mark_defaut) {
       Mark();
     }
@@ -92,10 +92,12 @@ class StopWatch {
     return cost;
   }
 
-  template <typename _Fp>
+  template<typename _Fp>
   void Print(_Fp fp, const std::string &mark = default_mark()) {
-    auto show = std::bind(fp, this, std::placeholders::_1);
-    std::cout << mark << " costs " << show(mark) << std::endl;
+    if (print_on) {
+      auto show = std::bind(fp, this, std::placeholders::_1);
+      std::cout << mark << " costs " << show(mark) << std::endl;
+    }
   }
 
   [[maybe_unused]] void PrintWithNano(
@@ -135,15 +137,15 @@ class StopWatch {
   }
 
   // return a mark's cost
-  template <typename _Rep, typename _Duration>
+  template<typename _Rep, typename _Duration>
   inline _Rep CountDuration(const std::string &mark = default_mark()) {
     return std::chrono::duration_cast<_Duration>(
-               std::chrono::high_resolution_clock::now() - mark_[mark])
+        std::chrono::high_resolution_clock::now() - mark_[mark])
         .count();
   }
 
   // return a mark's cost
-  template <typename _Period>
+  template<typename _Period>
   inline long long CountLL(const std::string &mark = default_mark()) {
     return CountDuration<long long, std::chrono::duration<long long, _Period>>(
         mark);
@@ -152,4 +154,5 @@ class StopWatch {
   std::unordered_map<std::string,
                      std::chrono::high_resolution_clock::time_point>
       mark_;
+  bool print_on;
 };
