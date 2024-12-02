@@ -20,13 +20,12 @@
         <javacpp.platform.properties>${javacpp.platform}</javacpp.platform.properties>
         <dist.download.folder>${project.build.directory}/dist</dist.download.folder>
 
-        <native.include.dir>${project.basedir}/../bazel-${project.parent.artifactId}</native.include.dir>
-        <native.include.src.dir>${native.include.dir}/native/src/main/native/cn/cstn/algorithm/javacpp
-        </native.include.src.dir>
-        <native.include.external.dir>${native.include.dir}/external</native.include.external.dir>
-        <native.lib.dir>${project.basedir}/../bazel-bin</native.lib.dir>
-        <native.lib.src.dir>${native.lib.dir}/native/src/main/native/cn/cstn/algorithm/javacpp</native.lib.src.dir>
-        <native.lib.external.dir>${native.lib.dir}/external</native.lib.external.dir>
+        <include.dir>${project.basedir}/../bazel-${project.parent.artifactId}</include.dir>
+        <include.src.dir>${include.dir}/native/src/main/native/cn/cstn/algorithm/javacpp</include.src.dir>
+        <include.external.dir>${include.dir}/external</include.external.dir>
+        <lib.dir>${project.basedir}/../bazel-bin</lib.dir>
+        <lib.src.dir>${lib.dir}/native/src/main/native/cn/cstn/algorithm/javacpp</lib.src.dir>
+        <lib.external.dir>${lib.dir}/external</lib.external.dir>
     </properties>
 
     <dependencies>
@@ -146,23 +145,24 @@
                     <copyLibs>true</copyLibs>
                     <includePaths>
                         <includePath>${dist.download.folder}/include/</includePath>
-                        <includePath>${native.include.src.dir}</includePath>
-                        <includePath>${native.include.external.dir}/com_dtera_heu</includePath>
-                        <includePath>${native.include.external.dir}/yacl</includePath>
-                        <includePath>${native.include.external.dir}/com_google_absl</includePath>
-                        <includePath>${native.lib.external.dir}/com_github_fmtlib_fmt/fmtlib/include</includePath>
-                        <includePath>${native.lib.external.dir}/com_github_gabime_spdlog/spdlog/include</includePath>
-                        <includePath>${native.lib.external.dir}/com_github_msgpack_msgpack/msgpack/include</includePath>
-                        <includePath>${native.lib.external.dir}/com_github_libtom_libtommath/libtommath/include
-                        </includePath>
+                        <includePath>${include.src.dir}</includePath>
+                        <includePath>${include.external.dir}/com_dtera_heu</includePath>
+                        <includePath>${include.external.dir}/yacl</includePath>
+                        <includePath>${include.external.dir}/com_google_absl</includePath>
+                        <includePath>${include.external.dir}/macos_omp_arm64/include</includePath>
+                        <includePath>${lib.external.dir}/com_github_fmtlib_fmt/fmtlib/include</includePath>
+                        <includePath>${lib.external.dir}/com_github_gabime_spdlog/spdlog/include</includePath>
+                        <includePath>${lib.external.dir}/com_github_msgpack_msgpack/msgpack/include</includePath>
+                        <includePath>${lib.external.dir}/com_github_libtom_libtommath/libtommath/include</includePath>
+                        <includePath>${lib.external.dir}/gmp/gmp/include</includePath>
                     </includePaths>
                     <linkPaths>
                         <linkPath>${dist.download.folder}/</linkPath>
                         <linkPath>${dist.download.folder}/lib/</linkPath>
                         <!-- additional link paths in case of a full native build -->
-                        <linkPath>${native.lib.src.dir}</linkPath>
-                        <linkPath>${native.lib.src.dir}/heu</linkPath>
-                        <linkPath>${native.lib.external.dir}/com_github_libtom_libtommath/libtommath/lib</linkPath>
+                        <linkPath>${lib.src.dir}</linkPath>
+                        <linkPath>${lib.src.dir}/heu</linkPath>
+                        <linkPath>${lib.external.dir}/com_github_libtom_libtommath/libtommath/lib</linkPath>
                     </linkPaths>
                     <resourcePaths>
                         <resourcePath>${project.basedir}/../</resourcePath>
