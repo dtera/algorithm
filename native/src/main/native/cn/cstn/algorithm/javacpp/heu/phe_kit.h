@@ -29,6 +29,9 @@ class PheKit {
   std::function<Plaintext(double)> encoder_f;
   std::function<double(const Plaintext &)> decoder_f;
   std::function<Plaintext(double, double)> batch_encoder_f;
+  std::function<double *(const Plaintext &)> batch_decoder_f;
+  std::function<void(Ciphertext *, const Ciphertext &)> add_f;
+  std::function<void(Ciphertext *, const Ciphertext &)> sub_f;
 
   void init(std::shared_ptr<heu::lib::phe::HeKitPublicBase> he_kit, int64_t scale);
 
@@ -58,16 +61,29 @@ class PheKit {
   }
 
   template<typename T>
-  inline T *decrypt(const Ciphertext *ct, size_t size, std::function<T(const Plaintext &)> decoder) {
+  inline T *decrypt(const Ciphertext *cts, size_t size, std::function<T(const Plaintext &)> decoder) {
     sw.Mark("decrypt");
     T *res = new T[size];
     ParallelFor(size, [&](int i) {
-      res[i] = this->decrypt(ct[i], decoder);
+      res[i] = this->decrypt(cts[i], decoder);
     });
     sw.PrintWithMills("decrypt");
 
     return res;
   }
+
+  inline Ciphertext *op(const Ciphertext &a,
+                        const Ciphertext &b,
+                        std::function<void(Ciphertext *, const Ciphertext &)> op_f);
+  inline Ciphertext *op(const Ciphertext *a,
+                        const Ciphertext *b,
+                        size_t size,
+                        std::function<void(Ciphertext *, const Ciphertext &)> op_f, const std::string &op_name);
+  inline void opInplace(Ciphertext *a, const Ciphertext &b, std::function<void(Ciphertext *, const Ciphertext &)> op_f);
+  inline void opInplace(Ciphertext *a,
+                        const Ciphertext *b,
+                        size_t size,
+                        std::function<void(Ciphertext *, const Ciphertext &)> op_f, const std::string &op_name);
 
  public:
   PheKit(SchemaType schema_type, size_t key_size = 2048, int64_t scale = 1e6);
@@ -78,16 +94,23 @@ class PheKit {
   const std::shared_ptr<heu::lib::phe::PublicKey> &getPublicKey() const;
   const std::shared_ptr<heu::lib::phe::SecretKey> &getSecretKey() const;
 
-  Ciphertext *encrypt(double data);
-  Ciphertext *encrypt(double *data, size_t size);
+  Ciphertext *encrypt(double m);
+  Ciphertext *encrypt(double *ms, size_t size);
   double decrypt(const Ciphertext &ct);
-  double *decrypt(const Ciphertext *ct, size_t size);
+  double *decrypt(const Ciphertext *cts, size_t size);
 
-  Ciphertext *encryptPair(double d1, double d2);
-  Ciphertext *encryptPair(double *d1, double *d2, size_t size);
+  Ciphertext *encryptPair(double m1, double m2);
+  Ciphertext *encryptPair(double *ms1, double *ms2, size_t size);
   double *decryptPair(const Ciphertext &ct);
-  double **decryptPair(const Ciphertext *ct, size_t size);
+  double **decryptPair(const Ciphertext *cts, size_t size);
 
   Ciphertext *add(const Ciphertext &ct1, const Ciphertext &ct2);
+  Ciphertext *add(const Ciphertext *cts1, const Ciphertext *cts2, size_t size);
   void addInplace(Ciphertext &ct1, const Ciphertext &ct2);
+  void addInplace(Ciphertext *cts1, const Ciphertext *cts2, size_t size);
+
+  Ciphertext *sub(const Ciphertext &ct1, const Ciphertext &ct2);
+  Ciphertext *sub(const Ciphertext *cts1, const Ciphertext *cts2, size_t size);
+  void subInplace(Ciphertext &ct1, const Ciphertext &ct2);
+  void subInplace(Ciphertext *cts1, const Ciphertext *cts2, size_t size);
 };
