@@ -22,6 +22,8 @@ import cn.cstn.algorithm.javacpp.presets.heu;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.annotation.Properties;
 
+import static cn.cstn.algorithm.javacpp.global.heu.deletePheKit;
+
 @Properties(inherit = heu.class)
 public abstract class AbstractPheKit extends Pointer {
   private final PheKit pheKit;
@@ -89,6 +91,7 @@ public abstract class AbstractPheKit extends Pointer {
   @SuppressWarnings("removal")
   @Override
   protected void finalize() {
+    deletePheKit((PheKit) this);
     close();
   }
 

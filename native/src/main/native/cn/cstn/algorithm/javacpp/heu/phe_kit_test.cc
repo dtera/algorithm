@@ -30,6 +30,9 @@ TEST(phe_kit, single_op) {
   auto res = pheKit.decrypt(*ct);
   sw.PrintWithMills("decrypt");
   std::cout << "real: " << a + b + b << ", res: " << res << std::endl;
+  deleteCiphertext(ct1);
+  deleteCiphertext(ct2);
+  deleteCiphertext(ct);
 }
 
 TEST(phe_kit, pair_op) {
@@ -55,6 +58,9 @@ TEST(phe_kit, pair_op) {
   sw.PrintWithMills("decryptPair");
   std::cout << "real: [" << a1 + b1 + b1 << " " << a2 + b2 + b2 << "], res: [" << res[0] << " " << res[1] << "]"
             << std::endl;
+  deleteCiphertext(ct1);
+  deleteCiphertext(ct2);
+  deleteCiphertext(ct);
 }
 
 TEST(phe_kit, batch_op) {
@@ -79,6 +85,9 @@ TEST(phe_kit, batch_op) {
       std::cout << "real: " << ms1[i] + ms2[i] + ms2[i] << ", res: " << res[i] << std::endl;
     }
   }
+  deleteCiphertexts(ct1);
+  deleteCiphertexts(ct2);
+  deleteCiphertexts(ct);
 
 }
 
@@ -109,5 +118,8 @@ TEST(phe_kit, batch_pair_op) {
                 << res[i + len] << "]" << std::endl;
     }
   }
+  deleteCiphertexts(ct1);
+  deleteCiphertexts(ct2);
+  deleteCiphertexts(ct);
 
 }

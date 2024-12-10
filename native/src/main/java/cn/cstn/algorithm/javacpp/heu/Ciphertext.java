@@ -7,6 +7,9 @@ import org.bytedeco.javacpp.annotation.Namespace;
 import org.bytedeco.javacpp.annotation.Platform;
 import org.bytedeco.javacpp.annotation.Properties;
 
+import static cn.cstn.algorithm.javacpp.global.heu.deleteCiphertext;
+import static cn.cstn.algorithm.javacpp.global.heu.deleteCiphertexts;
+
 @Platform(
   include = {
     "heu/library/phe/base/serializable_types.h",
@@ -28,6 +31,11 @@ public class Ciphertext extends Pointer {
   @SuppressWarnings("removal")
   @Override
   protected void finalize() {
+    if (capacity > 1) {
+      deleteCiphertexts(this);
+    } else {
+      deleteCiphertext(this);
+    }
     close();
   }
 }

@@ -120,3 +120,7 @@ class PheKit {
   void subInplace(Ciphertext &ct1, const Ciphertext &ct2);
   void subInplaces(Ciphertext *cts1, const Ciphertext *cts2, size_t size);
 };
+
+void deletePheKit(PheKit *pheKit);
+void deleteCiphertext(Ciphertext *ciphertext);
+void deleteCiphertexts(Ciphertext *ciphertext);

@@ -197,3 +197,15 @@ void PheKit::subInplace(Ciphertext &ct1, const Ciphertext &ct2) {
 void PheKit::subInplaces(Ciphertext *cts1, const Ciphertext *cts2, size_t size) {
   opInplace(cts1, cts2, size, sub_f, "subInplaces");
 }
+
+void deletePheKit(PheKit *pheKit) {
+  delete pheKit;
+}
+
+void deleteCiphertext(Ciphertext *ciphertext) {
+  delete ciphertext;
+}
+
+void deleteCiphertexts(Ciphertext *ciphertext) {
+  delete[] ciphertext;
+}
