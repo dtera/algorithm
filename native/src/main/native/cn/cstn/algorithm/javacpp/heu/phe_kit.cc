@@ -59,6 +59,53 @@ const std::shared_ptr<heu::lib::phe::SecretKey> &PheKit::getSecretKey() const {
   throw std::invalid_argument("have no secret key");
 }
 
+inline Ciphertext *PheKit::op(const Ciphertext &a,
+                              const Ciphertext &b,
+                              std::function<void(Ciphertext *, const Ciphertext &)> op_f) {
+  auto res = new Ciphertext();
+  *res = a;
+  op_f(res, b);
+  return res;
+}
+
+inline Ciphertext *PheKit::op(const Ciphertext *a,
+                              const Ciphertext *b,
+                              size_t size,
+                              std::function<void(Ciphertext *, const Ciphertext &)> op_f, const std::string &op_name) {
+  sw.Mark(op_name);
+  Ciphertext *res = new Ciphertext[size];
+  /*ParallelFor(size, [&](int i) {
+    res[i] = a[i];
+    opInplace(&res[i], b[i], op_f);
+  });*/
+  for (size_t i = 0; i < size; ++i) {
+    res[i] = a[i];
+    opInplace(&res[i], b[i], op_f);
+  }
+  sw.PrintWithMills(op_name);
+  return res;
+}
+
+inline void PheKit::opInplace(Ciphertext *a,
+                              const Ciphertext &b,
+                              std::function<void(Ciphertext *, const Ciphertext &)> op_f) {
+  op_f(a, b);
+}
+
+inline void PheKit::opInplace(Ciphertext *a,
+                              const Ciphertext *b,
+                              size_t size,
+                              std::function<void(Ciphertext *, const Ciphertext &)> op_f, const std::string &op_name) {
+  sw.Mark(op_name);
+  /*ParallelFor(size, [&](int i) {
+    opInplace(&a[i], b[i], op_f);
+  });*/
+  for (size_t i = 0; i < size; ++i) {
+    opInplace(&a[i], b[i], op_f);
+  }
+  sw.PrintWithMills(op_name);
+}
+
 Ciphertext *PheKit::encrypt(double m) {
   return encrypt(encoder_f, m);
 }
@@ -117,53 +164,6 @@ double *PheKit::decryptPairs(const Ciphertext *cts, size_t size) {
   double *out = new double[size * 2];
   decryptPairs(cts, size, out);
   return out;
-}
-
-inline Ciphertext *PheKit::op(const Ciphertext &a,
-                              const Ciphertext &b,
-                              std::function<void(Ciphertext *, const Ciphertext &)> op_f) {
-  auto res = new Ciphertext();
-  *res = a;
-  op_f(res, b);
-  return res;
-}
-
-inline Ciphertext *PheKit::op(const Ciphertext *a,
-                              const Ciphertext *b,
-                              size_t size,
-                              std::function<void(Ciphertext *, const Ciphertext &)> op_f, const std::string &op_name) {
-  sw.Mark(op_name);
-  Ciphertext *res = new Ciphertext[size];
-  /*ParallelFor(size, [&](int i) {
-    res[i] = a[i];
-    opInplace(&res[i], b[i], op_f);
-  });*/
-  for (size_t i = 0; i < size; ++i) {
-    res[i] = a[i];
-    opInplace(&res[i], b[i], op_f);
-  }
-  sw.PrintWithMills(op_name);
-  return res;
-}
-
-inline void PheKit::opInplace(Ciphertext *a,
-                              const Ciphertext &b,
-                              std::function<void(Ciphertext *, const Ciphertext &)> op_f) {
-  op_f(a, b);
-}
-
-inline void PheKit::opInplace(Ciphertext *a,
-                              const Ciphertext *b,
-                              size_t size,
-                              std::function<void(Ciphertext *, const Ciphertext &)> op_f, const std::string &op_name) {
-  sw.Mark(op_name);
-  /*ParallelFor(size, [&](int i) {
-    opInplace(&a[i], b[i], op_f);
-  });*/
-  for (size_t i = 0; i < size; ++i) {
-    opInplace(&a[i], b[i], op_f);
-  }
-  sw.PrintWithMills(op_name);
 }
 
 Ciphertext *PheKit::add(const Ciphertext &ct1, const Ciphertext &ct2) {
