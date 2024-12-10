@@ -1,6 +1,6 @@
 package cn.cstn.algorithm.javacpp.heu;
 
-import cn.cstn.algorithm.javacpp.preset.heu;
+import cn.cstn.algorithm.javacpp.presets.heu;
 import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.annotation.Namespace;

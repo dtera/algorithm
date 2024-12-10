@@ -12,6 +12,7 @@
     <properties>
         <bazel.build.skip>false</bazel.build.skip>
         <javacpp.build.skip>false</javacpp.build.skip>
+        <javacpp.generate.skip>false</javacpp.generate.skip>
         <native.classifier>${javacpp.platform}${javacpp.platform.extension}</native.classifier>
         <javacpp.platform>${os.name}-${os.arch}</javacpp.platform>
         <jar.name.suffix>-${javacpp.platform}</jar.name.suffix>
@@ -29,6 +30,10 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacpp</artifactId>
@@ -56,6 +61,12 @@
             </properties>
         </profile>
         <profile>
+            <id>javacpp-generate-skip</id>
+            <properties>
+                <javacpp.generate.skip>true</javacpp.generate.skip>
+            </properties>
+        </profile>
+        <profile>
             <id>native-build-skip</id>
             <properties>
                 <bazel.build.skip>true</bazel.build.skip>
@@ -71,6 +82,48 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <release>${maven.compiler.release}</release>
+                    <fork>true</fork> <!-- Required for JDK16+ -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <excludes>
+                        <exclude>**/**/*.bazel</exclude>
+                        <exclude>**/**/*.cpp</exclude>
+                        <exclude>**/**/*.h</exclude>
+                        <exclude>**/**/*.sh</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>javacpp-compiler</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>cn/cstn/algorithm/javacpp/presets/*.java</include>
+                            </includes>
+                            <!-- Build on Java8 to prevent the plugin to automatically include module-info.java (excluding it won't work) -->
+                            <release>${maven.compiler.release}</release>
+                            <compilerArgs combine.self="override"/>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -139,9 +192,6 @@
                         </property>
                     </propertyKeysAndValues>
                     <classPath>${project.build.outputDirectory}</classPath>
-                    <compilerOptions>
-                        <compilerOption>-fPIE</compilerOption>
-                    </compilerOptions>
                     <copyLibs>true</copyLibs>
                     <includePaths>
                         <includePath>${dist.download.folder}/include/</includePath>
@@ -163,10 +213,16 @@
                         <linkPath>${lib.src.dir}</linkPath>
                         <linkPath>${lib.src.dir}/heu</linkPath>
                         <linkPath>${lib.external.dir}/com_github_libtom_libtommath/libtommath/lib</linkPath>
+                        <linkPath>/opt/homebrew/opt/libomp/lib</linkPath>
                     </linkPaths>
                     <resourcePaths>
                         <resourcePath>${project.basedir}/../</resourcePath>
                     </resourcePaths>
+                    <environmentVariables>
+                        <SDKROOT>
+                            /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+                        </SDKROOT>
+                    </environmentVariables>
                 </configuration>
                 <executions>
                     <!--
@@ -181,8 +237,8 @@
                     </execution>
                     <execution>
                         <!--
-                          Generate TensorFlow C API binding sources
-                            The plugin will parse the pre-compiled TensorFlow C API presets and generate
+                            Generate  C API binding sources
+                            The plugin will parse the pre-compiled C API presets and generate
                             source classes for calling this API directly in Java.
                         -->
                         <id>javacpp-parser</id>
@@ -193,7 +249,7 @@
                         <configuration>
                             <skip>${javacpp.generate.skip}</skip>
                             <outputDirectory>${project.basedir}/src/gen/java</outputDirectory>
-                            <classOrPackageName>cn.cstn.algorithm.javacpp.*</classOrPackageName>
+                            <classOrPackageName>cn.cstn.algorithm.javacpp.presets.*</classOrPackageName>
                         </configuration>
                     </execution>
                     <execution>
@@ -211,7 +267,7 @@
                             <skip>${javacpp.build.skip}</skip>
                             <!--deleteJniFiles>false</deleteJniFiles-->
                             <outputDirectory>
-                                ${project.build.directory}/classes/cn/cstn/algorithm/javacpp/${native.classifier}/
+                                ${project.build.directory}/classes/${native.classifier}/
                             </outputDirectory>
                             <classOrPackageName>cn.cstn.algorithm.javacpp.**</classOrPackageName>
                             <copyLibs>true</copyLibs>
@@ -226,6 +282,55 @@
                         <version>${protobuf.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.4.0</version>
+                <executions>
+                    <execution>
+                        <!--
+                            Add generated classes to the source path
+                            These are classes generated by the javacpp-plugin and the native build.
+                        -->
+                        <id>add-gen-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.basedir}/src/gen/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.3.2</version>
+                <executions>
+                    <execution>
+                        <!--
+                          Clean generated source files and resources
+                        -->
+                        <id>generated-sources-clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${javacpp.clean.skip}</skip>
+                            <filesets>
+                                <fileset>
+                                    <directory>src/gen</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

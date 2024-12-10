@@ -12,9 +12,8 @@ TEST(phe_kit, single_op) {
   StopWatch sw;
 
   sw.Mark("init");
-  PheKit pheKit(1);
+  PheKit pheKit(SchemaType::ElGamal);
   sw.PrintWithMills("init");
-  std::cout << pheKit.getPublicKey()->ToString() << std::endl;
 
   double a = 2.36, b = 5.12;
   sw.Mark("encrypt");
@@ -39,7 +38,6 @@ TEST(phe_kit, pair_op) {
   sw.Mark("init");
   PheKit pheKit(SchemaType::OU);
   sw.PrintWithMills("init");
-  std::cout << pheKit.getPublicKey()->ToString() << std::endl;
 
   double a1 = 2.36, a2 = 5.12, b1 = 3.12, b2 = 7.45;
   sw.Mark("encryptPair");
@@ -53,7 +51,7 @@ TEST(phe_kit, pair_op) {
   pheKit.addInplace(*ct, *ct2);
   sw.PrintWithMills("addInplace");
   sw.Mark("decryptPair");
-  auto res = pheKit.decryptPair(*ct);
+  auto res = pheKit.decryptPair_(*ct);
   sw.PrintWithMills("decryptPair");
   std::cout << "real: [" << a1 + b1 + b1 << " " << a2 + b2 + b2 << "], res: [" << res[0] << " " << res[1] << "]"
             << std::endl;
@@ -61,7 +59,6 @@ TEST(phe_kit, pair_op) {
 
 TEST(phe_kit, batch_op) {
   PheKit pheKit(SchemaType::OU);
-  std::cout << pheKit.getPublicKey()->ToString() << std::endl;
 
   const int len = 100000, freq = 4;
   double *ms1 = new double[len];
@@ -71,11 +68,11 @@ TEST(phe_kit, batch_op) {
     ms2[i] = i * 100 + (i + 3) / 10;
   }
 
-  auto ct1 = pheKit.encrypt(ms1, len);
-  auto ct2 = pheKit.encrypt(ms2, len);
-  auto ct = pheKit.add(ct1, ct2, len);
-  pheKit.addInplace(ct, ct2, len);
-  auto res = pheKit.decrypt(ct, len);
+  auto ct1 = pheKit.encrypts(ms1, len);
+  auto ct2 = pheKit.encrypts(ms2, len);
+  auto ct = pheKit.adds(ct1, ct2, len);
+  pheKit.addInplaces(ct, ct2, len);
+  auto res = pheKit.decrypts(ct, len);
 
   for (int i = 0; i < len; ++i) {
     if (i % (len / freq) == 0) {
@@ -87,7 +84,6 @@ TEST(phe_kit, batch_op) {
 
 TEST(phe_kit, batch_pair_op) {
   PheKit pheKit(SchemaType::OU);
-  std::cout << pheKit.getPublicKey()->ToString() << std::endl;
 
   const int len = 100000, freq = 3;
   double *ms11 = new double[len];
@@ -101,16 +97,16 @@ TEST(phe_kit, batch_pair_op) {
     ms22[i] = i * 100 + (i + 3) / 5;
   }
 
-  auto ct1 = pheKit.encryptPair(ms11, ms12, len);
-  auto ct2 = pheKit.encryptPair(ms21, ms22, len);
-  auto ct = pheKit.add(ct1, ct2, len);
-  pheKit.addInplace(ct, ct2, len);
-  auto res = pheKit.decryptPair(ct, len);
+  auto ct1 = pheKit.encryptPairs(ms11, ms12, len);
+  auto ct2 = pheKit.encryptPairs(ms21, ms22, len);
+  auto ct = pheKit.adds(ct1, ct2, len);
+  pheKit.addInplaces(ct, ct2, len);
+  auto res = pheKit.decryptPairs(ct, len);
 
   for (int i = 0; i < len; ++i) {
     if (i % (len / freq) == 0) {
-      std::cout << "real: [" << ms11[i] + 2 * ms21[i] << " " << ms12[i] + 2 * ms22[i] << "], res: [" << res[i][0] << " "
-                << res[i][1] << "]" << std::endl;
+      std::cout << "real: [" << ms11[i] + 2 * ms21[i] << " " << ms12[i] + 2 * ms22[i] << "], res: [" << res[i] << " "
+                << res[i + len] << "]" << std::endl;
     }
   }
 

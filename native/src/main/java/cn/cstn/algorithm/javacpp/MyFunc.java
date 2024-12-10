@@ -4,7 +4,7 @@ import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.annotation.Platform;
 
-@Platform(include = "func.h", link = "func")
+@Platform(compiler = "cpp17", include = "func.h", link = "func")
 public class MyFunc extends Pointer {
   static {
     Loader.load();
