@@ -19,6 +19,7 @@ limitations under the License.
 package cn.cstn.algorithm.javacpp.heu;
 
 import cn.cstn.algorithm.javacpp.presets.heu;
+import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.annotation.Properties;
 
@@ -97,6 +98,10 @@ public abstract class AbstractPheKit extends Pointer {
 
   public static PheKit newInstance(SchemaType schemaType) {
     return new PheKit(schemaType);
+  }
+
+  public static PheKit newInstance(BytePointer pkBuffer) {
+    return new PheKit(pkBuffer);
   }
 
 }

@@ -93,7 +93,9 @@ class PheKit {
 
  public:
   PheKit(SchemaType schema_type, size_t key_size = 2048, int64_t scale = 1e6);
-  PheKit(const char *pk_buffer, int64_t scale = 1e6);
+  PheKit(std::string &pk_buffer, int64_t scale = 1e6);
+
+  std::string pubKey() const;
 
   Ciphertext *encrypt(double m);
   Ciphertext *encrypts(double *ms, size_t size);

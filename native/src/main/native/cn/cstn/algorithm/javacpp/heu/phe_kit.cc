@@ -21,7 +21,9 @@ PheKit::PheKit(yacl::ByteContainerView pk_buffer, int64_t scale) : has_secret_ke
   init(dhe_kit_, scale);
 }
 
-PheKit::PheKit(const char *pk_buffer, int64_t scale) : PheKit(yacl::ByteContainerView(pk_buffer, scale)) {}
+PheKit::PheKit(std::string &pk_buffer, int64_t scale) : PheKit(yacl::ByteContainerView(pk_buffer.data(),
+                                                                                       pk_buffer.size()),
+                                                               scale) {}
 
 void PheKit::init(std::shared_ptr<heu::lib::phe::HeKitPublicBase> he_kit, int64_t scale) {
   encoder_ = std::make_shared<heu::lib::phe::PlainEncoder>(
@@ -104,6 +106,10 @@ inline void PheKit::opInplace(Ciphertext *a,
     opInplace(&a[i], b[i], op_f);
   }
   sw.PrintWithMills(op_name);
+}
+
+std::string PheKit::pubKey() const {
+  return std::string(getPublicKey()->Serialize());
 }
 
 Ciphertext *PheKit::encrypt(double m) {

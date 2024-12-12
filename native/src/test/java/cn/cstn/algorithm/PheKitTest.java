@@ -30,6 +30,25 @@ public class PheKitTest extends TestCase {
   }
 
   /**
+   * PubKey Test
+   */
+  public void testPubKey() {
+    try (PheKit pheKit = PheKit.newInstance(SchemaType.OU);
+         PheKit pheKit2 = PheKit.newInstance(pheKit.pubKey())) {
+      Ciphertext ct1 = pheKit2.encrypt(2);
+      Ciphertext ct2 = pheKit2.encrypt(3);
+      Ciphertext addRes = pheKit2.add(ct1, ct2);
+      System.out.printf("add: %f\n", pheKit.decrypt(addRes));
+      pheKit2.addInplace(addRes, ct2);
+      System.out.printf("addInplace: %f\n", pheKit.decrypt(addRes));
+      Ciphertext subRes = pheKit2.sub(ct2, ct1);
+      System.out.printf("sub: %f\n", pheKit.decrypt(subRes));
+      pheKit2.subInplace(subRes, ct2);
+      System.out.printf("subInplace: %f\n", pheKit.decrypt(subRes));
+    }
+  }
+
+  /**
    * Single Op Test
    */
   public void testSingleOp() {

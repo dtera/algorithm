@@ -8,6 +8,35 @@
 
 #include "heu/phe_kit.h"
 
+TEST(phe_kit, pub_key_t) {
+  StopWatch sw;
+
+  sw.Mark("init");
+  PheKit pheKit(SchemaType::OU);
+  auto pk = pheKit.pubKey();
+  PheKit dpheKit(pk);
+  sw.PrintWithMills("init");
+
+  double a = 2.36, b = 5.12;
+  sw.Mark("encrypt");
+  auto ct1 = dpheKit.encrypt(a);
+  auto ct2 = dpheKit.encrypt(b);
+  sw.PrintWithMills("encrypt");
+  sw.Mark("add");
+  auto ct = dpheKit.add(*ct1, *ct2);
+  sw.PrintWithMills("add");
+  sw.Mark("addInplace");
+  dpheKit.addInplace(*ct, *ct2);
+  sw.PrintWithMills("addInplace");
+  sw.Mark("decrypt");
+  auto res = pheKit.decrypt(*ct);
+  sw.PrintWithMills("decrypt");
+  std::cout << "real: " << a + b + b << ", res: " << res << std::endl;
+  deleteCiphertext(ct1);
+  deleteCiphertext(ct2);
+  deleteCiphertext(ct);
+}
+
 TEST(phe_kit, single_op) {
   StopWatch sw;
 
