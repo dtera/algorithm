@@ -76,14 +76,10 @@ inline Ciphertext *PheKit::op(const Ciphertext *a,
                               std::function<void(Ciphertext *, const Ciphertext &)> op_f, const std::string &op_name) {
   sw.Mark(op_name);
   Ciphertext *res = new Ciphertext[size];
-  /*ParallelFor(size, [&](int i) {
+  ParallelFor(size, [&](int i) {
     res[i] = a[i];
     opInplace(&res[i], b[i], op_f);
-  });*/
-  for (size_t i = 0; i < size; ++i) {
-    res[i] = a[i];
-    opInplace(&res[i], b[i], op_f);
-  }
+  });
   sw.PrintWithMills(op_name);
   return res;
 }
@@ -99,12 +95,9 @@ inline void PheKit::opInplace(Ciphertext *a,
                               size_t size,
                               std::function<void(Ciphertext *, const Ciphertext &)> op_f, const std::string &op_name) {
   sw.Mark(op_name);
-  /*ParallelFor(size, [&](int i) {
+  ParallelFor(size, [&](int i) {
     opInplace(&a[i], b[i], op_f);
-  });*/
-  for (size_t i = 0; i < size; ++i) {
-    opInplace(&a[i], b[i], op_f);
-  }
+  });
   sw.PrintWithMills(op_name);
 }
 
