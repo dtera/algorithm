@@ -1,9 +1,12 @@
-#include <iostream>
+#pragma once
 
 class MyFunc {
- public:
-  MyFunc() = default;
-  ~MyFunc() = default;
-  int add(int a, int b);
-  int sub(int a, int b);
+public:
+    MyFunc() = default;
+
+    ~MyFunc() = default;
+
+    static int add(int a, int b);
+
+    static int sub(int a, int b);
 };

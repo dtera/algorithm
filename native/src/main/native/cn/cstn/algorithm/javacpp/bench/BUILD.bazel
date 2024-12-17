@@ -18,8 +18,8 @@ algo_cc_binary(
     name = "phe_bench",
     srcs = ["phe_bench.cc"],
     deps = [
+        "util:utils",
         "@com_dtera_heu//heu/library/phe",
-        "@com_github_fmtlib_fmt//:fmtlib",
         "@com_github_gflags_gflags//:gflags",
         "@com_github_google_benchmark//:benchmark",
     ],

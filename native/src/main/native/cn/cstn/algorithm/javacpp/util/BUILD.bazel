@@ -19,7 +19,10 @@ package(default_visibility = ["//visibility:public"])
 algo_cc_library(
     name = "utils",
     hdrs = ["utils.h"],
-    deps = ["@gmp"] + OMP_DEPS,
+    deps = [
+        "@com_github_fmtlib_fmt//:fmtlib",
+        "@gmp",
+    ] + OMP_DEPS,
 )
 
 algo_cc_library(
