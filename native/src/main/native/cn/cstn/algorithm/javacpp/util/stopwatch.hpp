@@ -96,7 +96,7 @@ class StopWatch {
   void Print(_Fp fp, const std::string &mark = default_mark()) {
     if (print_on) {
       auto show = std::bind(fp, this, std::placeholders::_1);
-      std::cout << mark << " costs " << show(mark) << std::endl;
+      std::cout << mark << " takes " << show(mark) << std::endl;
     }
   }
 
