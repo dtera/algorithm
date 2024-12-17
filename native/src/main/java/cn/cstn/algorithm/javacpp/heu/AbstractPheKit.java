@@ -100,8 +100,20 @@ public abstract class AbstractPheKit extends Pointer {
     return new PheKit(schemaType);
   }
 
+  public static PheKit newInstance(SchemaType schemaType, long key_size) {
+    return new PheKit(schemaType, key_size, 10 ^ 6);
+  }
+
+  public static PheKit newInstance(SchemaType schemaType, long key_size, long scale) {
+    return new PheKit(schemaType, key_size, scale);
+  }
+
   public static PheKit newInstance(BytePointer pkBuffer) {
     return new PheKit(pkBuffer);
+  }
+
+  public static PheKit newInstance(BytePointer pkBuffer, long scale) {
+    return new PheKit(pkBuffer, scale);
   }
 
 }

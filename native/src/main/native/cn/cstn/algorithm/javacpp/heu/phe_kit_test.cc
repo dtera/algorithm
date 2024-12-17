@@ -8,11 +8,11 @@
 
 #include "heu/phe_kit.h"
 
-TEST(phe_kit, pub_key_t) {
+void pub_key_t(const SchemaType &schema) {
     StopWatch sw;
 
     sw.Mark("init");
-    PheKit pheKit(SchemaType::OU);
+    PheKit pheKit(schema);
     const auto pk = pheKit.pubKey();
     PheKit dpheKit(pk);
     sw.PrintWithMills("init");
@@ -51,11 +51,11 @@ TEST(phe_kit, pub_key_t) {
     deleteCiphertext(subCt);
 }
 
-TEST(phe_kit, single_op) {
+void single_op(const SchemaType &schema) {
     StopWatch sw;
 
     sw.Mark("init");
-    PheKit pheKit(SchemaType::ElGamal);
+    PheKit pheKit(schema);
     sw.PrintWithMills("init");
 
     constexpr double a = 2.36, b = 5.12;
@@ -92,11 +92,47 @@ TEST(phe_kit, single_op) {
     deleteCiphertext(subCt);
 }
 
-TEST(phe_kit, pair_op) {
+void batch_op(const SchemaType &schema, const int len = 100000) {
+    PheKit pheKit(schema);
+
+    auto *ms1 = new double[len];
+    auto *ms2 = new double[len];
+    for (int i = 0; i < len; ++i) {
+        ms1[i] = i + static_cast<double>(i) / 10;
+        ms2[i] = i + static_cast<double>(i + 3) / 10;
+    }
+    const auto ct1 = pheKit.encrypts(ms1, len);
+    const auto ct2 = pheKit.encrypts(ms2, len);
+
+    const auto addCt = pheKit.adds(ct1, ct2, len);
+    pheKit.addInplaces(addCt, ct2, len);
+    auto res = pheKit.decrypts(addCt, len);
+    for (int i = 0; i < len; ++i) {
+        if (constexpr int freq = 4; i % (len / freq) == 0) {
+            std::cout << "[add]real: " << ms1[i] + ms2[i] + ms2[i] << ", res: " << res[i] << std::endl;
+        }
+    }
+
+    const auto subCt = pheKit.subs(addCt, ct2, len);
+    pheKit.subInplaces(subCt, ct2, len);
+    res = pheKit.decrypts(subCt, len);
+    for (int i = 0; i < len; ++i) {
+        if (constexpr int freq = 4; i % (len / freq) == 0) {
+            std::cout << "[sub]real: " << ms1[i] << ", res: " << res[i] << std::endl;
+        }
+    }
+
+    deleteCiphertexts(ct1);
+    deleteCiphertexts(ct2);
+    deleteCiphertexts(addCt);
+    deleteCiphertexts(subCt);
+}
+
+void pair_op(const SchemaType &schema) {
     StopWatch sw;
 
     sw.Mark("init");
-    PheKit pheKit(SchemaType::OU);
+    PheKit pheKit(schema);
     sw.PrintWithMills("init");
 
     constexpr double a1 = 2.36, a2 = 5.12, b1 = 3.12, b2 = 7.45;
@@ -134,56 +170,18 @@ TEST(phe_kit, pair_op) {
     deleteCiphertext(subCt);
 }
 
-TEST(phe_kit, batch_op) {
-    PheKit pheKit(SchemaType::OU);
+void batch_pair_op(const SchemaType &schema, const int len = 100000) {
+    PheKit pheKit(schema);
 
-    constexpr int len = 100000;
-    auto *ms1 = new double[len];
-    auto *ms2 = new double[len];
-    for (int i = 0; i < len; ++i) {
-        ms1[i] = i * 10 + static_cast<double>(i) / 10;
-        ms2[i] = i * 100 + static_cast<double>(i + 3) / 10;
-    }
-    const auto ct1 = pheKit.encrypts(ms1, len);
-    const auto ct2 = pheKit.encrypts(ms2, len);
-
-    const auto addCt = pheKit.adds(ct1, ct2, len);
-    pheKit.addInplaces(addCt, ct2, len);
-    auto res = pheKit.decrypts(addCt, len);
-    for (int i = 0; i < len; ++i) {
-        if (constexpr int freq = 4; i % (len / freq) == 0) {
-            std::cout << "[add]real: " << ms1[i] + ms2[i] + ms2[i] << ", res: " << res[i] << std::endl;
-        }
-    }
-
-    const auto subCt = pheKit.subs(addCt, ct2, len);
-    pheKit.subInplaces(subCt, ct2, len);
-    res = pheKit.decrypts(subCt, len);
-    for (int i = 0; i < len; ++i) {
-        if (constexpr int freq = 4; i % (len / freq) == 0) {
-            std::cout << "[sub]real: " << ms1[i] << ", res: " << res[i] << std::endl;
-        }
-    }
-
-    deleteCiphertexts(ct1);
-    deleteCiphertexts(ct2);
-    deleteCiphertexts(addCt);
-    deleteCiphertexts(subCt);
-}
-
-TEST(phe_kit, batch_pair_op) {
-    PheKit pheKit(SchemaType::OU);
-
-    constexpr int len = 100000;
     auto *ms11 = new double[len];
     auto *ms12 = new double[len];
     auto *ms21 = new double[len];
     auto *ms22 = new double[len];
     for (int i = 0; i < len; ++i) {
-        ms11[i] = i * 10 + static_cast<double>(i) / 10;
-        ms12[i] = i * 10 + static_cast<double>(i) / 5;
-        ms21[i] = i * 100 + static_cast<double>(i + 3) / 10;
-        ms22[i] = i * 100 + static_cast<double>(i + 3) / 5;
+        ms11[i] = i + static_cast<double>(i) / 10;
+        ms12[i] = i + static_cast<double>(i) / 5;
+        ms21[i] = i + static_cast<double>(i + 3) / 10;
+        ms22[i] = i + static_cast<double>(i + 3) / 5;
     }
     const auto ct1 = pheKit.encryptPairs(ms11, ms12, len);
     const auto ct2 = pheKit.encryptPairs(ms21, ms22, len);
@@ -213,3 +211,43 @@ TEST(phe_kit, batch_pair_op) {
     deleteCiphertexts(addCt);
     deleteCiphertexts(subCt);
 }
+
+TEST(phe_kit, ou_pub_key_t) {
+    pub_key_t(SchemaType::OU);
+}
+
+TEST(phe_kit, ou_single_op) {
+    single_op(SchemaType::OU);
+}
+
+TEST(phe_kit, ou_batch_op) {
+    batch_op(SchemaType::OU);
+}
+
+TEST(phe_kit, ou_pair_op) {
+    pair_op(SchemaType::OU);
+}
+
+TEST(phe_kit, ou_batch_pair_op) {
+    batch_pair_op(SchemaType::OU);
+}
+
+TEST(phe_kit, elgamal_pub_key_t) {
+    pub_key_t(SchemaType::ElGamal);
+}
+
+TEST(phe_kit, elgamal_single_op) {
+    single_op(SchemaType::ElGamal);
+}
+
+TEST(phe_kit, elgamal_batch_op) {
+    batch_op(SchemaType::ElGamal);
+}
+
+/*TEST(phe_kit, elgamal_pair_op) {
+    pair_op(SchemaType::ElGamal);
+}
+
+TEST(phe_kit, elgamal_batch_pair_op) {
+    batch_pair_op(SchemaType::ElGamal);
+}*/

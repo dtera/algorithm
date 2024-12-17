@@ -30,10 +30,10 @@ public class PheKitTest extends TestCase {
   }
 
   /**
-   * PubKey Test
+   * PubKey
    */
-  public void testPubKey() {
-    try (PheKit pheKit = PheKit.newInstance(SchemaType.OU);
+  public void pubKey(SchemaType schemaType) {
+    try (PheKit pheKit = PheKit.newInstance(schemaType);
          PheKit pheKit2 = PheKit.newInstance(pheKit.pubKey())) {
       Ciphertext ct1 = pheKit2.encrypt(2);
       Ciphertext ct2 = pheKit2.encrypt(3);
@@ -49,10 +49,10 @@ public class PheKitTest extends TestCase {
   }
 
   /**
-   * Single Op Test
+   * Single Op
    */
-  public void testSingleOp() {
-    try (PheKit pheKit = PheKit.newInstance(SchemaType.OU)) {
+  public void singleOp(SchemaType schemaType) {
+    try (PheKit pheKit = PheKit.newInstance(schemaType)) {
       Ciphertext ct1 = pheKit.encrypt(2);
       Ciphertext ct2 = pheKit.encrypt(3);
       Ciphertext addRes = pheKit.add(ct1, ct2);
@@ -67,10 +67,10 @@ public class PheKitTest extends TestCase {
   }
 
   /**
-   * Single Pair Op Test
+   * Single Pair Op
    */
-  public void testSinglePairOp() {
-    try (PheKit pheKit = PheKit.newInstance(SchemaType.OU)) {
+  public void singlePairOp(SchemaType schemaType) {
+    try (PheKit pheKit = PheKit.newInstance(schemaType)) {
       Ciphertext ct1 = pheKit.encryptPair(2.1, 4.3);
       Ciphertext ct2 = pheKit.encryptPair(3.2, 5.4);
       Ciphertext addRes = pheKit.add(ct1, ct2);
@@ -89,17 +89,16 @@ public class PheKitTest extends TestCase {
   }
 
   /**
-   * Batch Op Test
+   * Batch Op
    */
-  public void testBatchOp() {
-    try (PheKit pheKit = PheKit.newInstance(SchemaType.OU)) {
-      int size = 100000;
+  public void batchOp(SchemaType schemaType, int size) {
+    try (PheKit pheKit = PheKit.newInstance(schemaType)) {
       StopWatch sw = new StopWatch();
       sw.start("init");
       double[] ms1 = new double[size], ms2 = new double[size], res1 = new double[size], res2 = new double[size];
       for (int i = 0; i < size; i++) {
-        ms1[i] = i * 10 + (double) i / 10;
-        ms2[i] = i * 100 + (double) (i + 3) / 10;
+        ms1[i] = i + (double) i / 10;
+        ms2[i] = i + (double) (i + 3) / 10;
         res1[i] = ms1[i] + ms2[i];
         res2[i] = res1[i] + ms2[i];
       }
@@ -150,20 +149,19 @@ public class PheKitTest extends TestCase {
   }
 
   /**
-   * Batch Pair Op Test
+   * Batch Pair Op
    */
-  public void testBatchPairOp() {
-    try (PheKit pheKit = PheKit.newInstance(SchemaType.OU)) {
-      int size = 100000;
+  public void batchPairOp(SchemaType schemaType, int size) {
+    try (PheKit pheKit = PheKit.newInstance(schemaType)) {
       StopWatch sw = new StopWatch();
       sw.start("init");
       double[] ms11 = new double[size], ms12 = new double[size], res11 = new double[size], res12 = new double[size];
       double[] ms21 = new double[size], ms22 = new double[size], res21 = new double[size], res22 = new double[size];
       for (int i = 0; i < size; i++) {
-        ms11[i] = i * 10 + (double) i / 10;
-        ms12[i] = i * 10 + (double) (i + 3) / 10;
-        ms21[i] = i * 100 + (double) i / 100;
-        ms22[i] = i * 100 + (double) (i + 3) / 100;
+        ms11[i] = i + (double) i / 10;
+        ms12[i] = i + (double) (i + 3) / 10;
+        ms21[i] = i + (double) i / 100;
+        ms22[i] = i + (double) (i + 3) / 100;
         res11[i] = ms11[i] + ms21[i];
         res12[i] = ms12[i] + ms22[i];
         res21[i] = res11[i] + ms21[i];
@@ -213,6 +211,41 @@ public class PheKitTest extends TestCase {
 
       System.out.println(sw.prettyPrint());
     }
+  }
+
+  /**
+   * PubKey Test For OU
+   */
+  public void testOUPubKey() {
+    pubKey(SchemaType.OU);
+  }
+
+  /**
+   * Single Op Test For OU
+   */
+  public void testOUSingleOp() {
+    singleOp(SchemaType.OU);
+  }
+
+  /**
+   * Single Pair Op Test For OU
+   */
+  public void testOUSinglePairOp() {
+    singlePairOp(SchemaType.OU);
+  }
+
+  /**
+   * Batch Op Test For OU
+   */
+  public void testOUBatchOp() {
+    batchOp(SchemaType.OU, 100000);
+  }
+
+  /**
+   * Batch Pair Op Test For OU
+   */
+  public void testOUBatchPairOp() {
+    batchPairOp(SchemaType.OU, 100000);
   }
 
 }

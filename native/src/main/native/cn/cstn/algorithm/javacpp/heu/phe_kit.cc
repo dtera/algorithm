@@ -21,12 +21,14 @@ PheKit::PheKit(yacl::ByteContainerView pk_buffer, const int64_t scale) : has_sec
     init(dhe_kit_, scale);
 }
 
-PheKit::PheKit(const std::string &pk_buffer, const int64_t scale) : PheKit(yacl::ByteContainerView(pk_buffer.data(),
-                                                                               pk_buffer.size()),
-                                                                           scale) {
+PheKit::PheKit(const std::string &pk_buffer, const int64_t scale) : PheKit(
+    yacl::ByteContainerView(pk_buffer.data(), pk_buffer.size()), scale) {
 }
 
 void PheKit::init(const std::shared_ptr<heu::lib::phe::HeKitPublicBase> &he_kit, int64_t scale) {
+    if (he_kit->GetSchemaType() == SchemaType::ElGamal) {
+        scale = 1e4;
+    }
     encoder_ = std::make_shared<heu::lib::phe::PlainEncoder>(
         he_kit->GetEncoder<heu::lib::phe::PlainEncoder>(scale));
     batch_encoder_ = std::make_shared<heu::lib::phe::BatchEncoder>(
