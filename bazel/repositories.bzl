@@ -60,7 +60,7 @@ def _libtommath():
 def _heu():
     git_repository(
         name = "com_dtera_heu",
-        commit = "fd9160be83b1bb17f2ebdad975688d3bbfe3e223",
+        commit = "f6e6e4110414d947f23c984fe9194d91f13b1573",
         remote = "https://github.com/dtera/heu.git",
     )
 
