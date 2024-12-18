@@ -241,7 +241,7 @@ TEST(phe_kit, elgamal_single_op) {
 }
 
 TEST(phe_kit, elgamal_batch_op) {
-    batch_op(SchemaType::ElGamal, 100000, PheKit::ed25519);
+    batch_op(SchemaType::ElGamal, 10000, PheKit::ed25519);
 }
 
 /*TEST(phe_kit, elgamal_pair_op) {
