@@ -18,7 +18,10 @@ load("//bazel:algo.bzl", "algo_cc_library", "algo_cc_test")
 algo_cc_library(
     name = "phe_kit",
     srcs = ["phe_kit.cc"],
-    hdrs = ["phe_kit.h"],
+    hdrs = [
+        "ecc_factory.h",
+        "phe_kit.h",
+    ],
     deps = [
         "util:stopwatch",
         "util:utils",

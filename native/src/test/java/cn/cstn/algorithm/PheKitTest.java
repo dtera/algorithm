@@ -248,4 +248,25 @@ public class PheKitTest extends TestCase {
     batchPairOp(SchemaType.OU, 100000, PheKit.empty);
   }
 
+  /**
+   * PubKey Test For ElGamal
+   */
+  public void testElGamalPubKey() {
+    pubKey(SchemaType.ElGamal, PheKit.ed25519);
+  }
+
+  /**
+   * SingleOp Test For ElGamal
+   */
+  public void testElGamalSingleOp() {
+    singleOp(SchemaType.ElGamal, PheKit.ed25519);
+  }
+
+  /**
+   * BatchOp Test For ElGamal
+   */
+  public void testElGamalBatchOp() {
+    batchOp(SchemaType.ElGamal, 10000, PheKit.ed25519);
+  }
+
 }

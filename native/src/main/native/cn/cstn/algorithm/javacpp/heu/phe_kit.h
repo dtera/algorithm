@@ -96,7 +96,7 @@ protected:
 
     [[nodiscard]] const std::shared_ptr<heu::lib::phe::SecretKey> &getSecretKey() const;
 
-    explicit PheKit(yacl::ByteContainerView pk_buffer, int64_t scale = 1e6);
+    explicit PheKit(yacl::ByteContainerView pk_buffer, int64_t scale = 1e6, bool register_ec_lib = false);
 
 public:
     static const std::string empty;
@@ -108,11 +108,12 @@ public:
     static const std::string secp256r1;
     static const std::string fourq;
 
-    explicit PheKit(SchemaType schema, size_t key_size = 2048, int64_t scale = 1e6, const std::string &curve_name = "");
+    explicit PheKit(SchemaType schema, size_t key_size = 2048, int64_t scale = 1e6, const std::string &curve_name = "",
+                    bool register_ec_lib = false);
 
-    explicit PheKit(SchemaType schema, const std::string &curve_name);
+    explicit PheKit(SchemaType schema, const std::string &curve_name, bool register_ec_lib = false);
 
-    explicit PheKit(const std::string &pk_buffer, int64_t scale = 1e6);
+    explicit PheKit(const std::string &pk_buffer, int64_t scale = 1e6, bool register_ec_lib = false);
 
     [[nodiscard]] std::string pubKey() const;
 

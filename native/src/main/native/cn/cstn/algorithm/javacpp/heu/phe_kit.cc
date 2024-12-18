@@ -3,6 +3,7 @@
 //
 
 #include "heu/phe_kit.h"
+#include "heu/ecc_factory.h"
 
 const std::string PheKit::empty;
 const std::string PheKit::ed25519 = "ed25519";
@@ -13,7 +14,11 @@ const std::string PheKit::secp192r1 = "secp192r1";
 const std::string PheKit::secp256r1 = "secp256r1";
 const std::string PheKit::fourq = "fourq";
 
-PheKit::PheKit(const SchemaType schema, size_t key_size, const int64_t scale, const std::string &curve_name) {
+PheKit::PheKit(const SchemaType schema, size_t key_size, const int64_t scale, const std::string &curve_name,
+               const bool register_ec_lib) {
+    if (register_ec_lib) {
+        yacl::crypto::register_ec_lib();
+    }
     sw.Mark("key_pair_gen");
     if (std::vector curve_schemas = {SchemaType::ElGamal};
         std::find(curve_schemas.begin(), curve_schemas.end(), schema) == curve_schemas.end() || curve_name.empty()) {
@@ -34,18 +39,23 @@ PheKit::PheKit(const SchemaType schema, size_t key_size, const int64_t scale, co
     sw.PrintWithMills("key_pair_gen");
 }
 
-PheKit::PheKit(const SchemaType schema, const std::string &curve_name): PheKit(schema, 2048, 1e6, curve_name) {
+PheKit::PheKit(const SchemaType schema, const std::string &curve_name, const bool register_ec_lib): PheKit(
+    schema, 2048, 1e6, curve_name, register_ec_lib) {
 }
 
-PheKit::PheKit(yacl::ByteContainerView pk_buffer, const int64_t scale) : has_secret_key(false) {
+PheKit::PheKit(yacl::ByteContainerView pk_buffer, const int64_t scale, const bool register_ec_lib) : has_secret_key(
+    false) {
+    if (register_ec_lib) {
+        yacl::crypto::register_ec_lib();
+    }
     dhe_kit_ = std::make_shared<heu::lib::phe::DestinationHeKit>(pk_buffer);
     encryptor_ = dhe_kit_->GetEncryptor();
     evaluator_ = dhe_kit_->GetEvaluator();
     init(dhe_kit_, scale);
 }
 
-PheKit::PheKit(const std::string &pk_buffer, const int64_t scale) : PheKit(
-    yacl::ByteContainerView(pk_buffer.data(), pk_buffer.size()), scale) {
+PheKit::PheKit(const std::string &pk_buffer, const int64_t scale, const bool register_ec_lib) : PheKit(
+    yacl::ByteContainerView(pk_buffer.data(), pk_buffer.size()), scale, register_ec_lib) {
 }
 
 void PheKit::init(const std::shared_ptr<heu::lib::phe::HeKitPublicBase> &he_kit, int64_t scale) {
