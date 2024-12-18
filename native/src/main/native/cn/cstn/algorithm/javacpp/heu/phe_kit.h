@@ -99,7 +99,18 @@ protected:
     explicit PheKit(yacl::ByteContainerView pk_buffer, int64_t scale = 1e6);
 
 public:
-    explicit PheKit(SchemaType schema_type, size_t key_size = 2048, int64_t scale = 1e6);
+    static const std::string empty;
+    static const std::string ed25519;
+    static const std::string curve25519;
+    static const std::string sm2;
+    static const std::string secp256k1;
+    static const std::string secp192r1;
+    static const std::string secp256r1;
+    static const std::string fourq;
+
+    explicit PheKit(SchemaType schema, size_t key_size = 2048, int64_t scale = 1e6, const std::string &curve_name = "");
+
+    explicit PheKit(SchemaType schema, const std::string &curve_name);
 
     explicit PheKit(const std::string &pk_buffer, int64_t scale = 1e6);
 

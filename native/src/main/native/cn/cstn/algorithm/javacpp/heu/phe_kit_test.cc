@@ -8,11 +8,11 @@
 
 #include "heu/phe_kit.h"
 
-void pub_key_t(const SchemaType &schema) {
+void pub_key_t(const SchemaType &schema, const std::string &curve_name = "") {
     StopWatch sw;
 
     sw.Mark("init");
-    PheKit pheKit(schema);
+    PheKit pheKit(schema, curve_name);
     const auto pk = pheKit.pubKey();
     PheKit dpheKit(pk);
     sw.PrintWithMills("init");
@@ -51,11 +51,11 @@ void pub_key_t(const SchemaType &schema) {
     deleteCiphertext(subCt);
 }
 
-void single_op(const SchemaType &schema) {
+void single_op(const SchemaType &schema, const std::string &curve_name = "") {
     StopWatch sw;
 
     sw.Mark("init");
-    PheKit pheKit(schema);
+    PheKit pheKit(schema, curve_name);
     sw.PrintWithMills("init");
 
     constexpr double a = 2.36, b = 5.12;
@@ -92,8 +92,8 @@ void single_op(const SchemaType &schema) {
     deleteCiphertext(subCt);
 }
 
-void batch_op(const SchemaType &schema, const int len = 100000) {
-    PheKit pheKit(schema);
+void batch_op(const SchemaType &schema, const int len = 100000, const std::string &curve_name = "") {
+    PheKit pheKit(schema, curve_name);
 
     auto *ms1 = new double[len];
     auto *ms2 = new double[len];
@@ -128,11 +128,11 @@ void batch_op(const SchemaType &schema, const int len = 100000) {
     deleteCiphertexts(subCt);
 }
 
-void pair_op(const SchemaType &schema) {
+void pair_op(const SchemaType &schema, const std::string &curve_name = "") {
     StopWatch sw;
 
     sw.Mark("init");
-    PheKit pheKit(schema);
+    PheKit pheKit(schema, curve_name);
     sw.PrintWithMills("init");
 
     constexpr double a1 = 2.36, a2 = 5.12, b1 = 3.12, b2 = 7.45;
@@ -170,8 +170,8 @@ void pair_op(const SchemaType &schema) {
     deleteCiphertext(subCt);
 }
 
-void batch_pair_op(const SchemaType &schema, const int len = 100000) {
-    PheKit pheKit(schema);
+void batch_pair_op(const SchemaType &schema, const int len = 100000, const std::string &curve_name = "") {
+    PheKit pheKit(schema, curve_name);
 
     auto *ms11 = new double[len];
     auto *ms12 = new double[len];
@@ -233,21 +233,21 @@ TEST(phe_kit, ou_batch_pair_op) {
 }
 
 TEST(phe_kit, elgamal_pub_key_t) {
-    pub_key_t(SchemaType::ElGamal);
+    pub_key_t(SchemaType::ElGamal, PheKit::ed25519);
 }
 
 TEST(phe_kit, elgamal_single_op) {
-    single_op(SchemaType::ElGamal);
+    single_op(SchemaType::ElGamal, PheKit::ed25519);
 }
 
 TEST(phe_kit, elgamal_batch_op) {
-    batch_op(SchemaType::ElGamal);
+    batch_op(SchemaType::ElGamal, 100000, PheKit::ed25519);
 }
 
 /*TEST(phe_kit, elgamal_pair_op) {
-    pair_op(SchemaType::ElGamal);
+    pair_op(SchemaType::ElGamal, PheKit::fourq);
 }
 
 TEST(phe_kit, elgamal_batch_pair_op) {
-    batch_pair_op(SchemaType::ElGamal);
+    batch_pair_op(SchemaType::ElGamal, 100000, PheKit::fourq);
 }*/

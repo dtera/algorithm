@@ -4,14 +4,37 @@
 
 #include "heu/phe_kit.h"
 
-PheKit::PheKit(SchemaType schema_type, size_t key_size, const int64_t scale) {
+const std::string PheKit::empty;
+const std::string PheKit::ed25519 = "ed25519";
+const std::string PheKit::curve25519 = "curve25519";
+const std::string PheKit::sm2 = "sm2";
+const std::string PheKit::secp256k1 = "secp256k1";
+const std::string PheKit::secp192r1 = "secp192r1";
+const std::string PheKit::secp256r1 = "secp256r1";
+const std::string PheKit::fourq = "fourq";
+
+PheKit::PheKit(const SchemaType schema, size_t key_size, const int64_t scale, const std::string &curve_name) {
     sw.Mark("key_pair_gen");
-    he_kit_ = std::make_shared<heu::lib::phe::HeKit>(schema_type, key_size);
+    if (std::vector curve_schemas = {SchemaType::ElGamal};
+        std::find(curve_schemas.begin(), curve_schemas.end(), schema) == curve_schemas.end() || curve_name.empty()) {
+        he_kit_ = std::make_shared<heu::lib::phe::HeKit>(schema, key_size);
+    } else {
+        std::cout << "schema: " << schema << ", curve_name: " << curve_name << std::endl;
+        heu::lib::algorithms::elgamal::SecretKey sk;
+        heu::lib::algorithms::elgamal::PublicKey pk;
+        heu::lib::algorithms::elgamal::KeyGenerator::Generate(curve_name, &sk, &pk);
+        he_kit_ = std::make_shared<heu::lib::phe::HeKit>(std::make_shared<heu::lib::phe::PublicKey>(std::move(pk)),
+                                                         std::make_shared<heu::lib::phe::SecretKey>(std::move(sk)));
+    }
     decryptor_ = he_kit_->GetDecryptor();
     encryptor_ = he_kit_->GetEncryptor();
     evaluator_ = he_kit_->GetEvaluator();
+
     init(he_kit_, scale);
     sw.PrintWithMills("key_pair_gen");
+}
+
+PheKit::PheKit(const SchemaType schema, const std::string &curve_name): PheKit(schema, 2048, 1e6, curve_name) {
 }
 
 PheKit::PheKit(yacl::ByteContainerView pk_buffer, const int64_t scale) : has_secret_key(false) {

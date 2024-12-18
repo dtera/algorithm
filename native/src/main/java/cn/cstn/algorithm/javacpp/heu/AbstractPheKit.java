@@ -27,6 +27,15 @@ import static cn.cstn.algorithm.javacpp.global.heu.deletePheKit;
 
 @Properties(inherit = heu.class)
 public abstract class AbstractPheKit extends Pointer {
+  public static final String empty = "";
+  public static final String ed25519 = "ed25519";
+  public static final String curve25519 = "curve25519";
+  public static final String secp256k1 = "secp256k1";
+  public static final String secp256r1 = "secp256r1";
+  public static final String secp192r1 = "secp192r1";
+  public static final String fourq = "fourq";
+  public static final String sm2 = "sm2";
+
   private final PheKit pheKit;
 
   public AbstractPheKit(Pointer p) {
@@ -100,12 +109,16 @@ public abstract class AbstractPheKit extends Pointer {
     return new PheKit(schemaType);
   }
 
+  public static PheKit newInstance(SchemaType schemaType, String curveName) {
+    return new PheKit(schemaType, curveName);
+  }
+
   public static PheKit newInstance(SchemaType schemaType, long key_size) {
-    return new PheKit(schemaType, key_size, 10 ^ 6);
+    return newInstance(schemaType, key_size, 10 ^ 6);
   }
 
   public static PheKit newInstance(SchemaType schemaType, long key_size, long scale) {
-    return new PheKit(schemaType, key_size, scale);
+    return new PheKit(schemaType, key_size, scale, empty);
   }
 
   public static PheKit newInstance(BytePointer pkBuffer) {

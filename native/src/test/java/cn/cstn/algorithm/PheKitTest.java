@@ -32,8 +32,8 @@ public class PheKitTest extends TestCase {
   /**
    * PubKey
    */
-  public void pubKey(SchemaType schemaType) {
-    try (PheKit pheKit = PheKit.newInstance(schemaType);
+  public void pubKey(SchemaType schemaType, String curveName) {
+    try (PheKit pheKit = PheKit.newInstance(schemaType, curveName);
          PheKit pheKit2 = PheKit.newInstance(pheKit.pubKey())) {
       Ciphertext ct1 = pheKit2.encrypt(2);
       Ciphertext ct2 = pheKit2.encrypt(3);
@@ -51,8 +51,8 @@ public class PheKitTest extends TestCase {
   /**
    * Single Op
    */
-  public void singleOp(SchemaType schemaType) {
-    try (PheKit pheKit = PheKit.newInstance(schemaType)) {
+  public void singleOp(SchemaType schemaType, String curveName) {
+    try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
       Ciphertext ct1 = pheKit.encrypt(2);
       Ciphertext ct2 = pheKit.encrypt(3);
       Ciphertext addRes = pheKit.add(ct1, ct2);
@@ -69,8 +69,8 @@ public class PheKitTest extends TestCase {
   /**
    * Single Pair Op
    */
-  public void singlePairOp(SchemaType schemaType) {
-    try (PheKit pheKit = PheKit.newInstance(schemaType)) {
+  public void singlePairOp(SchemaType schemaType, String curveName) {
+    try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
       Ciphertext ct1 = pheKit.encryptPair(2.1, 4.3);
       Ciphertext ct2 = pheKit.encryptPair(3.2, 5.4);
       Ciphertext addRes = pheKit.add(ct1, ct2);
@@ -91,8 +91,8 @@ public class PheKitTest extends TestCase {
   /**
    * Batch Op
    */
-  public void batchOp(SchemaType schemaType, int size) {
-    try (PheKit pheKit = PheKit.newInstance(schemaType)) {
+  public void batchOp(SchemaType schemaType, int size, String curveName) {
+    try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
       StopWatch sw = new StopWatch();
       sw.start("init");
       double[] ms1 = new double[size], ms2 = new double[size], res1 = new double[size], res2 = new double[size];
@@ -151,8 +151,8 @@ public class PheKitTest extends TestCase {
   /**
    * Batch Pair Op
    */
-  public void batchPairOp(SchemaType schemaType, int size) {
-    try (PheKit pheKit = PheKit.newInstance(schemaType)) {
+  public void batchPairOp(SchemaType schemaType, int size, String curveName) {
+    try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
       StopWatch sw = new StopWatch();
       sw.start("init");
       double[] ms11 = new double[size], ms12 = new double[size], res11 = new double[size], res12 = new double[size];
@@ -217,35 +217,35 @@ public class PheKitTest extends TestCase {
    * PubKey Test For OU
    */
   public void testOUPubKey() {
-    pubKey(SchemaType.OU);
+    pubKey(SchemaType.OU, PheKit.empty);
   }
 
   /**
    * Single Op Test For OU
    */
   public void testOUSingleOp() {
-    singleOp(SchemaType.OU);
+    singleOp(SchemaType.OU, PheKit.empty);
   }
 
   /**
    * Single Pair Op Test For OU
    */
   public void testOUSinglePairOp() {
-    singlePairOp(SchemaType.OU);
+    singlePairOp(SchemaType.OU, PheKit.empty);
   }
 
   /**
    * Batch Op Test For OU
    */
   public void testOUBatchOp() {
-    batchOp(SchemaType.OU, 100000);
+    batchOp(SchemaType.OU, 100000, PheKit.empty);
   }
 
   /**
    * Batch Pair Op Test For OU
    */
   public void testOUBatchPairOp() {
-    batchPairOp(SchemaType.OU, 100000);
+    batchPairOp(SchemaType.OU, 100000, PheKit.empty);
   }
 
 }
