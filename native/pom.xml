@@ -214,6 +214,7 @@
                         <linkPath>${lib.src.dir}/heu</linkPath>
                         <linkPath>${lib.external.dir}/com_github_libtom_libtommath/libtommath/lib</linkPath>
                         <linkPath>${lib.external.dir}/com_github_microsoft_FourQlib/FourQlib/lib</linkPath>
+                        <linkPath>${lib.external.dir}/com_github_openssl_openssl/openssl/lib</linkPath>
                         <linkPath>/opt/homebrew/opt/libomp/lib</linkPath>
                     </linkPaths>
                     <resourcePaths>

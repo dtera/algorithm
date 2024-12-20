@@ -291,4 +291,25 @@ public class PheKitTest extends TestCase {
     batchOp(SchemaType.ElGamal, 10000, CurveName.fourq);
   }
 
+  /**
+   * PubKey Test For ElGamal, curve is Sm2
+   */
+  public void testElGamalSm2PubKey() {
+    pubKey(SchemaType.ElGamal, CurveName.sm2);
+  }
+
+  /**
+   * SingleOp Test For ElGamal, curve is Sm2
+   */
+  public void testElGamalSm2SingleOp() {
+    singleOp(SchemaType.ElGamal, CurveName.sm2);
+  }
+
+  /**
+   * BatchOp Test For ElGamal, curve is Sm2
+   */
+  public void testElGamalSm2BatchOp() {
+    batchOp(SchemaType.ElGamal, 10000, CurveName.sm2);
+  }
+
 }
