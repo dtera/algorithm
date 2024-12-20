@@ -312,4 +312,67 @@ public class PheKitTest extends TestCase {
     batchOp(SchemaType.ElGamal, 10000, CurveName.sm2);
   }
 
+  /**
+   * PubKey Test For ElGamal, curve is Secp256k1
+   */
+  public void testElGamalSecp256k1PubKey() {
+    pubKey(SchemaType.ElGamal, CurveName.secp256k1);
+  }
+
+  /**
+   * SingleOp Test For ElGamal, curve is Secp256k1
+   */
+  public void testElGamalSecp256k1SingleOp() {
+    singleOp(SchemaType.ElGamal, CurveName.secp256k1);
+  }
+
+  /**
+   * BatchOp Test For ElGamal, curve is Secp256k1
+   */
+  public void testElGamalSecp256k1BatchOp() {
+    batchOp(SchemaType.ElGamal, 10000, CurveName.secp256k1);
+  }
+
+  /**
+   * PubKey Test For ElGamal, curve is Secp256r1
+   */
+  public void testElGamalSecp256r1PubKey() {
+    pubKey(SchemaType.ElGamal, CurveName.secp256r1);
+  }
+
+  /**
+   * SingleOp Test For ElGamal, curve is Secp256r1
+   */
+  public void testElGamalSecp256r1SingleOp() {
+    singleOp(SchemaType.ElGamal, CurveName.secp256r1);
+  }
+
+  /**
+   * BatchOp Test For ElGamal, curve is Secp256r1
+   */
+  public void testElGamalSecp256r1BatchOp() {
+    batchOp(SchemaType.ElGamal, 10000, CurveName.secp256r1);
+  }
+
+  /**
+   * PubKey Test For ElGamal, curve is Secp192r1
+   */
+  public void testElGamalSecp192r1PubKey() {
+    pubKey(SchemaType.ElGamal, CurveName.secp192r1);
+  }
+
+  /**
+   * SingleOp Test For ElGamal, curve is Secp192r1
+   */
+  public void testElGamalSecp192r1SingleOp() {
+    singleOp(SchemaType.ElGamal, CurveName.secp192r1);
+  }
+
+  /**
+   * BatchOp Test For ElGamal, curve is Secp192r1
+   */
+  public void testElGamalSecp192r1BatchOp() {
+    batchOp(SchemaType.ElGamal, 10000, CurveName.secp192r1);
+  }
+
 }
