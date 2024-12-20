@@ -8,12 +8,17 @@ import org.bytedeco.javacpp.tools.InfoMapper;
 
 @Properties(value = {
   @Platform(
+    value = {"linux", "macosx", "windows"},
     compiler = "cpp17",
     include = {
       "heu/phe_kit.h",
     },
     link = {"phe_kit_all", "tommath", "FourQ", "crypto", "ssl", "omp"},
     define = {"MSGPACK_NO_BOOST", "SPDLOG_FMT_EXTERNAL", "SPDLOG_NO_TLS"}
+  ),
+  @Platform(
+    value = "linux",
+    link = {"phe_kit_all", "tommath", "FourQ", "crypto", "ssl", "omp", "FourQ_group", "openssl"}
   )
 },
   target = "cn.cstn.algorithm.javacpp.heu",
@@ -28,10 +33,6 @@ public class heu implements InfoMapper {
           "PheKit::secp256k1", "PheKit::secp256r1", "PheKit::secp192r1", "PheKit::fourq", "PheKit::sm2")
           .skip()
       )
-      /*.put(
-        new Info("PheKit::decryptPairs")
-          .javaText("public native void decryptPairs(@Const Ciphertext cts, @Cast(\"size_t\") long size, @Cast(\"double**\") @ByPtrPtr double[][] out);")
-      )*/
       .put(
         new Info("PheKit")
           .pointerTypes("PheKit")
