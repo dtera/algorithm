@@ -250,24 +250,45 @@ public class PheKitTest extends TestCase {
   }
 
   /**
-   * PubKey Test For ElGamal
+   * PubKey Test For ElGamal, curve is Ed25519
    */
-  public void testElGamalPubKey() {
+  public void testElGamalEd25519PubKey() {
     pubKey(SchemaType.ElGamal, CurveName.ed25519);
   }
 
   /**
-   * SingleOp Test For ElGamal
+   * SingleOp Test For ElGamal, curve is Ed25519
    */
-  public void testElGamalSingleOp() {
+  public void testElGamalEd25519SingleOp() {
     singleOp(SchemaType.ElGamal, CurveName.ed25519);
   }
 
   /**
-   * BatchOp Test For ElGamal
+   * BatchOp Test For ElGamal, curve is Ed25519
    */
-  public void testElGamalBatchOp() {
+  public void testElGamalEd25519BatchOp() {
     batchOp(SchemaType.ElGamal, 10000, CurveName.ed25519);
+  }
+
+  /**
+   * PubKey Test For ElGamal, curve is FourQ
+   */
+  public void testElGamalFourQPubKey() {
+    pubKey(SchemaType.ElGamal, CurveName.fourq);
+  }
+
+  /**
+   * SingleOp Test For ElGamal, curve is FourQ
+   */
+  public void testElGamalFourQSingleOp() {
+    singleOp(SchemaType.ElGamal, CurveName.fourq);
+  }
+
+  /**
+   * BatchOp Test For ElGamal, curve is FourQ
+   */
+  public void testElGamalFourQBatchOp() {
+    batchOp(SchemaType.ElGamal, 10000, CurveName.fourq);
   }
 
 }

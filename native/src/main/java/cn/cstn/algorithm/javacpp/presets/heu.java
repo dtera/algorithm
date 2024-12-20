@@ -12,7 +12,7 @@ import org.bytedeco.javacpp.tools.InfoMapper;
     include = {
       "heu/phe_kit.h",
     },
-    link = {"phe_kit_all", "tommath", "omp"},
+    link = {"phe_kit_all", "tommath", "FourQ", "omp"},
     define = {"MSGPACK_NO_BOOST", "SPDLOG_FMT_EXTERNAL", "SPDLOG_NO_TLS"}
   )
 },
