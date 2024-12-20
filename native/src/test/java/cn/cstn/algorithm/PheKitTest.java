@@ -1,6 +1,7 @@
 package cn.cstn.algorithm;
 
 import cn.cstn.algorithm.javacpp.heu.Ciphertext;
+import cn.cstn.algorithm.javacpp.heu.CurveName;
 import cn.cstn.algorithm.javacpp.heu.PheKit;
 import cn.cstn.algorithm.javacpp.heu.SchemaType;
 import junit.framework.Test;
@@ -32,7 +33,7 @@ public class PheKitTest extends TestCase {
   /**
    * PubKey
    */
-  public void pubKey(SchemaType schemaType, String curveName) {
+  public void pubKey(SchemaType schemaType, CurveName curveName) {
     try (PheKit pheKit = PheKit.newInstance(schemaType, curveName);
          PheKit pheKit2 = PheKit.newInstance(pheKit.pubKey())) {
       Ciphertext ct1 = pheKit2.encrypt(2);
@@ -51,7 +52,7 @@ public class PheKitTest extends TestCase {
   /**
    * Single Op
    */
-  public void singleOp(SchemaType schemaType, String curveName) {
+  public void singleOp(SchemaType schemaType, CurveName curveName) {
     try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
       Ciphertext ct1 = pheKit.encrypt(2);
       Ciphertext ct2 = pheKit.encrypt(3);
@@ -69,7 +70,7 @@ public class PheKitTest extends TestCase {
   /**
    * Single Pair Op
    */
-  public void singlePairOp(SchemaType schemaType, String curveName) {
+  public void singlePairOp(SchemaType schemaType, CurveName curveName) {
     try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
       Ciphertext ct1 = pheKit.encryptPair(2.1, 4.3);
       Ciphertext ct2 = pheKit.encryptPair(3.2, 5.4);
@@ -91,7 +92,7 @@ public class PheKitTest extends TestCase {
   /**
    * Batch Op
    */
-  public void batchOp(SchemaType schemaType, int size, String curveName) {
+  public void batchOp(SchemaType schemaType, int size, CurveName curveName) {
     try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
       StopWatch sw = new StopWatch();
       sw.start("init");
@@ -151,7 +152,7 @@ public class PheKitTest extends TestCase {
   /**
    * Batch Pair Op
    */
-  public void batchPairOp(SchemaType schemaType, int size, String curveName) {
+  public void batchPairOp(SchemaType schemaType, int size, CurveName curveName) {
     try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
       StopWatch sw = new StopWatch();
       sw.start("init");
@@ -217,56 +218,56 @@ public class PheKitTest extends TestCase {
    * PubKey Test For OU
    */
   public void testOUPubKey() {
-    pubKey(SchemaType.OU, PheKit.empty);
+    pubKey(SchemaType.OU, CurveName.empty);
   }
 
   /**
    * Single Op Test For OU
    */
   public void testOUSingleOp() {
-    singleOp(SchemaType.OU, PheKit.empty);
+    singleOp(SchemaType.OU, CurveName.empty);
   }
 
   /**
    * Single Pair Op Test For OU
    */
   public void testOUSinglePairOp() {
-    singlePairOp(SchemaType.OU, PheKit.empty);
+    singlePairOp(SchemaType.OU, CurveName.empty);
   }
 
   /**
    * Batch Op Test For OU
    */
   public void testOUBatchOp() {
-    batchOp(SchemaType.OU, 100000, PheKit.empty);
+    batchOp(SchemaType.OU, 100000, CurveName.empty);
   }
 
   /**
    * Batch Pair Op Test For OU
    */
   public void testOUBatchPairOp() {
-    batchPairOp(SchemaType.OU, 100000, PheKit.empty);
+    batchPairOp(SchemaType.OU, 100000, CurveName.empty);
   }
 
   /**
    * PubKey Test For ElGamal
    */
   public void testElGamalPubKey() {
-    pubKey(SchemaType.ElGamal, PheKit.ed25519);
+    pubKey(SchemaType.ElGamal, CurveName.ed25519);
   }
 
   /**
    * SingleOp Test For ElGamal
    */
   public void testElGamalSingleOp() {
-    singleOp(SchemaType.ElGamal, PheKit.ed25519);
+    singleOp(SchemaType.ElGamal, CurveName.ed25519);
   }
 
   /**
    * BatchOp Test For ElGamal
    */
   public void testElGamalBatchOp() {
-    batchOp(SchemaType.ElGamal, 10000, PheKit.ed25519);
+    batchOp(SchemaType.ElGamal, 10000, CurveName.ed25519);
   }
 
 }
