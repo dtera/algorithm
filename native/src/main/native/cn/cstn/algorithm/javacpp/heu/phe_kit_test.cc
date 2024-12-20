@@ -232,22 +232,82 @@ TEST(phe_kit, ou_batch_pair_op) {
     batch_pair_op(SchemaType::OU);
 }
 
-TEST(phe_kit, elgamal_pub_key_t) {
+TEST(phe_kit, elgamal_ed25519_pub_key_t) {
     pub_key_t(SchemaType::ElGamal, PheKit::ed25519);
 }
 
-TEST(phe_kit, elgamal_single_op) {
+TEST(phe_kit, elgamal_ed25519_single_op) {
     single_op(SchemaType::ElGamal, PheKit::ed25519);
 }
 
-TEST(phe_kit, elgamal_batch_op) {
+TEST(phe_kit, elgamal_ed25519_batch_op) {
     batch_op(SchemaType::ElGamal, 10000, PheKit::ed25519);
 }
 
-/*TEST(phe_kit, elgamal_pair_op) {
+TEST(phe_kit, elgamal_fourq_pub_key_t) {
+    pub_key_t(SchemaType::ElGamal, PheKit::fourq);
+}
+
+TEST(phe_kit, elgamal_fourq_single_op) {
+    single_op(SchemaType::ElGamal, PheKit::fourq);
+}
+
+TEST(phe_kit, elgamal_fourq_batch_op) {
+    batch_op(SchemaType::ElGamal, 10000, PheKit::fourq);
+}
+
+TEST(phe_kit, elgamal_sm2_pub_key_t) {
+    pub_key_t(SchemaType::ElGamal, PheKit::sm2);
+}
+
+TEST(phe_kit, elgamal_sm2_single_op) {
+    single_op(SchemaType::ElGamal, PheKit::sm2);
+}
+
+TEST(phe_kit, elgamal_sm2_batch_op) {
+    batch_op(SchemaType::ElGamal, 10000, PheKit::sm2);
+}
+
+TEST(phe_kit, elgamal_secp256k1_pub_key_t) {
+    pub_key_t(SchemaType::ElGamal, PheKit::secp256k1);
+}
+
+TEST(phe_kit, elgamal_secp256k1_single_op) {
+    single_op(SchemaType::ElGamal, PheKit::secp256k1);
+}
+
+TEST(phe_kit, elgamal_secp256k1_batch_op) {
+    batch_op(SchemaType::ElGamal, 10000, PheKit::secp256k1);
+}
+
+TEST(phe_kit, elgamal_secp256r1_pub_key_t) {
+    pub_key_t(SchemaType::ElGamal, PheKit::secp256r1);
+}
+
+TEST(phe_kit, elgamal_secp256r1_single_op) {
+    single_op(SchemaType::ElGamal, PheKit::secp256r1);
+}
+
+TEST(phe_kit, elgamal_secp256r1_batch_op) {
+    batch_op(SchemaType::ElGamal, 10000, PheKit::secp256r1);
+}
+
+TEST(phe_kit, elgamal_secp192r1_pub_key_t) {
+    pub_key_t(SchemaType::ElGamal, PheKit::secp192r1);
+}
+
+TEST(phe_kit, elgamal_secp192r1_single_op) {
+    single_op(SchemaType::ElGamal, PheKit::secp192r1);
+}
+
+TEST(phe_kit, elgamal_secp192r1_batch_op) {
+    batch_op(SchemaType::ElGamal, 10000, PheKit::secp192r1);
+}
+
+/*TEST(phe_kit, elgamal_fourq_pair_op) {
     pair_op(SchemaType::ElGamal, PheKit::fourq);
 }
 
-TEST(phe_kit, elgamal_batch_pair_op) {
+TEST(phe_kit, elgamal_fourq_batch_pair_op) {
     batch_pair_op(SchemaType::ElGamal, 100000, PheKit::fourq);
 }*/
