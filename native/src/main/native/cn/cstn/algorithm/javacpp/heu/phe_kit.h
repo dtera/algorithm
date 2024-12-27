@@ -41,16 +41,29 @@ protected:
         return res;
     }
 
-    Ciphertext *encrypts(const size_t size, const std::function<Plaintext(int)> &encoder) {
-        sw.Mark("encrypts");
-        const auto res = new Ciphertext[size];
+    Ciphertext *encrypts(const size_t size, const std::function<void(int, Ciphertext *)> &do_encrypt,
+                         const std::string &mark = "encrypts", const int repeats = 1) {
+        sw.Mark(mark);
+        const auto res = new Ciphertext[size * repeats];
         ParallelFor(size, [&](const int i) {
-            res[i] = encryptor_->Encrypt(encoder(i));
+            do_encrypt(i, res);
         });
-        sw.PrintWithMills("encrypts");
+        sw.PrintWithMills(mark);
 
         return res;
     }
+
+    Ciphertext *encrypts(const size_t size, const std::function<Plaintext(int)> &encoder,
+                         const std::string &mark = "encrypts") {
+        return encrypts(size, [&](const int i, Ciphertext *res) {
+            res[i] = encryptor_->Encrypt(encoder(i));
+        }, mark);
+    }
+
+    Ciphertext *encryptPairUnpack(double m1, double m2) const;
+
+    Ciphertext *encryptPairsUnpack(const double *ms1, const double *ms2, size_t size,
+                                   const std::string &mark = "encryptPairsUnpack");
 
     template<typename T>
     void decrypt(const Ciphertext &ct, T *out, std::function<void(const Plaintext &, T *)> decoder) {
@@ -63,12 +76,13 @@ protected:
     void decrypts(const Ciphertext *cts,
                   size_t size,
                   T *out,
-                  std::function<void(const Plaintext &, T *)> decoder) {
-        sw.Mark("decrypts");
+                  std::function<void(const Plaintext &, T *)> decoder,
+                  const std::string &mark = "decrypts") {
+        sw.Mark(mark);
         ParallelFor(size, [&](int i) {
             this->decrypt(cts[i], &out[i], decoder);
         });
-        sw.PrintWithMills("decrypts");
+        sw.PrintWithMills(mark);
     }
 
     static inline Ciphertext *op(const Ciphertext &a,
@@ -79,7 +93,7 @@ protected:
                           const Ciphertext *b,
                           size_t size,
                           const std::function<void(Ciphertext *, const Ciphertext &)> &op_f,
-                          const std::string &op_name);
+                          const std::string &mark);
 
     static inline void opInplace(Ciphertext *a, const Ciphertext &b,
                                  const std::function<void(Ciphertext *, const Ciphertext &)> &op_f);
@@ -88,7 +102,7 @@ protected:
                           const Ciphertext *b,
                           size_t size,
                           const std::function<void(Ciphertext *, const Ciphertext &)> &op_f,
-                          const std::string &op_name);
+                          const std::string &mark);
 
     [[nodiscard]] bool hasSecretKey() const;
 
@@ -119,41 +133,44 @@ public:
 
     Ciphertext *encrypt(double m);
 
-    Ciphertext *encrypts(const double *ms, size_t size);
+    Ciphertext *encrypts(const double *ms, size_t size, const std::string &mark = "encrypts");
 
     double decrypt(const Ciphertext &ct);
 
-    void decrypts(const Ciphertext *cts, size_t size, double *out);
+    void decrypts(const Ciphertext *cts, size_t size, double *out, const std::string &mark = "decrypts");
 
-    double *decrypts(const Ciphertext *cts, size_t size);
+    double *decrypts(const Ciphertext *cts, size_t size, const std::string &mark = "decrypts");
 
-    Ciphertext *encryptPair(double m1, double m2);
+    Ciphertext *encryptPair(double m1, double m2, bool unpack = false);
 
-    Ciphertext *encryptPairs(const double *ms1, const double *ms2, size_t size);
+    Ciphertext *encryptPairs(const double *ms1, const double *ms2, size_t size, bool unpack = false,
+                             const std::string &mark = "encryptPairs");
 
-    void decryptPair(const Ciphertext &ct, double *out);
+    void decryptPair(const Ciphertext &ct, double *out, bool unpack = false);
 
-    double *decryptPair_(const Ciphertext &ct);
+    double *decryptPair_(const Ciphertext &ct, bool unpack = false);
 
-    void decryptPairs(const Ciphertext *cts, size_t size, double *out);
+    void decryptPairs(const Ciphertext *cts, size_t size, double *out, bool unpack = false,
+                      const std::string &mark = "decryptPairs");
 
-    double *decryptPairs(const Ciphertext *cts, size_t size);
+    double *decryptPairs(const Ciphertext *cts, size_t size, bool unpack = false,
+                         const std::string &mark = "decryptPairs");
 
-    [[nodiscard]] Ciphertext *add(const Ciphertext &ct1, const Ciphertext &ct2) const;
+    [[nodiscard]] Ciphertext *add(const Ciphertext &ct1, const Ciphertext &ct2, bool unpack = false);
 
-    Ciphertext *adds(const Ciphertext *cts1, const Ciphertext *cts2, size_t size);
+    Ciphertext *adds(const Ciphertext *cts1, const Ciphertext *cts2, size_t size, const std::string &mark = "adds");
 
-    void addInplace(Ciphertext &ct1, const Ciphertext &ct2) const;
+    void addInplace(Ciphertext &ct1, const Ciphertext &ct2, bool unpack = false);
 
-    void addInplaces(Ciphertext *cts1, const Ciphertext *cts2, size_t size);
+    void addInplaces(Ciphertext *cts1, const Ciphertext *cts2, size_t size, const std::string &mark = "addInplaces");
 
-    [[nodiscard]] Ciphertext *sub(const Ciphertext &ct1, const Ciphertext &ct2) const;
+    [[nodiscard]] Ciphertext *sub(const Ciphertext &ct1, const Ciphertext &ct2, bool unpack = false);
 
-    Ciphertext *subs(const Ciphertext *cts1, const Ciphertext *cts2, size_t size);
+    Ciphertext *subs(const Ciphertext *cts1, const Ciphertext *cts2, size_t size, const std::string &mark = "subs");
 
-    void subInplace(Ciphertext &ct1, const Ciphertext &ct2) const;
+    void subInplace(Ciphertext &ct1, const Ciphertext &ct2, bool unpack = false);
 
-    void subInplaces(Ciphertext *cts1, const Ciphertext *cts2, size_t size);
+    void subInplaces(Ciphertext *cts1, const Ciphertext *cts2, size_t size, const std::string &mark = "subInplaces");
 };
 
 void deletePheKit(const PheKit *pheKit);

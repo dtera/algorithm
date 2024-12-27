@@ -70,21 +70,21 @@ public class PheKitTest extends TestCase {
   /**
    * Single Pair Op
    */
-  public void singlePairOp(SchemaType schemaType, CurveName curveName) {
+  public void singlePairOp(SchemaType schemaType, CurveName curveName, boolean unpack) {
     try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
-      Ciphertext ct1 = pheKit.encryptPair(2.1, 4.3);
-      Ciphertext ct2 = pheKit.encryptPair(3.2, 5.4);
-      Ciphertext addRes = pheKit.add(ct1, ct2);
-      double[] res = pheKit.decryptPair(addRes);
+      Ciphertext ct1 = pheKit.encryptPair(2.1, 4.3, unpack);
+      Ciphertext ct2 = pheKit.encryptPair(3.2, 5.4, unpack);
+      Ciphertext addRes = pheKit.add(ct1, ct2, unpack);
+      double[] res = pheKit.decryptPair(addRes, unpack);
       System.out.printf("add: [%f, %f]\n", res[0], res[1]);
-      pheKit.addInplace(addRes, ct2);
-      res = pheKit.decryptPair(addRes);
+      pheKit.addInplace(addRes, ct2, unpack);
+      res = pheKit.decryptPair(addRes, unpack);
       System.out.printf("addInplace: [%f, %f]\n", res[0], res[1]);
-      Ciphertext subRes = pheKit.sub(ct2, ct1);
-      res = pheKit.decryptPair(subRes);
+      Ciphertext subRes = pheKit.sub(ct2, ct1, unpack);
+      res = pheKit.decryptPair(subRes, unpack);
       System.out.printf("sub: [%f, %f]\n", res[0], res[1]);
-      pheKit.subInplace(subRes, ct2);
-      res = pheKit.decryptPair(subRes);
+      pheKit.subInplace(subRes, ct2, unpack);
+      res = pheKit.decryptPair(subRes, unpack);
       System.out.printf("subInplace: [%f, %f]\n", res[0], res[1]);
     }
   }
@@ -152,7 +152,7 @@ public class PheKitTest extends TestCase {
   /**
    * Batch Pair Op
    */
-  public void batchPairOp(SchemaType schemaType, int size, CurveName curveName) {
+  public void batchPairOp(SchemaType schemaType, int size, CurveName curveName, boolean unpack) {
     try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
       StopWatch sw = new StopWatch();
       sw.start("init");
@@ -170,17 +170,17 @@ public class PheKitTest extends TestCase {
       }
       sw.stop();
       sw.start("encrypt [ms11, ms12]");
-      Ciphertext cts1 = pheKit.encryptPairs(ms11, ms12);
+      Ciphertext cts1 = pheKit.encryptPairs(ms11, ms12, unpack);
       sw.stop();
       sw.start("encrypt [ms21, ms22]");
-      Ciphertext cts2 = pheKit.encryptPairs(ms21, ms22);
+      Ciphertext cts2 = pheKit.encryptPairs(ms21, ms22, unpack);
       sw.stop();
 
       sw.start("add");
       Ciphertext addRes = pheKit.adds(cts1, cts2);
       sw.stop();
       sw.start("decrypt add");
-      double[] res = pheKit.decryptPairs(addRes);
+      double[] res = pheKit.decryptPairs(addRes, unpack);
       sw.stop();
       System.out.printf("[add]real: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\t", res11[0], res12[0], res11[1], res12[1], res11[2], res12[2], res11[3], res12[3]);
       System.out.printf("res: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\n", res[0], res[size], res[1], res[size + 1], res[2], res[size + 2], res[3], res[size + 3]);
@@ -188,7 +188,7 @@ public class PheKitTest extends TestCase {
       pheKit.addInplaces(addRes, cts2);
       sw.stop();
       sw.start("decrypt addInplace");
-      res = pheKit.decryptPairs(addRes);
+      res = pheKit.decryptPairs(addRes, unpack);
       sw.stop();
       System.out.printf("[addInplace]real: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\t", res21[0], res22[0], res21[1], res22[1], res21[2], res22[2], res21[3], res22[3]);
       System.out.printf("res: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\n", res[0], res[size], res[1], res[size + 1], res[2], res[size + 2], res[3], res[size + 3]);
@@ -197,7 +197,7 @@ public class PheKitTest extends TestCase {
       Ciphertext subRes = pheKit.subs(addRes, cts2);
       sw.stop();
       sw.start("decrypt sub");
-      res = pheKit.decryptPairs(subRes);
+      res = pheKit.decryptPairs(subRes, unpack);
       sw.stop();
       System.out.printf("[sub]real: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\t", res11[0], res12[0], res11[1], res12[1], res11[2], res12[2], res11[3], res12[3]);
       System.out.printf("res: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\n", res[0], res[size], res[1], res[size + 1], res[2], res[size + 2], res[3], res[size + 3]);
@@ -205,7 +205,7 @@ public class PheKitTest extends TestCase {
       pheKit.subInplaces(subRes, cts2);
       sw.stop();
       sw.start("decrypt subInplace");
-      res = pheKit.decryptPairs(subRes);
+      res = pheKit.decryptPairs(subRes, unpack);
       sw.stop();
       System.out.printf("[subInplace]real: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\t", ms11[0], ms12[0], ms11[1], ms12[1], ms11[2], ms12[2], ms11[3], ms12[3]);
       System.out.printf("res: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\n", res[0], res[size], res[1], res[size + 1], res[2], res[size + 2], res[3], res[size + 3]);
@@ -229,13 +229,6 @@ public class PheKitTest extends TestCase {
   }
 
   /**
-   * Single Pair Op Test For OU
-   */
-  public void testOUSinglePairOp() {
-    singlePairOp(SchemaType.OU, CurveName.empty);
-  }
-
-  /**
    * Batch Op Test For OU
    */
   public void testOUBatchOp() {
@@ -243,10 +236,17 @@ public class PheKitTest extends TestCase {
   }
 
   /**
+   * Single Pair Op Test For OU
+   */
+  public void testOUSinglePairOp() {
+    singlePairOp(SchemaType.OU, CurveName.empty, false);
+  }
+
+  /**
    * Batch Pair Op Test For OU
    */
   public void testOUBatchPairOp() {
-    batchPairOp(SchemaType.OU, 100000, CurveName.empty);
+    batchPairOp(SchemaType.OU, 100000, CurveName.empty, false);
   }
 
   /**
@@ -373,6 +373,20 @@ public class PheKitTest extends TestCase {
    */
   public void testElGamalSecp192r1BatchOp() {
     batchOp(SchemaType.ElGamal, 10000, CurveName.secp192r1);
+  }
+
+  /**
+   * Single Pair Op Test For ElGamal, curve is Ed25519
+   */
+  public void testElGamalEd25519SinglePairOp() {
+    singlePairOp(SchemaType.ElGamal, CurveName.ed25519, true);
+  }
+
+  /**
+   * Batch Pair Op Test For ElGamal, curve is Ed25519
+   */
+  public void testElGamalEd25519BatchPairOp() {
+    batchPairOp(SchemaType.ElGamal, 10000, CurveName.ed25519, true);
   }
 
 }

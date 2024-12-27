@@ -111,14 +111,14 @@ inline Ciphertext *PheKit::op(const Ciphertext *a,
                               const Ciphertext *b,
                               const size_t size,
                               const std::function<void(Ciphertext *, const Ciphertext &)> &op_f,
-                              const std::string &op_name) {
-    sw.Mark(op_name);
+                              const std::string &mark) {
+    sw.Mark(mark);
     auto *res = new Ciphertext[size];
     ParallelFor(size, [&](const int i) {
         res[i] = a[i];
         opInplace(&res[i], b[i], op_f);
     });
-    sw.PrintWithMills(op_name);
+    sw.PrintWithMills(mark);
     return res;
 }
 
@@ -132,12 +132,12 @@ inline void PheKit::opInplace(Ciphertext *a,
                               const Ciphertext *b,
                               const size_t size,
                               const std::function<void(Ciphertext *, const Ciphertext &)> &op_f,
-                              const std::string &op_name) {
-    sw.Mark(op_name);
+                              const std::string &mark) {
+    sw.Mark(mark);
     ParallelFor(size, [&](const int i) {
         opInplace(&a[i], b[i], op_f);
     });
-    sw.PrintWithMills(op_name);
+    sw.PrintWithMills(mark);
 }
 
 std::string PheKit::pubKey() const {
@@ -148,10 +148,10 @@ Ciphertext *PheKit::encrypt(const double m) {
     return encrypt(encoder_f, m);
 }
 
-Ciphertext *PheKit::encrypts(const double *ms, const size_t size) {
+Ciphertext *PheKit::encrypts(const double *ms, const size_t size, const std::string &mark) {
     return encrypts(size, [&](const int i) {
         return encoder_f(ms[i]);
-    });
+    }, mark);
 }
 
 double PheKit::decrypt(const Ciphertext &ct) {
@@ -160,80 +160,101 @@ double PheKit::decrypt(const Ciphertext &ct) {
     return out;
 }
 
-void PheKit::decrypts(const Ciphertext *cts, const size_t size, double *out) {
-    decrypts<double>(cts, size, out, decoder_f);
+void PheKit::decrypts(const Ciphertext *cts, const size_t size, double *out, const std::string &mark) {
+    decrypts<double>(cts, size, out, decoder_f, mark);
 }
 
-double *PheKit::decrypts(const Ciphertext *cts, const size_t size) {
+double *PheKit::decrypts(const Ciphertext *cts, const size_t size, const std::string &mark) {
     auto *out = new double[size];
-    decrypts(cts, size, out);
+    decrypts(cts, size, out, mark);
     return out;
 }
 
-Ciphertext *PheKit::encryptPair(const double m1, const double m2) {
-    return encrypt(batch_encoder_f, m1, m2);
+Ciphertext *PheKit::encryptPair(const double m1, const double m2, const bool unpack) {
+    return unpack ? encryptPairUnpack(m1, m2) : encrypt(batch_encoder_f, m1, m2);
 }
 
-Ciphertext *PheKit::encryptPairs(const double *ms1, const double *ms2, const size_t size) {
-    return encrypts(size, [&](const int i) {
-        return batch_encoder_f(ms1[i], ms2[i]);
-    });
+Ciphertext *PheKit::encryptPairs(const double *ms1, const double *ms2, const size_t size, const bool unpack,
+                                 const std::string &mark) {
+    return unpack
+               ? encryptPairsUnpack(ms1, ms2, size, mark)
+               : encrypts(size, [&](const int i) {
+                   return batch_encoder_f(ms1[i], ms2[i]);
+               }, mark);
 }
 
-void PheKit::decryptPair(const Ciphertext &ct, double *out) {
-    decrypt<double>(ct, out, batch_decoder_f);
+Ciphertext *PheKit::encryptPairUnpack(const double m1, const double m2) const {
+    const auto res = new Ciphertext[2];
+    res[0] = encryptor_->Encrypt(encoder_f(m1));
+    res[1] = encryptor_->Encrypt(encoder_f(m2));
+    return res;
+}
+
+Ciphertext *PheKit::encryptPairsUnpack(const double *ms1, const double *ms2, const size_t size,
+                                       const std::string &mark) {
+    return encrypts(size, [&](const int i, Ciphertext *res) {
+        res[i] = encryptor_->Encrypt(encoder_f(ms1[i]));
+        res[i + size] = encryptor_->Encrypt(encoder_f(ms2[i]));
+    }, mark, 2);
+}
+
+void PheKit::decryptPair(const Ciphertext &ct, double *out, const bool unpack) {
+    unpack ? decrypts(&ct, 2, out, "") : decrypt<double>(ct, out, batch_decoder_f);
     //std::cout << "[c++]out: [" << out[0] << ", " << out[1] << "]" << std::endl;
 }
 
-double *PheKit::decryptPair_(const Ciphertext &ct) {
+double *PheKit::decryptPair_(const Ciphertext &ct, const bool unpack) {
     auto *out = new double[2];
-    decryptPair(ct, out);
+    decryptPair(ct, out, unpack);
     return out;
 }
 
-void PheKit::decryptPairs(const Ciphertext *cts, const size_t size, double *out) {
-    decrypts<double>(cts, size, out, [&](const Plaintext &pt, double *o) {
-        o[0] = batch_encoder_->Decode<double, 0>(pt);
-        o[size] = batch_encoder_->Decode<double, 1>(pt);
-    });
+void PheKit::decryptPairs(const Ciphertext *cts, const size_t size, double *out, const bool unpack,
+                          const std::string &mark) {
+    unpack
+        ? decrypts(cts, size * 2, out, mark)
+        : decrypts<double>(cts, size, out, [&](const Plaintext &pt, double *o) {
+            o[0] = batch_encoder_->Decode<double, 0>(pt);
+            o[size] = batch_encoder_->Decode<double, 1>(pt);
+        }, mark);
 }
 
-double *PheKit::decryptPairs(const Ciphertext *cts, const size_t size) {
+double *PheKit::decryptPairs(const Ciphertext *cts, const size_t size, const bool unpack, const std::string &mark) {
     auto *out = new double[size * 2];
-    decryptPairs(cts, size, out);
+    decryptPairs(cts, size, out, unpack, mark);
     return out;
 }
 
-Ciphertext *PheKit::add(const Ciphertext &ct1, const Ciphertext &ct2) const {
-    return op(ct1, ct2, add_f);
+Ciphertext *PheKit::add(const Ciphertext &ct1, const Ciphertext &ct2, const bool unpack) {
+    return unpack ? adds(&ct1, &ct2, 2, "") : op(ct1, ct2, add_f);
 }
 
-Ciphertext *PheKit::adds(const Ciphertext *cts1, const Ciphertext *cts2, const size_t size) {
-    return op(cts1, cts2, size, add_f, "adds");
+Ciphertext *PheKit::adds(const Ciphertext *cts1, const Ciphertext *cts2, const size_t size, const std::string &mark) {
+    return op(cts1, cts2, size, add_f, mark);
 }
 
-void PheKit::addInplace(Ciphertext &ct1, const Ciphertext &ct2) const {
-    opInplace(&ct1, ct2, add_f);
+void PheKit::addInplace(Ciphertext &ct1, const Ciphertext &ct2, const bool unpack) {
+    unpack ? addInplaces(&ct1, &ct2, 2, "") : opInplace(&ct1, ct2, add_f);
 }
 
-void PheKit::addInplaces(Ciphertext *cts1, const Ciphertext *cts2, const size_t size) {
-    opInplace(cts1, cts2, size, add_f, "addInplaces");
+void PheKit::addInplaces(Ciphertext *cts1, const Ciphertext *cts2, const size_t size, const std::string &mark) {
+    opInplace(cts1, cts2, size, add_f, mark);
 }
 
-Ciphertext *PheKit::sub(const Ciphertext &ct1, const Ciphertext &ct2) const {
-    return op(ct1, ct2, sub_f);
+Ciphertext *PheKit::sub(const Ciphertext &ct1, const Ciphertext &ct2, const bool unpack) {
+    return unpack ? subs(&ct1, &ct2, 2, "") : op(ct1, ct2, sub_f);
 }
 
-Ciphertext *PheKit::subs(const Ciphertext *cts1, const Ciphertext *cts2, const size_t size) {
-    return op(cts1, cts2, size, sub_f, "subs");
+Ciphertext *PheKit::subs(const Ciphertext *cts1, const Ciphertext *cts2, const size_t size, const std::string &mark) {
+    return op(cts1, cts2, size, sub_f, mark);
 }
 
-void PheKit::subInplace(Ciphertext &ct1, const Ciphertext &ct2) const {
-    opInplace(&ct1, ct2, sub_f);
+void PheKit::subInplace(Ciphertext &ct1, const Ciphertext &ct2, const bool unpack) {
+    unpack ? subInplaces(&ct1, &ct2, 2, "") : opInplace(&ct1, ct2, sub_f);
 }
 
-void PheKit::subInplaces(Ciphertext *cts1, const Ciphertext *cts2, const size_t size) {
-    opInplace(cts1, cts2, size, sub_f, "subInplaces");
+void PheKit::subInplaces(Ciphertext *cts1, const Ciphertext *cts2, const size_t size, const std::string &mark) {
+    opInplace(cts1, cts2, size, sub_f, mark);
 }
 
 void deletePheKit(const PheKit *pheKit) {

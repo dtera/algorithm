@@ -128,7 +128,7 @@ void batch_op(const SchemaType &schema, const int len = 100000, const std::strin
     deleteCiphertexts(subCt);
 }
 
-void pair_op(const SchemaType &schema, const std::string &curve_name = "") {
+void pair_op(const SchemaType &schema, const std::string &curve_name = "", const bool unpack = false) {
     StopWatch sw;
 
     sw.Mark("init");
@@ -137,30 +137,30 @@ void pair_op(const SchemaType &schema, const std::string &curve_name = "") {
 
     constexpr double a1 = 2.36, a2 = 5.12, b1 = 3.12, b2 = 7.45;
     sw.Mark("encryptPair");
-    const auto ct1 = pheKit.encryptPair(a1, a2);
-    const auto ct2 = pheKit.encryptPair(b1, b2);
+    const auto ct1 = pheKit.encryptPair(a1, a2, unpack);
+    const auto ct2 = pheKit.encryptPair(b1, b2, unpack);
     sw.PrintWithMills("encryptPair");
 
     sw.Mark("add");
-    const auto addCt = pheKit.add(*ct1, *ct2);
+    const auto addCt = pheKit.add(*ct1, *ct2, unpack);
     sw.PrintWithMills("add");
     sw.Mark("addInplace");
-    pheKit.addInplace(*addCt, *ct2);
+    pheKit.addInplace(*addCt, *ct2, unpack);
     sw.PrintWithMills("addInplace");
     sw.Mark("decryptPair");
-    auto res = pheKit.decryptPair_(*addCt);
+    auto res = pheKit.decryptPair_(*addCt, unpack);
     sw.PrintWithMills("decryptPair");
     std::cout << "[add]real: [" << a1 + b1 + b1 << " " << a2 + b2 + b2 << "], res: [" << res[0] << " " << res[1] << "]"
             << std::endl;
 
     sw.Mark("sub");
-    const auto subCt = pheKit.sub(*addCt, *ct2);
+    const auto subCt = pheKit.sub(*addCt, *ct2, unpack);
     sw.PrintWithMills("sub");
     sw.Mark("subInplace");
-    pheKit.subInplace(*subCt, *ct2);
+    pheKit.subInplace(*subCt, *ct2, unpack);
     sw.PrintWithMills("subInplace");
     sw.Mark("decrypt");
-    res = pheKit.decryptPair_(*subCt);
+    res = pheKit.decryptPair_(*subCt, unpack);
     sw.PrintWithMills("decrypt");
     std::cout << "[sub]real: [" << a1 << " " << a2 << "], res: [" << res[0] << " " << res[1] << "]" << std::endl;
 
@@ -170,7 +170,8 @@ void pair_op(const SchemaType &schema, const std::string &curve_name = "") {
     deleteCiphertext(subCt);
 }
 
-void batch_pair_op(const SchemaType &schema, const int len = 100000, const std::string &curve_name = "") {
+void batch_pair_op(const SchemaType &schema, const int len = 100000, const std::string &curve_name = "",
+                   const bool unpack = false) {
     PheKit pheKit(schema, curve_name);
 
     auto *ms11 = new double[len];
@@ -183,12 +184,13 @@ void batch_pair_op(const SchemaType &schema, const int len = 100000, const std::
         ms21[i] = i + static_cast<double>(i + 3) / 10;
         ms22[i] = i + static_cast<double>(i + 3) / 5;
     }
-    const auto ct1 = pheKit.encryptPairs(ms11, ms12, len);
-    const auto ct2 = pheKit.encryptPairs(ms21, ms22, len);
+    const auto ct1 = pheKit.encryptPairs(ms11, ms12, len, unpack);
+    const auto ct2 = pheKit.encryptPairs(ms21, ms22, len, unpack);
 
-    const auto addCt = pheKit.adds(ct1, ct2, len);
-    pheKit.addInplaces(addCt, ct2, len);
-    auto res = pheKit.decryptPairs(addCt, len);
+    const auto size = len * (unpack ? 2 : 1);
+    const auto addCt = pheKit.adds(ct1, ct2, size);
+    pheKit.addInplaces(addCt, ct2, size);
+    auto res = pheKit.decryptPairs(addCt, len, unpack);
     for (int i = 0; i < len; ++i) {
         if (constexpr int freq = 3; i % (len / freq) == 0) {
             std::cout << "[add]real: [" << ms11[i] + 2 * ms21[i] << " " << ms12[i] + 2 * ms22[i] << "], res: [" <<
@@ -196,9 +198,9 @@ void batch_pair_op(const SchemaType &schema, const int len = 100000, const std::
         }
     }
 
-    const auto subCt = pheKit.subs(addCt, ct2, len);
-    pheKit.subInplaces(subCt, ct2, len);
-    res = pheKit.decryptPairs(subCt, len);
+    const auto subCt = pheKit.subs(addCt, ct2, size);
+    pheKit.subInplaces(subCt, ct2, size);
+    res = pheKit.decryptPairs(subCt, len, unpack);
     for (int i = 0; i < len; ++i) {
         if (constexpr int freq = 4; i % (len / freq) == 0) {
             std::cout << "[sub]real: " << ms11[i] << " " << ms12[i] << "], res: [" << res[i] << " " << res[i + len] <<
@@ -304,10 +306,10 @@ TEST(phe_kit, elgamal_secp192r1_batch_op) {
     batch_op(SchemaType::ElGamal, 10000, PheKit::secp192r1);
 }
 
-/*TEST(phe_kit, elgamal_fourq_pair_op) {
-    pair_op(SchemaType::ElGamal, PheKit::fourq);
+TEST(phe_kit, elgamal_ed25519_pair_op) {
+    pair_op(SchemaType::ElGamal, PheKit::ed25519, true);
 }
 
-TEST(phe_kit, elgamal_fourq_batch_pair_op) {
-    batch_pair_op(SchemaType::ElGamal, 100000, PheKit::fourq);
-}*/
+TEST(phe_kit, elgamal_ed25519_batch_pair_op) {
+    batch_pair_op(SchemaType::ElGamal, 10000, PheKit::ed25519, true);
+}

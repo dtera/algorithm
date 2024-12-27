@@ -46,23 +46,47 @@ public abstract class AbstractPheKit extends Pointer {
     return res;
   }
 
-  public Ciphertext encryptPairs(double[] ms1, double[] ms2) {
+  public Ciphertext encryptPairs(double[] ms1, double[] ms2, boolean unpack, String mark) {
     assert ms1.length == ms2.length;
-    Ciphertext ct = pheKit.encryptPairs(ms1, ms2, ms1.length);
-    ct.capacity(ms1.length);
+    Ciphertext ct = pheKit.encryptPairs(ms1, ms2, ms1.length, unpack, mark);
+    ct.capacity(ms1.length * (unpack ? 2L : 1));
     return ct;
   }
 
-  public double[] decryptPair(Ciphertext ct) {
+  public Ciphertext encryptPairs(double[] ms1, double[] ms2, boolean unpack) {
+    return encryptPairs(ms1, ms2, unpack, "encryptPairs");
+  }
+
+  public Ciphertext encryptPairs(double[] ms1, double[] ms2, String mark) {
+    return encryptPairs(ms1, ms2, false, mark);
+  }
+
+  public Ciphertext encryptPairs(double[] ms1, double[] ms2) {
+    return encryptPairs(ms1, ms2, "encryptPairs");
+  }
+
+  public double[] decryptPair(Ciphertext ct, boolean unpack) {
     double[] res = new double[2];
-    pheKit.decryptPair(ct, res);
+    pheKit.decryptPair(ct, res, unpack);
     return res;
   }
 
-  public double[] decryptPairs(Ciphertext cts) {
-    double[] res = new double[(int) cts.capacity() * 2];
-    pheKit.decryptPairs(cts, cts.capacity(), res);
+  public double[] decryptPair(Ciphertext ct) {
+    return decryptPair(ct, false);
+  }
+
+  public double[] decryptPairs(Ciphertext cts, boolean unpack, String mark) {
+    double[] res = new double[(int) cts.capacity() * (unpack ? 1 : 2)];
+    pheKit.decryptPairs(cts, res.length / 2, res, unpack, mark);
     return res;
+  }
+
+  public double[] decryptPairs(Ciphertext cts, boolean unpack) {
+    return decryptPairs(cts, unpack, "decryptPairs");
+  }
+
+  public double[] decryptPairs(Ciphertext cts) {
+    return decryptPairs(cts, false);
   }
 
   public Ciphertext adds(Ciphertext cts1, Ciphertext cts2) {
