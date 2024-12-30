@@ -36,7 +36,7 @@ PheKit::PheKit(const SchemaType schema, size_t key_size, const int64_t scale, co
     evaluator_ = he_kit_->GetEvaluator();
 
     init(he_kit_, scale);
-    sw.PrintWithMills("key_pair_gen");
+    sw.Stop();
 }
 
 PheKit::PheKit(const SchemaType schema, const std::string &curve_name, const bool register_ec_lib): PheKit(
@@ -118,7 +118,7 @@ inline Ciphertext *PheKit::op(const Ciphertext *a,
         res[i] = a[i];
         opInplace(&res[i], b[i], op_f);
     });
-    sw.PrintWithMills(mark);
+    sw.Stop();
     return res;
 }
 
@@ -137,7 +137,7 @@ inline void PheKit::opInplace(Ciphertext *a,
     ParallelFor(size, [&](const int i) {
         opInplace(&a[i], b[i], op_f);
     });
-    sw.PrintWithMills(mark);
+    sw.Stop();
 }
 
 std::string PheKit::pubKey() const {
@@ -255,6 +255,10 @@ void PheKit::subInplace(Ciphertext &ct1, const Ciphertext &ct2, const bool unpac
 
 void PheKit::subInplaces(Ciphertext *cts1, const Ciphertext *cts2, const size_t size, const std::string &mark) {
     opInplace(cts1, cts2, size, sub_f, mark);
+}
+
+void PheKit::prettyPrint(const uint8_t time_unit) const {
+    sw.PrettyPrint(static_cast<TimeUnit>(time_unit));
 }
 
 void deletePheKit(const PheKit *pheKit) {

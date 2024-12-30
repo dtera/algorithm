@@ -9,6 +9,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.springframework.util.StopWatch;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Unit test for simple App.
  */
@@ -104,48 +106,49 @@ public class PheKitTest extends TestCase {
         res2[i] = res1[i] + ms2[i];
       }
       sw.stop();
-      sw.start("encrypt ms1");
-      Ciphertext cts1 = pheKit.encrypts(ms1);
+      sw.start("[cts1]encrypts");
+      Ciphertext cts1 = pheKit.encrypts(ms1, "[cts1]encrypts");
       sw.stop();
-      sw.start("encrypt ms2");
-      Ciphertext cts2 = pheKit.encrypts(ms2);
+      sw.start("[cts2]encrypts");
+      Ciphertext cts2 = pheKit.encrypts(ms2, "[cts2]encrypts");
       sw.stop();
 
-      sw.start("add");
+      sw.start("adds");
       Ciphertext addRes = pheKit.adds(cts1, cts2);
       sw.stop();
-      sw.start("decrypt add");
-      double[] res = pheKit.decrypts(addRes);
+      sw.start("[add]decrypts");
+      double[] res = pheKit.decrypts(addRes, "[add]decrypts");
       sw.stop();
-      System.out.printf("[add]real: [%f, %f, %f, %f]\t", res1[0], res1[1], res1[2], res1[3]);
+      System.out.printf("[adds]real: [%f, %f, %f, %f]\t", res1[0], res1[1], res1[2], res1[3]);
       System.out.printf("res: [%f, %f, %f, %f]\n", res[0], res[1], res[2], res[3]);
-      sw.start("addInplace");
+      sw.start("addInplaces");
       pheKit.addInplaces(addRes, cts2);
       sw.stop();
-      sw.start("decrypt addInplace");
-      res = pheKit.decrypts(addRes);
+      sw.start("[addInplaces]decrypts");
+      res = pheKit.decrypts(addRes, "[addInplaces]decrypts");
       sw.stop();
-      System.out.printf("[addInplace]real: [%f, %f, %f, %f]\t", res2[0], res2[1], res2[2], res2[3]);
+      System.out.printf("[addInplaces]real: [%f, %f, %f, %f]\t", res2[0], res2[1], res2[2], res2[3]);
       System.out.printf("res: [%f, %f, %f, %f]\n", res[0], res[1], res[2], res[3]);
 
-      sw.start("sub");
+      sw.start("subs");
       Ciphertext subRes = pheKit.subs(addRes, cts2);
       sw.stop();
-      sw.start("decrypt sub");
-      res = pheKit.decrypts(subRes);
+      sw.start("[subs]decrypts");
+      res = pheKit.decrypts(subRes, "[subs]decrypts");
       sw.stop();
-      System.out.printf("[sub]real: [%f, %f, %f, %f]\t", res1[0], res1[1], res1[2], res1[3]);
+      System.out.printf("[subs]real: [%f, %f, %f, %f]\t", res1[0], res1[1], res1[2], res1[3]);
       System.out.printf("res: [%f, %f, %f, %f]\n", res[0], res[1], res[2], res[3]);
-      sw.start("subInplace");
+      sw.start("subInplaces");
       pheKit.subInplaces(subRes, cts2);
       sw.stop();
-      sw.start("decrypt subInplace");
-      res = pheKit.decrypts(subRes);
+      sw.start("[subInplaces]decrypts");
+      res = pheKit.decrypts(subRes, "[subInplaces]decrypts");
       sw.stop();
-      System.out.printf("[subInplace]real: [%f, %f, %f, %f]\t", ms1[0], ms1[1], ms1[2], ms1[3]);
+      System.out.printf("[subInplaces]real: [%f, %f, %f, %f]\t", ms1[0], ms1[1], ms1[2], ms1[3]);
       System.out.printf("res: [%f, %f, %f, %f]\n", res[0], res[1], res[2], res[3]);
 
       System.out.println(sw.prettyPrint());
+      pheKit.prettyPrint(TimeUnit.SECONDS);
     }
   }
 
@@ -169,48 +172,49 @@ public class PheKitTest extends TestCase {
         res22[i] = res12[i] + ms22[i];
       }
       sw.stop();
-      sw.start("encrypt [ms11, ms12]");
-      Ciphertext cts1 = pheKit.encryptPairs(ms11, ms12, unpack);
+      sw.start("[cts1]encryptPairs");
+      Ciphertext cts1 = pheKit.encryptPairs(ms11, ms12, unpack, "[cts1]encryptPairs");
       sw.stop();
-      sw.start("encrypt [ms21, ms22]");
-      Ciphertext cts2 = pheKit.encryptPairs(ms21, ms22, unpack);
+      sw.start("[cts2]encryptPairs");
+      Ciphertext cts2 = pheKit.encryptPairs(ms21, ms22, unpack, "[cts2]encryptPairs");
       sw.stop();
 
-      sw.start("add");
+      sw.start("adds");
       Ciphertext addRes = pheKit.adds(cts1, cts2);
       sw.stop();
-      sw.start("decrypt add");
-      double[] res = pheKit.decryptPairs(addRes, unpack);
+      sw.start("[adds]decryptPairs");
+      double[] res = pheKit.decryptPairs(addRes, unpack, "[adds]decryptPairs");
       sw.stop();
       System.out.printf("[add]real: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\t", res11[0], res12[0], res11[1], res12[1], res11[2], res12[2], res11[3], res12[3]);
       System.out.printf("res: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\n", res[0], res[size], res[1], res[size + 1], res[2], res[size + 2], res[3], res[size + 3]);
-      sw.start("addInplace");
+      sw.start("addInplaces");
       pheKit.addInplaces(addRes, cts2);
       sw.stop();
-      sw.start("decrypt addInplace");
-      res = pheKit.decryptPairs(addRes, unpack);
+      sw.start("[addInplaces]decryptPairs");
+      res = pheKit.decryptPairs(addRes, unpack, "[addInplaces]decryptPairs");
       sw.stop();
-      System.out.printf("[addInplace]real: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\t", res21[0], res22[0], res21[1], res22[1], res21[2], res22[2], res21[3], res22[3]);
+      System.out.printf("[addInplaces]real: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\t", res21[0], res22[0], res21[1], res22[1], res21[2], res22[2], res21[3], res22[3]);
       System.out.printf("res: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\n", res[0], res[size], res[1], res[size + 1], res[2], res[size + 2], res[3], res[size + 3]);
 
-      sw.start("sub");
+      sw.start("subs");
       Ciphertext subRes = pheKit.subs(addRes, cts2);
       sw.stop();
-      sw.start("decrypt sub");
-      res = pheKit.decryptPairs(subRes, unpack);
+      sw.start("[subs]decryptPairs");
+      res = pheKit.decryptPairs(subRes, unpack, "[subs]decryptPairs");
       sw.stop();
-      System.out.printf("[sub]real: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\t", res11[0], res12[0], res11[1], res12[1], res11[2], res12[2], res11[3], res12[3]);
+      System.out.printf("[subs]real: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\t", res11[0], res12[0], res11[1], res12[1], res11[2], res12[2], res11[3], res12[3]);
       System.out.printf("res: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\n", res[0], res[size], res[1], res[size + 1], res[2], res[size + 2], res[3], res[size + 3]);
-      sw.start("subInplace");
+      sw.start("subInplaces");
       pheKit.subInplaces(subRes, cts2);
       sw.stop();
-      sw.start("decrypt subInplace");
-      res = pheKit.decryptPairs(subRes, unpack);
+      sw.start("[subInplaces]decryptPairs");
+      res = pheKit.decryptPairs(subRes, unpack, "[subInplaces]decryptPairs");
       sw.stop();
-      System.out.printf("[subInplace]real: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\t", ms11[0], ms12[0], ms11[1], ms12[1], ms11[2], ms12[2], ms11[3], ms12[3]);
+      System.out.printf("[subInplaces]real: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\t", ms11[0], ms12[0], ms11[1], ms12[1], ms11[2], ms12[2], ms11[3], ms12[3]);
       System.out.printf("res: [(%f, %f), (%f, %f), (%f, %f), (%f, %f)]\n", res[0], res[size], res[1], res[size + 1], res[2], res[size + 2], res[3], res[size + 3]);
 
       System.out.println(sw.prettyPrint());
+      pheKit.prettyPrint(TimeUnit.SECONDS);
     }
   }
 

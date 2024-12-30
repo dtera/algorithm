@@ -48,7 +48,7 @@ protected:
         ParallelFor(size, [&](const int i) {
             do_encrypt(i, res);
         });
-        sw.PrintWithMills(mark);
+        sw.Stop();
 
         return res;
     }
@@ -82,7 +82,7 @@ protected:
         ParallelFor(size, [&](int i) {
             this->decrypt(cts[i], &out[i], decoder);
         });
-        sw.PrintWithMills(mark);
+        sw.Stop();
     }
 
     static inline Ciphertext *op(const Ciphertext &a,
@@ -171,6 +171,8 @@ public:
     void subInplace(Ciphertext &ct1, const Ciphertext &ct2, bool unpack = false);
 
     void subInplaces(Ciphertext *cts1, const Ciphertext *cts2, size_t size, const std::string &mark = "subInplaces");
+
+    void prettyPrint(uint8_t time_unit = MILLISECONDS) const;
 };
 
 void deletePheKit(const PheKit *pheKit);

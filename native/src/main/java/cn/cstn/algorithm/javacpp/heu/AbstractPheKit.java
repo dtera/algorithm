@@ -23,6 +23,8 @@ import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.annotation.Properties;
 
+import java.util.concurrent.TimeUnit;
+
 import static cn.cstn.algorithm.javacpp.global.heu.deletePheKit;
 
 @Properties(inherit = heu.class)
@@ -34,16 +36,24 @@ public abstract class AbstractPheKit extends Pointer {
     pheKit = (PheKit) this;
   }
 
-  public Ciphertext encrypts(double[] ms) {
-    Ciphertext ct = pheKit.encrypts(ms, ms.length);
+  public Ciphertext encrypts(double[] ms, String mark) {
+    Ciphertext ct = pheKit.encrypts(ms, ms.length, mark);
     ct.capacity(ms.length);
     return ct;
   }
 
-  public double[] decrypts(Ciphertext cts) {
+  public Ciphertext encrypts(double[] ms) {
+    return encrypts(ms, "encrypts");
+  }
+
+  public double[] decrypts(Ciphertext cts, String mark) {
     double[] res = new double[(int) cts.capacity()];
-    pheKit.decrypts(cts, cts.capacity(), res);
+    pheKit.decrypts(cts, cts.capacity(), res, mark);
     return res;
+  }
+
+  public double[] decrypts(Ciphertext cts) {
+    return decrypts(cts, "decrypts");
   }
 
   public Ciphertext encryptPairs(double[] ms1, double[] ms2, boolean unpack, String mark) {
@@ -111,6 +121,10 @@ public abstract class AbstractPheKit extends Pointer {
   public void subInplaces(Ciphertext cts1, Ciphertext cts2) {
     assert cts1.capacity() == cts2.capacity();
     pheKit.subInplaces(cts1, cts2, cts1.capacity());
+  }
+
+  public void prettyPrint(TimeUnit tm) {
+    pheKit.prettyPrint((byte) tm.ordinal());
   }
 
   @SuppressWarnings("removal")
