@@ -8,9 +8,46 @@
 #include <string>
 #include <unordered_map>
 
+enum TimeUnit: uint8_t {
+    // Time unit representing one thousandth of a microsecond.
+    NANOSECONDS = 0,
+    // Time unit representing one thousandth of a millisecond.
+    MICROSECONDS = 1,
+    // Time unit representing one thousandth of a second.
+    MILLISECONDS = 2,
+    // Time unit representing one second.
+    SECONDS = 3,
+    // Time unit representing sixty seconds.
+    MINUTES = 4,
+    // Time unit representing sixty minutes.
+    HOURS = 5,
+    // Time unit representing twenty-four hours.
+    DAYS = 6
+};
+
+inline std::string timeUnitToStr(const TimeUnit time_unit) {
+    switch (time_unit) {
+        case MICROSECONDS:
+            return "microseconds";
+        case MILLISECONDS:
+            return "milliseconds";
+        case SECONDS:
+            return "seconds";
+        case MINUTES:
+            return "minutes";
+        case HOURS:
+            return "hours";
+        case DAYS:
+            return "days";
+        default:
+            return "nanoseconds";
+    }
+}
+
 class StopWatch {
 public:
-    explicit StopWatch(const bool mark_default = false, const bool print_on = true) : print_on(print_on) {
+    explicit StopWatch(const bool mark_default = false, const bool print_on = true) : total_duration(0),
+        print_on(print_on), cur_mark_(default_mark()) {
         if (mark_default) {
             Mark();
         }
@@ -19,6 +56,7 @@ public:
     // start a new mark
     void Mark(const std::string &mark = default_mark()) {
         mark_[mark] = std::chrono::high_resolution_clock::now();
+        cur_mark_ = mark;
     }
 
     // return a mark's cost , default in nanoseconds
@@ -47,8 +85,7 @@ public:
     }
 
     // return a mark's cost , default in hours
-    [[maybe_unused]] long CountHours(
-        const std::string &mark = default_mark()) {
+    [[maybe_unused]] long CountHours(const std::string &mark = default_mark()) {
         return CountDuration<long, std::chrono::hours>(mark);
     }
 
@@ -83,11 +120,49 @@ public:
     }
 
     // remove mark and return its cost
-    [[maybe_unused]] double Stop(
-        const std::string &mark = default_mark()) {
-        const auto cost = static_cast<double>(CountMilli(mark));
-        mark_.erase(mark);
-        return cost;
+    [[maybe_unused]] void Stop(const std::string &mark = default_mark()) {
+        const auto m = mark == default_mark() ? cur_mark_ : mark;
+        const auto duration = CountNano(m);
+        total_duration += duration;
+        const auto d = std::find_if(task_durations_.begin(), task_durations_.end(),
+                                    [&](const auto &t) { return t.first == m; });
+        d == task_durations_.end()
+            ? task_durations_.emplace_back(std::make_pair(m, duration))
+            : task_durations_[std::distance(task_durations_.begin(), d)] = std::make_pair(m, d->second + duration);
+    }
+
+    [[maybe_unused]] void PrettyPrint(const TimeUnit time_unit = MILLISECONDS) const {
+        std::function stat_time = [](const double t) { return t; };
+        switch (time_unit) {
+            case MICROSECONDS:
+                stat_time = [](const double t) { return t / 1e3; };
+                break;
+            case MILLISECONDS:
+                stat_time = [](const double t) { return t / 1e6; };
+                break;
+            case SECONDS:
+                stat_time = [](const double t) { return t / 1e9; };
+                break;
+            case MINUTES:
+                stat_time = [](const double t) { return t / 1e9 / 60; };
+                break;
+            case HOURS:
+                stat_time = [](const double t) { return t / 1e9 / 60 / 60; };
+                break;
+            case DAYS:
+                stat_time = [](const double t) { return t / 1e9 / 60 / 60 / 24; };
+                break;
+            default:
+                break;
+        }
+        printf("------------------------------------------------------\n");
+        printf("%-14s %-5s         %-s\n", timeUnitToStr(time_unit).c_str(), "%", "mark");
+        printf("------------------------------------------------------\n");
+        for (auto [fst, snd]: task_durations_) {
+            printf("%-6.8s       %-6.6s%%       %-s\n", std::to_string(stat_time(static_cast<double>(snd))).c_str(),
+                   std::to_string(static_cast<double>(snd) / total_duration * 100).c_str(),
+                   fst.c_str());
+        }
     }
 
     template<typename Fp>
@@ -98,33 +173,27 @@ public:
         }
     }
 
-    [[maybe_unused]] void PrintWithNano(
-        const std::string &mark = default_mark()) {
+    [[maybe_unused]] void PrintWithNano(const std::string &mark = default_mark()) {
         Print(&StopWatch::ShowTickNano, mark);
     }
 
-    [[maybe_unused]] void PrintWithMicro(
-        const std::string &mark = default_mark()) {
+    [[maybe_unused]] void PrintWithMicro(const std::string &mark = default_mark()) {
         Print(&StopWatch::ShowTickMicro, mark);
     }
 
-    [[maybe_unused]] void PrintWithMills(
-        const std::string &mark = default_mark()) {
+    [[maybe_unused]] void PrintWithMills(const std::string &mark = default_mark()) {
         Print(&StopWatch::ShowTickMills, mark);
     }
 
-    [[maybe_unused]] void PrintWithSeconds(
-        const std::string &mark = default_mark()) {
+    [[maybe_unused]] void PrintWithSeconds(const std::string &mark = default_mark()) {
         Print(&StopWatch::ShowTickSeconds, mark);
     }
 
-    [[maybe_unused]] void PrintWithMinutes(
-        const std::string &mark = default_mark()) {
+    [[maybe_unused]] void PrintWithMinutes(const std::string &mark = default_mark()) {
         Print(&StopWatch::ShowTickMinutes, mark);
     }
 
-    [[maybe_unused]] void PrintWithHours(
-        const std::string &mark = default_mark()) {
+    [[maybe_unused]] void PrintWithHours(const std::string &mark = default_mark()) {
         Print(&StopWatch::ShowTickHours, mark);
     }
 
@@ -149,8 +218,9 @@ protected:
             mark);
     }
 
-    std::unordered_map<std::string,
-        std::chrono::high_resolution_clock::time_point>
-    mark_;
+    std::unordered_map<std::string, std::chrono::high_resolution_clock::time_point> mark_;
+    std::vector<std::pair<std::string, long long> > task_durations_;
+    long long total_duration;
     bool print_on;
+    std::string cur_mark_;
 };
