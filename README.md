@@ -7,13 +7,13 @@
 > The concept of algorithm has existed for centuries, and the use of the concept can be ascribed to Greek mathematicians, e.g. the sieve of Eratosthenes and Euclid's algorithm; the term algorithm itself derives from the 9th Century mathematician Muḥammad ibn Mūsā al'Khwārizmī, latinized 'Algoritmi'. A partial formalization of what would become the modern notion of algorithm began with attempts to solve the Entscheidungsproblem (the "decision problem") posed by David Hilbert in 1928. Subsequent formalizations were framed as attempts to define "effective calculability" or "effective method"; those formalizations included the Gödel–Herbrand–Kleene recursive functions of 1930, 1934 and 1935, Alonzo Church's lambda calculus of 1936, Emil Post's Formulation 1 of 1936, and Alan Turing's Turing machines of 1936–7 and 1939.
 
 ### [Commons](https://github.com/dtera/algorithm#commons-algorithm) 
-> This is commons algorithm implement, such as sort, find etc.
+> This is common implements of algorithm, such as sort, find etc.
 
 * [Array](./commons/src/main/java/cn/cstn/algorithm/commons/util/ArrayUtil.java)
 * [Union Find](./commons/src/main/java/cn/cstn/algorithm/commons/UF.java)
 
 ### [Corporation](https://github.com/dtera/algorithm#corporation) 
-> This is corporation interview algorithm implement, such as alibaba, tencent, baidu etc.
+> This is some implements of algorithm about corporation interviews, such as alibaba, tencent, baidu etc.
 
 * [Alibaba](https://github.com/dtera/algorithm#alibaba)
 * [Tencent](https://github.com/dtera/algorithm#tencent)
@@ -56,7 +56,7 @@ I'll keep updating for full summary and better solutions. Stay tuned for updates
 * [Shell Script](https://github.com/dtera/algorithm#shell-script)
 
 ### [Offer](https://github.com/dtera/algorithm#offer) 
-> The Pointing Offer.
+> This is some implements of algorithm in offers.
 
 
 ### [Corporation](https://github.com/dtera/algorithm#corporation)
