@@ -15,9 +15,10 @@
 common --experimental_repo_remote_exec
 common --experimental_cc_shared_library
 common --enable_bzlmod
-common --registry=https://raw.githubusercontent.com/dtera/bazel-registry/main
+
 common --registry=https://bcr.bazel.build
 common --registry=https://baidu.github.io/babylon/registry
+common --registry=https://raw.githubusercontent.com/dtera/bazel-registry/main
 
 build --verbose_failures
 
