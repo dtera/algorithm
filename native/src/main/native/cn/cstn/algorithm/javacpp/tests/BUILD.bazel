@@ -24,8 +24,8 @@ algo_cc_test(
     name = "gmp_test",
     srcs = ["gmp_test.cc"],
     deps = [
-        "@gmp//:gmp",
         "//native/src/main/native/cn/cstn/algorithm/javacpp/util:stopwatch",
+        "@com_dtera_gmp//:gmp",
     ],
 )
 
@@ -33,7 +33,7 @@ algo_cc_test(
     name = "omp_test",
     srcs = ["omp_test.cc"],
     deps = [
-        "util:utils",
         "util:stopwatch",
+        "util:utils",
     ],
 )

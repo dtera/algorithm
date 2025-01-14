@@ -1,10 +1,10 @@
-# Copyright 2024 dterazhao, Ltd.
+# Copyright 2022 Ant Group Co., Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#   http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,20 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("//bazel:algo.bzl", "OMP_DEPS", "algo_cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_library")
 
-package(default_visibility = ["//visibility:public"])
-
-algo_cc_library(
-    name = "utils",
-    hdrs = ["utils.h"],
-    deps = [
-        "@com_dtera_gmp//:gmp",
-        "@fmt",
-    ] + OMP_DEPS,
-)
-
-algo_cc_library(
-    name = "stopwatch",
-    hdrs = ["stopwatch.hpp"],
+cc_library(
+    name = "openmp",
+    srcs = [
+        "lib/libomp.a",
+    ],
+    hdrs = ["include/omp.h"],
+    includes = [
+        "include/",
+    ],
+    visibility = ["//visibility:public"],
 )

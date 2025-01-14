@@ -64,6 +64,21 @@ def _add_prefix_for_local_deps(deps = []):
     else:
         return deps
 
+def algo_cc_bench(
+        copts = [],
+        deps = [],
+        linkopts = [],
+        **kargs):
+    native.cc_binary(
+        copts = _algo_copts() + copts + OMP_CFLAGS,
+        deps = _add_prefix_for_local_deps(deps) + [
+            "@gflags",
+            "@google_benchmark//:benchmark",
+        ],
+        linkopts = linkopts + OMP_LINKFLAGS + ["-ldl"],
+        **kargs
+    )
+
 def algo_cc_binary(
         copts = [],
         deps = [],
@@ -84,7 +99,7 @@ def algo_cc_library(
     native.cc_library(
         copts = _algo_copts() + copts + OMP_CFLAGS,
         deps = _add_prefix_for_local_deps(deps) + [
-            "@com_github_gabime_spdlog//:spdlog",
+            "@spdlog//:spdlog",
         ],
         linkopts = linkopts + OMP_LINKFLAGS + ["-ldl"],
         **kargs
@@ -98,7 +113,7 @@ def algo_cc_test(
     native.cc_test(
         copts = _algo_copts() + copts + OMP_CFLAGS,
         deps = _add_prefix_for_local_deps(deps) + [
-            "@com_google_googletest//:gtest_main",
+            "@googletest//:gtest_main",
         ],
         linkopts = linkopts + OMP_LINKFLAGS + ["-ldl"],
         **kwargs

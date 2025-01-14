@@ -12,15 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("//bazel:algo.bzl", "algo_cc_binary")
+load("//bazel:algo.bzl", "algo_cc_bench")
 
-algo_cc_binary(
+algo_cc_bench(
     name = "phe_bench",
     srcs = ["phe_bench.cc"],
     deps = [
         "util:utils",
         "@com_dtera_heu//heu/library/phe",
-        "@com_github_gflags_gflags//:gflags",
-        "@com_github_google_benchmark//:benchmark",
     ],
 )
