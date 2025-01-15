@@ -22,7 +22,7 @@ bazel_dep(name = "spdlog", version = "1.14.1")
 
 # --registry=https://raw.githubusercontent.com/dtera/bazel-registry/main
 bazel_dep(name = "com_dtera_gmp", version = "6.3.0")
-#bazel_dep(name = "com_dtera_heu", version = "1.0.3-20250114")
+bazel_dep(name = "com_dtera_heu", version = "0.5.1")
 
 # test
 bazel_dep(name = "googletest", version = "1.15.2", dev_dependency = True)
@@ -31,14 +31,14 @@ bazel_dep(name = "google_benchmark", version = "1.8.5", dev_dependency = True)
 # new_local_repository
 new_local_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:local.bzl", "new_local_repository")
 
-#new_local_repository(
-#    name = "macos_omp_x64",
-#    build_file = "@algo//bazel/third_party:local_openmp_macos.BUILD",
-#    path = "/usr/local/opt/libomp",
-#)
-#
-#new_local_repository(
-#    name = "macos_omp_arm64",
-#    build_file = "@algo//bazel/third_party:local_openmp_macos.BUILD",
-#    path = "/opt/homebrew/opt/libomp/",
-#)
+new_local_repository(
+    name = "macos_omp_x64",
+    build_file = "@algo//bazel/third_party:local_openmp_macos.BUILD",
+    path = "/usr/local/opt/libomp",
+)
+
+new_local_repository(
+    name = "macos_omp_arm64",
+    build_file = "@algo//bazel/third_party:local_openmp_macos.BUILD",
+    path = "/opt/homebrew/opt/libomp/",
+)

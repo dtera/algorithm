@@ -196,15 +196,15 @@
                     <includePaths>
                         <includePath>${dist.download.folder}/include/</includePath>
                         <includePath>${include.src.dir}</includePath>
-                        <includePath>${include.external.dir}/com_dtera_heu</includePath>
-                        <includePath>${include.external.dir}/yacl</includePath>
-                        <includePath>${include.external.dir}/com_google_absl</includePath>
-                        <includePath>${include.external.dir}/macos_omp_arm64/include</includePath>
-                        <includePath>${lib.external.dir}/com_github_fmtlib_fmt/fmtlib/include</includePath>
-                        <includePath>${lib.external.dir}/com_github_gabime_spdlog/spdlog/include</includePath>
-                        <includePath>${lib.external.dir}/com_github_msgpack_msgpack/msgpack/include</includePath>
-                        <includePath>${lib.external.dir}/com_github_libtom_libtommath/libtommath/include</includePath>
-                        <includePath>${lib.external.dir}/gmp/gmp/include</includePath>
+                        <includePath>${include.external.dir}/com_dtera_heu~</includePath>
+                        <includePath>${include.external.dir}/yacl~</includePath>
+                        <includePath>${include.external.dir}/abseil-cpp~</includePath>
+                        <includePath>${include.external.dir}/msgpack-c~/include</includePath>
+                        <includePath>${include.external.dir}/spdlog~/include</includePath>
+                        <includePath>${include.external.dir}/_main~_repo_rules~macos_omp_arm64/include</includePath>
+                        <includePath>${lib.external.dir}/com_dtera_gmp~/gmp/include</includePath>
+                        <includePath>${lib.external.dir}/fmt~/_virtual_includes/fmt</includePath>
+                        <includePath>${lib.external.dir}/libtommath~/libtommath/include</includePath>
                     </includePaths>
                     <linkPaths>
                         <linkPath>${dist.download.folder}/</linkPath>
@@ -212,12 +212,12 @@
                         <!-- additional link paths in case of a full native build -->
                         <linkPath>${lib.src.dir}</linkPath>
                         <linkPath>${lib.src.dir}/heu</linkPath>
-                        <linkPath>${lib.external.dir}/com_github_libtom_libtommath/libtommath/lib</linkPath>
-                        <linkPath>${lib.external.dir}/com_github_microsoft_FourQlib/FourQlib/lib</linkPath>
-                        <linkPath>${lib.external.dir}/com_github_openssl_openssl/openssl/lib</linkPath>
-                        <linkPath>${lib.external.dir}/yacl/yacl/crypto/ecc/FourQlib</linkPath>
-                        <linkPath>${lib.external.dir}/yacl/yacl/crypto/ecc/openssl</linkPath>
-                        <linkPath>/opt/homebrew/opt/libomp/lib</linkPath>
+                        <linkPath>${lib.external.dir}/libtommath~/libtommath/lib</linkPath>
+                        <linkPath>${lib.external.dir}/fourqlib~/FourQlib/lib</linkPath>
+                        <linkPath>${lib.external.dir}/openssl~/openssl/lib</linkPath>
+                        <linkPath>${lib.external.dir}/yacl~/yacl/crypto/ecc/FourQlib</linkPath>
+                        <linkPath>${lib.external.dir}/yacl~/yacl/crypto/ecc/openssl</linkPath>
+                        <linkPath>${include.external.dir}/_main~_repo_rules~macos_omp_arm64/lib</linkPath>
                     </linkPaths>
                     <resourcePaths>
                         <resourcePath>${project.basedir}/../</resourcePath>
