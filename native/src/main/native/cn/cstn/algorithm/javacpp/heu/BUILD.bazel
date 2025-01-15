@@ -35,7 +35,7 @@ cc_static_library(
         "@platforms//os:macos": [":phe_kit"],
         "//conditions:default": [
             ":phe_kit",
-            "@libtommath//:tommath",
+            "@com_dtera_libtommath//:tommath",
         ],
     }),
 )
