@@ -2,7 +2,6 @@
 #pragma once
 
 #include <cassert>
-#include <chrono>
 #include <cstdint>
 #include <functional>
 #include <iostream>

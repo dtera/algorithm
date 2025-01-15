@@ -60,7 +60,7 @@ protected:
         }, mark);
     }
 
-    Ciphertext *encryptPairUnpack(double m1, double m2) const;
+    [[nodiscard]] Ciphertext *encryptPairUnpack(double m1, double m2) const;
 
     Ciphertext *encryptPairsUnpack(const double *ms1, const double *ms2, size_t size,
                                    const std::string &mark = "encryptPairsUnpack");

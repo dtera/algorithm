@@ -127,7 +127,7 @@ public:
         const auto d = std::find_if(task_durations_.begin(), task_durations_.end(),
                                     [&](const auto &t) { return t.first == m; });
         d == task_durations_.end()
-            ? task_durations_.emplace_back(std::make_pair(m, duration))
+            ? task_durations_.emplace_back(m, duration)
             : task_durations_[std::distance(task_durations_.begin(), d)] = std::make_pair(m, d->second + duration);
     }
 
@@ -158,9 +158,9 @@ public:
         printf("------------------------------------------------------\n");
         printf("%-14s %-5s         %-s\n", timeUnitToStr(time_unit).c_str(), "%", "mark");
         printf("------------------------------------------------------\n");
-        for (auto [fst, snd]: task_durations_) {
+        for (const auto &[fst, snd]: task_durations_) {
             printf("%-6.8s       %-6.6s%%       %-s\n", std::to_string(stat_time(static_cast<double>(snd))).c_str(),
-                   std::to_string(static_cast<double>(snd) / total_duration * 100).c_str(),
+                   std::to_string(static_cast<double>(snd) / static_cast<double>(total_duration) * 100.0).c_str(),
                    fst.c_str());
         }
     }
