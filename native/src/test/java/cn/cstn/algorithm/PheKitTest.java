@@ -1,12 +1,11 @@
 package cn.cstn.algorithm;
 
-import cn.cstn.algorithm.javacpp.heu.Ciphertext;
-import cn.cstn.algorithm.javacpp.heu.CurveName;
-import cn.cstn.algorithm.javacpp.heu.PheKit;
-import cn.cstn.algorithm.javacpp.heu.SchemaType;
+import cn.cstn.algorithm.javacpp.global.heu;
+import cn.cstn.algorithm.javacpp.heu.*;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.bytedeco.javacpp.BytePointer;
 import org.springframework.util.StopWatch;
 
 import java.util.concurrent.TimeUnit;
@@ -48,6 +47,99 @@ public class PheKitTest extends TestCase {
       System.out.printf("sub: %f\n", pheKit.decrypt(subRes));
       pheKit2.subInplace(subRes, ct2);
       System.out.printf("subInplace: %f\n", pheKit.decrypt(subRes));
+    }
+  }
+
+  /**
+   * Cipher serial and deserialize
+   */
+  public void cipherSerialDeserialize(SchemaType schemaType, CurveName curveName) {
+    try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
+      Ciphertext c1 = pheKit.encrypt(2);
+      Ciphertext c2 = pheKit.encrypt(3);
+      BytePointer bc1 = heu.cipher2Bytes(c1);
+      BytePointer bc2 = heu.cipher2Bytes(c2);
+      Ciphertext ct1 = heu.bytes2Cipher(bc1);
+      Ciphertext ct2 = heu.bytes2Cipher(bc2);
+
+      Ciphertext addRes = pheKit.add(ct1, ct2);
+      System.out.printf("add: %f\n", pheKit.decrypt(addRes));
+      pheKit.addInplace(addRes, ct2);
+      System.out.printf("addInplace: %f\n", pheKit.decrypt(addRes));
+      Ciphertext subRes = pheKit.sub(ct2, ct1);
+      System.out.printf("sub: %f\n", pheKit.decrypt(subRes));
+      pheKit.subInplace(subRes, ct2);
+      System.out.printf("subInplace: %f\n", pheKit.decrypt(subRes));
+    }
+  }
+
+  /**
+   * Ciphers serial and deserialize
+   */
+  public void ciphersSerialDeserialize(SchemaType schemaType, int size, CurveName curveName) {
+    try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
+      StopWatch sw = new StopWatch();
+      sw.start("init");
+      double[] ms1 = new double[size], ms2 = new double[size], res1 = new double[size], res2 = new double[size];
+      for (int i = 0; i < size; i++) {
+        ms1[i] = i + (double) i / 10;
+        ms2[i] = i + (double) (i + 3) / 10;
+        res1[i] = ms1[i] + ms2[i];
+        res2[i] = res1[i] + ms2[i];
+      }
+      sw.stop();
+      sw.start("[cts1]encrypts");
+      Ciphertext cs1 = pheKit.encrypts(ms1, "[cts1]encrypts");
+      sw.stop();
+      sw.start("[cts2]encrypts");
+      Ciphertext cs2 = pheKit.encrypts(ms2, "[cts2]encrypts");
+      sw.stop();
+
+      sw.start("serial");
+      YaclBuffer buf1 = PheKit.ciphers2Bytes(cs1);
+      YaclBuffer buf2 = PheKit.ciphers2Bytes(cs2);
+      sw.stop();
+      sw.start("deserial");
+      Ciphertext cts1 = PheKit.bytes2Ciphers(buf1);
+      Ciphertext cts2 = PheKit.bytes2Ciphers(buf2);
+      sw.stop();
+
+      sw.start("adds");
+      Ciphertext addRes = pheKit.adds(cts1, cts2);
+      sw.stop();
+      sw.start("[add]decrypts");
+      double[] res = pheKit.decrypts(addRes, "[add]decrypts");
+      sw.stop();
+      System.out.printf("[adds]real: [%f, %f, %f, %f]\t", res1[0], res1[1], res1[2], res1[3]);
+      System.out.printf("res: [%f, %f, %f, %f]\n", res[0], res[1], res[2], res[3]);
+      sw.start("addInplaces");
+      pheKit.addInplaces(addRes, cts2);
+      sw.stop();
+      sw.start("[addInplaces]decrypts");
+      res = pheKit.decrypts(addRes, "[addInplaces]decrypts");
+      sw.stop();
+      System.out.printf("[addInplaces]real: [%f, %f, %f, %f]\t", res2[0], res2[1], res2[2], res2[3]);
+      System.out.printf("res: [%f, %f, %f, %f]\n", res[0], res[1], res[2], res[3]);
+
+      sw.start("subs");
+      Ciphertext subRes = pheKit.subs(addRes, cts2);
+      sw.stop();
+      sw.start("[subs]decrypts");
+      res = pheKit.decrypts(subRes, "[subs]decrypts");
+      sw.stop();
+      System.out.printf("[subs]real: [%f, %f, %f, %f]\t", res1[0], res1[1], res1[2], res1[3]);
+      System.out.printf("res: [%f, %f, %f, %f]\n", res[0], res[1], res[2], res[3]);
+      sw.start("subInplaces");
+      pheKit.subInplaces(subRes, cts2);
+      sw.stop();
+      sw.start("[subInplaces]decrypts");
+      res = pheKit.decrypts(subRes, "[subInplaces]decrypts");
+      sw.stop();
+      System.out.printf("[subInplaces]real: [%f, %f, %f, %f]\t", ms1[0], ms1[1], ms1[2], ms1[3]);
+      System.out.printf("res: [%f, %f, %f, %f]\n", res[0], res[1], res[2], res[3]);
+
+      System.out.println(sw.prettyPrint());
+      pheKit.prettyPrint(TimeUnit.SECONDS);
     }
   }
 
@@ -223,6 +315,20 @@ public class PheKitTest extends TestCase {
    */
   public void testOUPubKey() {
     pubKey(SchemaType.OU, CurveName.empty);
+  }
+
+  /**
+   * Cipher serial and deserialize Test For OU
+   */
+  public void testOUCipherSerialDeserial() {
+    cipherSerialDeserialize(SchemaType.OU, CurveName.empty);
+  }
+
+  /**
+   * Ciphers serial and deserialize Test For OU
+   */
+  public void testOUCiphersSerialDeserial() {
+    ciphersSerialDeserialize(SchemaType.OU, 10000, CurveName.empty);
   }
 
   /**

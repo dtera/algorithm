@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include "heu/library/phe/phe.h"
 #include "heu/library/phe/encoding/encoding.h"
 #include "util/stopwatch.hpp"
@@ -13,6 +15,7 @@ typedef heu::lib::phe::SchemaType SchemaType;
 typedef heu::lib::phe::Ciphertext Ciphertext;
 typedef heu::lib::phe::Plaintext Plaintext;
 
+//**************************************************PheKit Begin**************************************************
 class PheKit {
     std::shared_ptr<heu::lib::phe::HeKit> he_kit_;
     std::shared_ptr<heu::lib::phe::DestinationHeKit> dhe_kit_;
@@ -175,8 +178,21 @@ public:
     void prettyPrint(uint8_t time_unit = MILLISECONDS) const;
 };
 
+//**************************************************PheKit End****************************************************
+
+//**************************************************Global Begin**************************************************
 void deletePheKit(const PheKit *pheKit);
 
 void deleteCiphertext(const Ciphertext *ciphertext);
 
 void deleteCiphertexts(const Ciphertext *ciphertext);
+
+std::string cipher2Bytes(const Ciphertext &ciphertext);
+
+Ciphertext *bytes2Cipher(const std::string &buffer);
+
+yacl::Buffer *ciphers2Bytes(const Ciphertext *ciphertext, size_t size);
+
+Ciphertext *bytes2Ciphers(const yacl::Buffer *buffers, size_t size);
+
+//**************************************************Global End****************************************************

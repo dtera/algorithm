@@ -14,6 +14,8 @@ const std::string PheKit::secp192r1 = "secp192r1";
 const std::string PheKit::secp256r1 = "secp256r1";
 const std::string PheKit::fourq = "fourq";
 
+
+//**************************************************PheKit Begin**************************************************
 PheKit::PheKit(const SchemaType schema, size_t key_size, const int64_t scale, const std::string &curve_name,
                const bool register_ec_lib) {
     if (register_ec_lib) {
@@ -261,6 +263,9 @@ void PheKit::prettyPrint(const uint8_t time_unit) const {
     sw.PrettyPrint(static_cast<TimeUnit>(time_unit));
 }
 
+//**************************************************PheKit End****************************************************
+
+//**************************************************Global Begin**************************************************
 void deletePheKit(const PheKit *pheKit) {
     delete pheKit;
 }
@@ -272,3 +277,31 @@ void deleteCiphertext(const Ciphertext *ciphertext) {
 void deleteCiphertexts(const Ciphertext *ciphertext) {
     delete[] ciphertext;
 }
+
+std::string cipher2Bytes(const Ciphertext &ciphertext) {
+    return std::string(ciphertext.Serialize());
+}
+
+Ciphertext *bytes2Cipher(const std::string &buffer) {
+    auto *out = new Ciphertext;
+    out->Deserialize(yacl::ByteContainerView(buffer.data(), buffer.size()));
+    return out;
+}
+
+yacl::Buffer *ciphers2Bytes(const Ciphertext *ciphertext, const size_t size) {
+    auto out = new yacl::Buffer[size];
+    ParallelFor(size, [&](const auto i) {
+        out[i] = ciphertext[i].Serialize();
+    });
+    return out;
+}
+
+Ciphertext *bytes2Ciphers(const yacl::Buffer *buffers, const size_t size) {
+    auto *out = new Ciphertext[size];
+    ParallelFor(size, [&](const auto i) {
+        out[i].Deserialize(buffers[i]);
+    });
+    return out;
+}
+
+//**************************************************Global End****************************************************

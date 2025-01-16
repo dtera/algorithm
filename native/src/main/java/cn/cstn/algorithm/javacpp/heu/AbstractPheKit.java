@@ -18,16 +18,14 @@ limitations under the License.
 
 package cn.cstn.algorithm.javacpp.heu;
 
-import cn.cstn.algorithm.javacpp.presets.heu;
+import cn.cstn.algorithm.javacpp.global.heu;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.annotation.Properties;
 
 import java.util.concurrent.TimeUnit;
 
-import static cn.cstn.algorithm.javacpp.global.heu.deletePheKit;
-
-@Properties(inherit = heu.class)
+@Properties(inherit = cn.cstn.algorithm.javacpp.presets.heu.class)
 public abstract class AbstractPheKit extends Pointer {
   private final PheKit pheKit;
 
@@ -130,8 +128,20 @@ public abstract class AbstractPheKit extends Pointer {
   @SuppressWarnings("removal")
   @Override
   protected void finalize() {
-    deletePheKit((PheKit) this);
+    heu.deletePheKit((PheKit) this);
     close();
+  }
+
+  public static YaclBuffer ciphers2Bytes(Ciphertext ciphertext) {
+    YaclBuffer buffer = heu.ciphers2Bytes(ciphertext, ciphertext.capacity());
+    buffer.capacity(ciphertext.capacity());
+    return buffer;
+  }
+
+  public static Ciphertext bytes2Ciphers(YaclBuffer buffer) {
+    Ciphertext ciphertext = heu.bytes2Ciphers(buffer, buffer.capacity());
+    ciphertext.capacity(buffer.capacity());
+    return ciphertext;
   }
 
   public static PheKit newInstance(SchemaType schemaType) {
