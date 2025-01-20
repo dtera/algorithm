@@ -5,7 +5,10 @@
 .git/
 .idea/
 .vscode/
+bazel-bin/
+bazel-out/
 bazel-registry/
+bazel-testlogs/
 commons/
 corporation/
 leetcode/
