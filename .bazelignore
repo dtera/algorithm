@@ -1,0 +1,12 @@
+# ignore non-bazel module
+bazel-registry/
+commons/
+corporation/
+leetcode/
+offer/
+python/
+security/
+shell/
+tests/
+tmp/
+
