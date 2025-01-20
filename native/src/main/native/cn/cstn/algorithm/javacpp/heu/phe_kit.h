@@ -8,6 +8,7 @@
 
 #include "heu/library/phe/phe.h"
 #include "heu/library/phe/encoding/encoding.h"
+#include "he_buffer.h"
 #include "util/stopwatch.hpp"
 #include "util/utils.h"
 
@@ -191,8 +192,8 @@ std::string cipher2Bytes(const Ciphertext &ciphertext);
 
 Ciphertext *bytes2Cipher(const std::string &buffer);
 
-yacl::Buffer *ciphers2Bytes(const Ciphertext *ciphertext, size_t size);
+HeBuffer *ciphers2Bytes(const Ciphertext *ciphertexts, size_t size);
 
-Ciphertext *bytes2Ciphers(const yacl::Buffer *buffers, size_t size);
+Ciphertext *bytes2Ciphers(const HeBuffer &buffers, size_t size);
 
 //**************************************************Global End****************************************************

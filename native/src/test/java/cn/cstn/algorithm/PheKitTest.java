@@ -1,17 +1,18 @@
 package cn.cstn.algorithm;
 
-import cn.cstn.algorithm.javacpp.global.heu;
-import cn.cstn.algorithm.javacpp.heu.*;
+import cn.cstn.algorithm.javacpp.heu.Ciphertext;
+import cn.cstn.algorithm.javacpp.heu.CurveName;
+import cn.cstn.algorithm.javacpp.heu.PheKit;
+import cn.cstn.algorithm.javacpp.heu.SchemaType;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.bytedeco.javacpp.BytePointer;
 import org.springframework.util.StopWatch;
 
 import java.util.concurrent.TimeUnit;
 
 /**
- * Unit test for simple App.
+ * Unit test for PheKit.
  */
 public class PheKitTest extends TestCase {
   /**
@@ -36,7 +37,7 @@ public class PheKitTest extends TestCase {
    */
   public void pubKey(SchemaType schemaType, CurveName curveName) {
     try (PheKit pheKit = PheKit.newInstance(schemaType, curveName);
-         PheKit pheKit2 = PheKit.newInstance(pheKit.pubKey())) {
+         PheKit pheKit2 = PheKit.newInstance(pheKit.getPubKey())) {
       Ciphertext ct1 = pheKit2.encrypt(2);
       Ciphertext ct2 = pheKit2.encrypt(3);
       Ciphertext addRes = pheKit2.add(ct1, ct2);
@@ -57,10 +58,10 @@ public class PheKitTest extends TestCase {
     try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
       Ciphertext c1 = pheKit.encrypt(2);
       Ciphertext c2 = pheKit.encrypt(3);
-      BytePointer bc1 = heu.cipher2Bytes(c1);
-      BytePointer bc2 = heu.cipher2Bytes(c2);
-      Ciphertext ct1 = heu.bytes2Cipher(bc1);
-      Ciphertext ct2 = heu.bytes2Cipher(bc2);
+      byte[] bt1 = PheKit.cipher2Bytes(c1);
+      byte[] bt2 = PheKit.cipher2Bytes(c2);
+      Ciphertext ct1 = PheKit.bytes2Cipher(bt1);
+      Ciphertext ct2 = PheKit.bytes2Cipher(bt2);
 
       Ciphertext addRes = pheKit.add(ct1, ct2);
       System.out.printf("add: %f\n", pheKit.decrypt(addRes));
@@ -96,8 +97,8 @@ public class PheKitTest extends TestCase {
       sw.stop();
 
       sw.start("serial");
-      YaclBuffer buf1 = PheKit.ciphers2Bytes(cs1);
-      YaclBuffer buf2 = PheKit.ciphers2Bytes(cs2);
+      byte[][] buf1 = PheKit.ciphers2Bytes(cs1);
+      byte[][] buf2 = PheKit.ciphers2Bytes(cs2);
       sw.stop();
       sw.start("deserial");
       Ciphertext cts1 = PheKit.bytes2Ciphers(buf1);

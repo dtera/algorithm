@@ -52,6 +52,47 @@ void pub_key_t(const SchemaType &schema, const std::string &curve_name = "") {
     deleteCiphertext(subCt);
 }
 
+void ciphers_serial_deserialize(const SchemaType &schema, const int len = 100000, const std::string &curve_name = "") {
+    PheKit pheKit(schema, curve_name);
+
+    auto *ms1 = new double[len];
+    auto *ms2 = new double[len];
+    for (int i = 0; i < len; ++i) {
+        ms1[i] = i + static_cast<double>(i) / 10;
+        ms2[i] = i + static_cast<double>(i + 3) / 10;
+    }
+    const auto c1 = pheKit.encrypts(ms1, len, "[ct1]encrypts");
+    const auto c2 = pheKit.encrypts(ms2, len, "[ct2]encrypts");
+    const auto bt1 = ciphers2Bytes(c1, len);
+    const auto bt2 = ciphers2Bytes(c2, len);
+    const auto ct1 = bytes2Ciphers(*bt1, len);
+    const auto ct2 = bytes2Ciphers(*bt2, len);
+
+    const auto addCt = pheKit.adds(ct1, ct2, len);
+    pheKit.addInplaces(addCt, ct2, len);
+    auto res = pheKit.decrypts(addCt, len, "[add]decrypts");
+    for (int i = 0; i < len; ++i) {
+        if (constexpr int freq = 4; i % (len / freq) == 0) {
+            std::cout << "[add]real: " << ms1[i] + ms2[i] + ms2[i] << ", res: " << res[i] << std::endl;
+        }
+    }
+
+    const auto subCt = pheKit.subs(addCt, ct2, len);
+    pheKit.subInplaces(subCt, ct2, len);
+    res = pheKit.decrypts(subCt, len, "[sub]decrypts");
+    for (int i = 0; i < len; ++i) {
+        if (constexpr int freq = 4; i % (len / freq) == 0) {
+            std::cout << "[sub]real: " << ms1[i] << ", res: " << res[i] << std::endl;
+        }
+    }
+    pheKit.prettyPrint();
+
+    deleteCiphertexts(ct1);
+    deleteCiphertexts(ct2);
+    deleteCiphertexts(addCt);
+    deleteCiphertexts(subCt);
+}
+
 void single_op(const SchemaType &schema, const std::string &curve_name = "") {
     StopWatch sw;
 
@@ -221,6 +262,10 @@ void batch_pair_op(const SchemaType &schema, const int len = 100000, const std::
 
 TEST(phe_kit, ou_pub_key_t) {
     pub_key_t(SchemaType::OU);
+}
+
+TEST(phe_kit, ou_ciphers_serial_deserialize) {
+    ciphers_serial_deserialize(SchemaType::OU, 10000);
 }
 
 TEST(phe_kit, ou_single_op) {

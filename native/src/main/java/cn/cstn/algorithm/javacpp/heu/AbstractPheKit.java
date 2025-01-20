@@ -34,6 +34,10 @@ public abstract class AbstractPheKit extends Pointer {
     pheKit = (PheKit) this;
   }
 
+  public byte[] getPubKey() {
+    return pheKit.pubKey().getStringBytes();
+  }
+
   public Ciphertext encrypts(double[] ms, String mark) {
     Ciphertext ct = pheKit.encrypts(ms, ms.length, mark);
     ct.capacity(ms.length);
@@ -132,16 +136,32 @@ public abstract class AbstractPheKit extends Pointer {
     close();
   }
 
-  public static YaclBuffer ciphers2Bytes(Ciphertext ciphertext) {
-    YaclBuffer buffer = heu.ciphers2Bytes(ciphertext, ciphertext.capacity());
-    buffer.capacity(ciphertext.capacity());
-    return buffer;
+  public static byte[] cipher2Bytes(Ciphertext ciphertext) {
+    return heu.cipher2Bytes(ciphertext).getStringBytes();
   }
 
-  public static Ciphertext bytes2Ciphers(YaclBuffer buffer) {
-    Ciphertext ciphertext = heu.bytes2Ciphers(buffer, buffer.capacity());
-    ciphertext.capacity(buffer.capacity());
-    return ciphertext;
+  public static Ciphertext bytes2Cipher(byte[] bs) {
+    return heu.bytes2Cipher(new BytePointer(bs));
+  }
+
+  public static byte[][] ciphers2Bytes(Ciphertext ciphertext) {
+    byte[][] res = new byte[(int) ciphertext.capacity()][];
+    HeBuffer buffer = heu.ciphers2Bytes(ciphertext, ciphertext.capacity());
+    for (int i = 0; i < res.length; i++) {
+      res[i] = buffer.get(i).getStringBytes();
+    }
+    buffer.close();
+    return res;
+  }
+
+  public static Ciphertext bytes2Ciphers(byte[][] bts) {
+    HeBuffer buffer = new HeBuffer(bts.length);
+    for (int i = 0; i < bts.length; i++) {
+      buffer.set(i, new BytePointer(bts[i]));
+    }
+    Ciphertext res = heu.bytes2Ciphers(buffer, bts.length);
+    res.capacity(bts.length);
+    return res;
   }
 
   public static PheKit newInstance(SchemaType schemaType) {
@@ -160,8 +180,8 @@ public abstract class AbstractPheKit extends Pointer {
     return new PheKit(schemaType, key_size, scale, CurveName.empty.name(), false);
   }
 
-  public static PheKit newInstance(BytePointer pkBuffer) {
-    return new PheKit(pkBuffer);
+  public static PheKit newInstance(byte[] pkBuffer) {
+    return new PheKit(new BytePointer(pkBuffer));
   }
 
   public static PheKit newInstance(BytePointer pkBuffer, long scale) {

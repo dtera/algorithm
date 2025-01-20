@@ -12,7 +12,8 @@ import org.bytedeco.javacpp.tools.InfoMapper;
     compiler = "cpp17",
     include = {
       "heu/phe_kit.h",
-      "yacl/base/buffer.h",
+      "heu/he_buffer.h",
+      //"yacl/base/buffer.h",
     },
     link = {"phe_kit_all", "tommath", "FourQ", "crypto", "ssl", "omp"},
     define = {"MSGPACK_NO_BOOST", "SPDLOG_FMT_EXTERNAL", "SPDLOG_NO_TLS"}
@@ -32,12 +33,8 @@ public class heu implements InfoMapper {
       .put(
         new Info("PheKit::decryptPair_", "PheKit::empty", "PheKit::ed25519", "PheKit::curve25519",
           "PheKit::secp256k1", "PheKit::secp256r1", "PheKit::secp192r1", "PheKit::fourq", "PheKit::sm2",
-          "yacl::Buffer::Buffer", "std::string_view")
+          "std::function<void(void*)>", "std::string_view", "ciphers2Buffer", "buffer2Ciphers")
           .skip()
-      )
-      .put(
-        new Info("yacl::Buffer")
-          .pointerTypes("YaclBuffer")
       )
       .put(
         new Info("PheKit")

@@ -283,23 +283,23 @@ std::string cipher2Bytes(const Ciphertext &ciphertext) {
 }
 
 Ciphertext *bytes2Cipher(const std::string &buffer) {
-    auto *out = new Ciphertext;
+    auto *out = new Ciphertext();
     out->Deserialize(yacl::ByteContainerView(buffer.data(), buffer.size()));
     return out;
 }
 
-yacl::Buffer *ciphers2Bytes(const Ciphertext *ciphertext, const size_t size) {
-    auto out = new yacl::Buffer[size];
+HeBuffer *ciphers2Bytes(const Ciphertext *ciphertexts, const size_t size) {
+    auto *out = new HeBuffer(size);
     ParallelFor(size, [&](const auto i) {
-        out[i] = ciphertext[i].Serialize();
+        out->set(i, std::string(ciphertexts[i].Serialize()));
     });
     return out;
 }
 
-Ciphertext *bytes2Ciphers(const yacl::Buffer *buffers, const size_t size) {
+Ciphertext *bytes2Ciphers(const HeBuffer &buffers, const size_t size) {
     auto *out = new Ciphertext[size];
     ParallelFor(size, [&](const auto i) {
-        out[i].Deserialize(buffers[i]);
+        out[i].Deserialize(yacl::ByteContainerView(buffers[i].data(), buffers[i].size()));
     });
     return out;
 }
