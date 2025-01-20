@@ -32,8 +32,7 @@ public class heu implements InfoMapper {
     infoMap
       .put(
         new Info("PheKit::decryptPair_", "PheKit::empty", "PheKit::ed25519", "PheKit::curve25519",
-          "PheKit::secp256k1", "PheKit::secp256r1", "PheKit::secp192r1", "PheKit::fourq", "PheKit::sm2",
-          "std::function<void(void*)>", "std::string_view", "ciphers2Buffer", "buffer2Ciphers")
+          "PheKit::secp256k1", "PheKit::secp256r1", "PheKit::secp192r1", "PheKit::fourq", "PheKit::sm2")
           .skip()
       )
       .put(
