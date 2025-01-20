@@ -1,4 +1,10 @@
 # ignore non-bazel module
+.clwb/
+.fleet/
+.github/
+.git/
+.idea/
+.vscode/
 bazel-registry/
 commons/
 corporation/
