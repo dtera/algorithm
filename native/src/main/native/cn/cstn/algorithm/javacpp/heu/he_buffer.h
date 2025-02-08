@@ -9,11 +9,9 @@ class HeBuffer {
     size_t size_;
 
 public:
-    HeBuffer() = default;
-
-    /*~HeBuffer() {
-        delete data_;
-    }*/
+    ~HeBuffer() {
+        delete[] data_;
+    }
 
     explicit HeBuffer(const size_t size) : size_(size) {
         data_ = new std::string[size];
