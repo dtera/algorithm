@@ -205,6 +205,7 @@
                         <includePath>${lib.external.dir}/com_dtera_gmp~/gmp/include</includePath>
                         <includePath>${lib.external.dir}/fmt~/_virtual_includes/fmt</includePath>
                         <includePath>${lib.external.dir}/libtommath~/libtommath/include</includePath>
+                        <includePath>/usr/local/opt/libomp/include</includePath>
                     </includePaths>
                     <linkPaths>
                         <linkPath>${dist.download.folder}/</linkPath>
@@ -218,6 +219,7 @@
                         <linkPath>${lib.external.dir}/yacl~/yacl/crypto/ecc/FourQlib</linkPath>
                         <linkPath>${lib.external.dir}/yacl~/yacl/crypto/ecc/openssl</linkPath>
                         <linkPath>${include.external.dir}/_main~_repo_rules~macos_omp_arm64/lib</linkPath>
+                        <linkPath>/usr/local/opt/libomp/lib</linkPath>
                     </linkPaths>
                     <resourcePaths>
                         <resourcePath>${project.basedir}/../</resourcePath>
@@ -227,6 +229,9 @@
                             /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
                         </SDKROOT>
                     </environmentVariables>
+                    <compilerOptions>
+                        <compilerOption>-DENABLE_IPCL=false</compilerOption>
+                    </compilerOptions>
                 </configuration>
                 <executions>
                     <!--

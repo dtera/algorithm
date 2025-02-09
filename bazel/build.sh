@@ -10,6 +10,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 cd ..
-OPTS="-c opt"
+OPTS="-c opt --cxxopt=-DENABLE_IPCL=false"
 # shellcheck disable=SC2086
-bazel build $OPTS //native/src/main/native/cn/cstn/algorithm/javacpp/...
+bazel query 'attr(testonly, 0, //native/src/main/native/cn/cstn/algorithm/javacpp/...)' | xargs bazel build $OPTS
