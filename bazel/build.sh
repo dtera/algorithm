@@ -7,6 +7,18 @@ echo "Current Directory: $CD"
 if [[ "$OSTYPE" == "darwin"* ]]; then
   # shellcheck disable=SC2155
   export SDKROOT=$(xcrun --show-sdk-path)
+  brew install bazelisk libomp
+elif echo "$OSTYPE" | grep -q "linux" || [[ "$OSTYPE" == "" ]]; then
+  os_release=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
+    if [[ "$os_release" == "ubuntu" ]]; then
+      apt-get install -y npm
+    else
+      yum install -y npm
+    fi
+    npm install -g @bazel/bazelisk
+else
+  echo "not supported os type: ${OSTYPE}"
+  exit 1
 fi
 
 cd ..

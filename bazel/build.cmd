@@ -6,6 +6,8 @@ set "CD=%~dp0"
 cd /d "%CD%"
 echo Current Directory: %CD%
 
+choco install bazelisk
+
 REM 返回上级目录
 cd ..
 
