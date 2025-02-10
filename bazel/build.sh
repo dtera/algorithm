@@ -11,11 +11,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 elif echo "$OSTYPE" | grep -q "linux" || [[ "$OSTYPE" == "" ]]; then
   os_release=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
   if [[ "$os_release" == "ubuntu" ]]; then
-    apt-get install -y npm
+    sudo apt-get install -y npm
   else
-    yum install -y npm
+    sudo yum install -y npm
   fi
-  npm install -g @bazel/bazelisk
+  sudo npm install -g @bazel/bazelisk
 else
   echo "not supported os type: ${OSTYPE}"
   exit 1
