@@ -39,6 +39,9 @@
         <javacpp.version>1.5.11</javacpp.version>
         <nativelib.loader.version>2.5.0</nativelib.loader.version>
         <protobuf.version>4.28.2</protobuf.version>
+
+        <shell.exe>bash</shell.exe>
+        <shell.ext>sh</shell.ext>
     </properties>
 
     <dependencyManagement>
@@ -293,6 +296,8 @@
             </activation>
             <properties>
                 <os.adjusted.name>windows</os.adjusted.name>
+                <shell.exe>powershell</shell.exe>
+                <shell.ext>cmd</shell.ext>
             </properties>
         </profile>
     </profiles>

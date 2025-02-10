@@ -137,9 +137,9 @@
                         <phase>initialize</phase>
                         <configuration>
                             <skip>${bazel.build.skip}</skip>
-                            <executable>bash</executable>
+                            <executable>${shell.exe}</executable>
                             <arguments>
-                                <argument>../bazel/build.sh</argument>
+                                <argument>../bazel/build.${shell.ext}</argument>
                             </arguments>
                         </configuration>
                     </execution>
