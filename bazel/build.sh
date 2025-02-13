@@ -24,4 +24,4 @@ fi
 cd ..
 OPTS="-c opt --cxxopt=-DENABLE_IPCL=false"
 # shellcheck disable=SC2086
-bazel query 'attr(testonly, 0, //native/src/main/native/cn/cstn/algorithm/javacpp/heu/...)' | xargs bazel build $OPTS
+bazel build $OPTS //native/src/main/native/cn/cstn/algorithm/javacpp/heu/... //native/src/main/native/cn/cstn/algorithm/javacpp:func
