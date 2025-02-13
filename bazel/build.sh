@@ -11,9 +11,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 elif echo "$OSTYPE" | grep -q "linux" || [[ "$OSTYPE" == "" ]]; then
   os_release=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
   if [[ "$os_release" == "ubuntu" ]]; then
-    sudo apt-get install -y npm
+    sudo apt install -y npm libomp-dev
   else
-    sudo yum install -y npm
+    sudo yum install -y npm libgomp
   fi
   sudo npm install -g @bazel/bazelisk
 else
