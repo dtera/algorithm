@@ -11,7 +11,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 elif echo "$OSTYPE" | grep -q "linux" || [[ "$OSTYPE" == "" ]]; then
   os_release=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
   if [[ "$os_release" == "ubuntu" ]]; then
-    sudo apt update -y && sudo apt install -y wget gcc g++ cmake make libomp-dev
+    sudo apt update -y && sudo apt install -y wget gcc g++ cmake make #libomp-dev
     omp_so_path="$(find /usr -name 'libomp.so*' 2>/dev/null|head -1)"
     [ -f "$omp_so_path" ] && sudo ln -s "$omp_so_path" /usr/lib/libomp.so
   elif [[ "$os_release" == "alpine" ]]; then
