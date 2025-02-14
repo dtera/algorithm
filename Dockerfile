@@ -11,6 +11,8 @@ LABEL authors="dterazhao"
 ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk
 ENV PATH=$PATH:$JAVA_HOME/bin
 
+RUN apk update && apk add --no-cache bash sudo
+
 # set working directory
 WORKDIR /workspace/algorithm
 VOLUME /workspace/out
