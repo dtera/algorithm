@@ -11,14 +11,18 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 elif echo "$OSTYPE" | grep -q "linux" || [[ "$OSTYPE" == "" ]]; then
   os_release=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
   if [[ "$os_release" == "ubuntu" ]]; then
-    sudo apt update -y && sudo apt install -y wget libomp-dev
+    sudo apt update -y && sudo apt install -y wget gcc g++ cmake make libomp-dev
+    omp_so_path="$(find /usr -name 'libomp.so*' 2>/dev/null|head -1)"
+    [ -f "$omp_so_path" ] && sudo ln -s "$omp_so_path" /usr/lib/libomp.so
   elif [[ "$os_release" == "alpine" ]]; then
-    echo "alpine linux"
+    apk update
+    apk add --no-cache openjdk21 maven wget gcc g++ libstdc++ make cmake openmp-dev gcompat zlib-dev openssl-dev
   else
-    sudo yum install -y wget libgomp
+    sudo yum install -y wget gcc g++ cmake make libgomp
   fi
-  wget https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-linux-amd64 -O /usr/local/bin/bazelisk
-  chmod +x /usr/local/bin/bazelisk && ln -s /usr/local/bin/bazelisk /usr/local/bin/bazel
+  [ -f /usr/local/bin/bazelisk ] || sudo wget -O /usr/local/bin/bazelisk https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-linux-amd64
+  [ -f /usr/local/bin/bazelisk ] || sudo chmod +x /usr/local/bin/bazelisk
+  [ -f /usr/local/bin/bazelisk ] || sudo ln -s /usr/local/bin/bazelisk /usr/local/bin/bazel
 else
   echo "not supported os type: ${OSTYPE}"
   exit 1
