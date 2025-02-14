@@ -14,6 +14,7 @@ elif echo "$OSTYPE" | grep -q "linux" || [[ "$OSTYPE" == "" ]]; then
     apt update -y && apt install -y openjdk-21-jdk maven sudo wget gcc g++ cmake make m4 libomp-dev
     omp_so_path="$(find /usr -name 'libomp.so*' 2>/dev/null|head -1)"
     [ -f "$omp_so_path" ] && sudo ln -s "$omp_so_path" /usr/lib/libomp.so
+    ldconfig
   elif [[ "$os_release" == "alpine" ]]; then
     apk update
     apk add --no-cache openjdk21 maven wget gcc g++ libstdc++ make cmake openmp-dev gcompat zlib-dev openssl-dev
