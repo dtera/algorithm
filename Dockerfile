@@ -9,7 +9,7 @@ LABEL maintainer="dterazhao"
 LABEL authors="dterazhao"
 
 # update and install dependencies
-RUN apk update && apk add --no-cache bash sudo
+RUN apt update -y && apt install -y bash sudo
 
 # set working directory
 WORKDIR /workspace/algorithm
