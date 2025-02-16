@@ -1,4 +1,5 @@
-FROM alpine:3.21
+#FROM alpine:3.21
+FROM ubuntu:24.04
 
 LABEL org.opencontainers.image.source="https://github.com/dtera/algorithm"
 LABEL name="algorithm"
@@ -7,10 +8,7 @@ LABEL description="Docker image for building and running Java algorithm"
 LABEL maintainer="dterazhao"
 LABEL authors="dterazhao"
 
-# set environment variables
-ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk
-ENV PATH=$PATH:$JAVA_HOME/bin
-
+# update and install dependencies
 RUN apk update && apk add --no-cache bash sudo
 
 # set working directory

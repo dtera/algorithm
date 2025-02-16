@@ -16,14 +16,18 @@ elif echo "$OSTYPE" | grep -q "linux" || [[ "$OSTYPE" == "" ]]; then
     [ -f "$omp_so_path" ] && sudo ln -s "$omp_so_path" /usr/lib/libomp.so
     ldconfig
   elif [[ "$os_release" == "alpine" ]]; then
-    apk update
-    apk add --no-cache openjdk21 maven wget gcc g++ libstdc++ make cmake openmp-dev gcompat zlib-dev openssl-dev
+    echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && apk update
+    apk add openjdk21 maven linux-headers build-base cmake gcompat openmp-dev zlib-dev openssl-dev perl m4 bazel7
   else
     sudo yum install -y java-21-openjdk maven wget gcc g++ cmake make libgomp
   fi
-  [ -f /usr/local/bin/bazelisk ] || sudo wget -O /usr/local/bin/bazelisk https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-linux-amd64
-  sudo chmod +x /usr/local/bin/bazelisk
-  [ -f /usr/local/bin/bazel ] || sudo ln -s /usr/local/bin/bazelisk /usr/local/bin/bazel
+
+  if [[ "$os_release" != "alpine" ]]; then
+    [ -f /usr/local/bin/bazelisk ] || sudo wget -O /usr/local/bin/bazelisk \
+                                   https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-linux-amd64
+    sudo chmod +x /usr/local/bin/bazelisk
+    [ -f /usr/local/bin/bazel ] || sudo ln -s /usr/local/bin/bazelisk /usr/local/bin/bazel
+  fi
 else
   echo "not supported os type: ${OSTYPE}"
   exit 1
@@ -32,4 +36,5 @@ fi
 cd ..
 OPTS="-c opt --cxxopt=-DENABLE_IPCL=false"
 # shellcheck disable=SC2086
-bazel build $OPTS //native/src/main/native/cn/cstn/algorithm/javacpp/heu/... //native/src/main/native/cn/cstn/algorithm/javacpp:func
+bazel build $OPTS //native/src/main/native/cn/cstn/algorithm/javacpp/heu/... \
+                  //native/src/main/native/cn/cstn/algorithm/javacpp:func
