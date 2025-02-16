@@ -9,7 +9,7 @@ LABEL maintainer="dterazhao"
 LABEL authors="dterazhao"
 
 # update and install dependencies
-RUN apt update -y && apt install -y bash sudo openjdk-21-jdk maven
+RUN apt update -y && apt install -y bash maven openjdk-21-jdk
 
 # set working directory
 WORKDIR /workspace/algorithm
