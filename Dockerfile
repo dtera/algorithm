@@ -20,4 +20,4 @@ RUN cd /workspace/algorithm && rm -rf .vscode .idea .github .fleet .clwb bazel-*
 
 # set working directory
 WORKDIR /workspace/out
-RUN cp /workspace/algorithm/native/target/native-*.jar /workspace/out/
+RUN cp /workspace/algorithm/native/target/native-*-jar-with-dependencies.jar /workspace/out/
