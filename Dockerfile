@@ -11,10 +11,13 @@ LABEL authors="dterazhao"
 # update and install dependencies
 RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y sudo bash maven openjdk-21-jdk
 
-# set working directory
-WORKDIR /workspace/algorithm
+# create workspace directory
+RUN mkdir -p /workspace/algorithm
 
 # maven compile the project
 ADD . /workspace/algorithm
 RUN cd /workspace/algorithm && rm -rf .vscode .idea .github .fleet .clwb bazel-* tmp && mvn clean package
-RUN mkdir /workspace/out && cp /workspace/algorithm/native/target/native-*.jar /workspace/out/ && cd /workspace/out
+
+# set working directory
+WORKDIR /workspace/out
+RUN cp /workspace/algorithm/native/target/native-*.jar /workspace/out/
