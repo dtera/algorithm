@@ -13,9 +13,8 @@ RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y sudo bash mav
 
 # set working directory
 WORKDIR /workspace/algorithm
-VOLUME /workspace/out
 
 # maven compile the project
 ADD . /workspace/algorithm
-RUN cd /workspace/algorithm && rm -rf .vscode .idea .github .fleet .clwb bazel-* tmp  && mvn clean package
-RUN cp /workspace/algorithm/native/target/native-*.jar /workspace/out/
+RUN cd /workspace/algorithm && rm -rf .vscode .idea .github .fleet .clwb bazel-* tmp && mvn clean package
+RUN mkdir /workspace/out && cp /workspace/algorithm/native/target/native-*.jar /workspace/out/ && cd /workspace/out

@@ -11,7 +11,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 elif echo "$OSTYPE" | grep -q "linux" || [[ "$OSTYPE" == "" ]]; then
   os_release=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
   if [[ "$os_release" == "ubuntu" ]]; then
-    sudo apt update -y && apt install -y wget gcc g++ cmake make m4 libomp-dev
+    sudo apt update -y && apt install -y wget gcc g++ cmake make m4 libomp-dev perl
     omp_so_path="$(find /usr -name 'libomp.so*' 2>/dev/null|head -1)"
     [ -f "$omp_so_path" ] && sudo ln -s "$omp_so_path" /usr/lib/libomp.so
     ldconfig
@@ -19,7 +19,7 @@ elif echo "$OSTYPE" | grep -q "linux" || [[ "$OSTYPE" == "" ]]; then
     echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && apk update
     apk add --no-cache linux-headers build-base cmake gcompat openmp-dev zlib-dev openssl-dev perl m4 bazel7
   else
-    sudo yum install -y wget gcc g++ cmake make libgomp
+    sudo yum install -y wget gcc g++ cmake make libgomp perl
   fi
 
   if [[ "$os_release" != "alpine" ]]; then
