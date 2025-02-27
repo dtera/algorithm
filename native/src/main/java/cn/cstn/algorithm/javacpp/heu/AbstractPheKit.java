@@ -125,6 +125,28 @@ public abstract class AbstractPheKit extends Pointer {
     pheKit.subInplaces(cts1, cts2, cts1.capacity());
   }
 
+  public Ciphertext muls(Ciphertext cts1, double[] pts2) {
+    assert cts1.capacity() == pts2.length;
+    Ciphertext ct = pheKit.muls(cts1, pts2, pts2.length);
+    ct.capacity(cts1.capacity());
+    return ct;
+  }
+
+  public void mulInplaces(Ciphertext cts1, double[] pts2) {
+    assert cts1.capacity() == pts2.length;
+    pheKit.mulInplaces(cts1, pts2, pts2.length);
+  }
+
+  public Ciphertext negates(Ciphertext cts1) {
+    Ciphertext ct = pheKit.negates(cts1, cts1.capacity());
+    ct.capacity(cts1.capacity());
+    return ct;
+  }
+
+  public void negateInplaces(Ciphertext cts1) {
+    pheKit.negateInplaces(cts1, cts1.capacity());
+  }
+
   public void prettyPrint(TimeUnit tm) {
     pheKit.prettyPrint((byte) tm.ordinal());
   }
@@ -173,19 +195,19 @@ public abstract class AbstractPheKit extends Pointer {
   }
 
   public static PheKit newInstance(SchemaType schemaType, long key_size) {
-    return newInstance(schemaType, key_size, 10 ^ 6);
+    return newInstance(schemaType, key_size, 10 ^ 6, 10);
   }
 
-  public static PheKit newInstance(SchemaType schemaType, long key_size, long scale) {
-    return new PheKit(schemaType, key_size, scale, CurveName.empty.name(), false);
+  public static PheKit newInstance(SchemaType schemaType, long key_size, long scale, int scaleCnt) {
+    return new PheKit(schemaType, key_size, scale, scaleCnt, CurveName.empty.name(), false);
   }
 
   public static PheKit newInstance(byte[] pkBuffer) {
     return new PheKit(new BytePointer(pkBuffer));
   }
 
-  public static PheKit newInstance(BytePointer pkBuffer, long scale) {
-    return new PheKit(pkBuffer, scale, false);
+  public static PheKit newInstance(BytePointer pkBuffer, long scale, int scaleCnt) {
+    return new PheKit(pkBuffer, scale, scaleCnt, false);
   }
 
 }

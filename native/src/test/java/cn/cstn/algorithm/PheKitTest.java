@@ -151,14 +151,28 @@ public class PheKitTest extends TestCase {
     try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
       Ciphertext ct1 = pheKit.encrypt(2);
       Ciphertext ct2 = pheKit.encrypt(3);
+
       Ciphertext addRes = pheKit.add(ct1, ct2);
       System.out.printf("add: %f\n", pheKit.decrypt(addRes));
       pheKit.addInplace(addRes, ct2);
       System.out.printf("addInplace: %f\n", pheKit.decrypt(addRes));
+
       Ciphertext subRes = pheKit.sub(ct2, ct1);
       System.out.printf("sub: %f\n", pheKit.decrypt(subRes));
       pheKit.subInplace(subRes, ct2);
       System.out.printf("subInplace: %f\n", pheKit.decrypt(subRes));
+
+      if (schemaType != SchemaType.ElGamal) {
+        Ciphertext mulRes = pheKit.mul(ct1, 5);
+        System.out.printf("mul: %f\n", pheKit.decrypt(mulRes));
+        pheKit.mulInplace(mulRes, 7);
+        System.out.printf("mulInplace: %f\n", pheKit.decrypt(mulRes));
+
+        Ciphertext negRes = pheKit.negate(mulRes);
+        System.out.printf("negate: %f\n", pheKit.decrypt(negRes));
+        pheKit.negateInplace(negRes);
+        System.out.printf("negateInplace: %f\n", pheKit.decrypt(negRes));
+      }
     }
   }
 
@@ -191,12 +205,15 @@ public class PheKitTest extends TestCase {
     try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
       StopWatch sw = new StopWatch();
       sw.start("init");
-      double[] ms1 = new double[size], ms2 = new double[size], res1 = new double[size], res2 = new double[size];
+      double[] ms1 = new double[size], ms2 = new double[size], res1 = new double[size], res2 = new double[size],
+        res3 = new double[size], res4 = new double[size];
       for (int i = 0; i < size; i++) {
         ms1[i] = i + (double) i / 10;
         ms2[i] = i + (double) (i + 3) / 10;
         res1[i] = ms1[i] + ms2[i];
         res2[i] = res1[i] + ms2[i];
+        res3[i] = ms1[i] * ms2[i];
+        res4[i] = res3[i] * ms2[i];
       }
       sw.stop();
       sw.start("[cts1]encrypts");
@@ -239,6 +256,42 @@ public class PheKitTest extends TestCase {
       sw.stop();
       System.out.printf("[subInplaces]real: [%f, %f, %f, %f]\t", ms1[0], ms1[1], ms1[2], ms1[3]);
       System.out.printf("res: [%f, %f, %f, %f]\n", res[0], res[1], res[2], res[3]);
+
+      if (schemaType != SchemaType.ElGamal) {
+        sw.start("muls");
+        Ciphertext mulRes = pheKit.muls(cts1, ms2);
+        sw.stop();
+        sw.start("[muls]decrypts");
+        res = pheKit.decrypts(mulRes, "[muls]decrypts");
+        sw.stop();
+        System.out.printf("[muls]real: [%f, %f, %f, %f]\t", res3[0], res3[1], res3[2], res3[3]);
+        System.out.printf("res: [%f, %f, %f, %f]\n", res[0], res[1], res[2], res[3]);
+        sw.start("mulInplaces");
+        pheKit.mulInplaces(mulRes, ms2);
+        sw.stop();
+        sw.start("[mulInplaces]decrypts");
+        res = pheKit.decrypts(mulRes, "[mulInplaces]decrypts");
+        sw.stop();
+        System.out.printf("[mulInplaces]real: [%f, %f, %f, %f]\t", res4[0], res4[1], res4[2], res4[3]);
+        System.out.printf("res: [%f, %f, %f, %f]\n", res[0], res[1], res[2], res[3]);
+
+        sw.start("negs");
+        Ciphertext negRes = pheKit.negates(mulRes);
+        sw.stop();
+        sw.start("[negs]decrypts");
+        res = pheKit.decrypts(negRes, "[negs]decrypts");
+        sw.stop();
+        System.out.printf("[negs]real: [%f, %f, %f, %f]\t", -res4[0], -res4[1], -res4[2], -res4[3]);
+        System.out.printf("res: [%f, %f, %f, %f]\n", res[0], res[1], res[2], res[3]);
+        sw.start("negInplaces");
+        pheKit.negateInplaces(negRes);
+        sw.stop();
+        sw.start("[negInplaces]decrypts");
+        res = pheKit.decrypts(negRes, "[negInplaces]decrypts");
+        sw.stop();
+        System.out.printf("[negInplaces]real: [%f, %f, %f, %f]\t", res4[0], res4[1], res4[2], res4[3]);
+        System.out.printf("res: [%f, %f, %f, %f]\n", res[0], res[1], res[2], res[3]);
+      }
 
       System.out.println(sw.prettyPrint());
       pheKit.prettyPrint(TimeUnit.SECONDS);

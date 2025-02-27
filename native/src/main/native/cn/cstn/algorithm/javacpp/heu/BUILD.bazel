@@ -20,7 +20,7 @@ algo_cc_library(
     srcs = ["phe_kit.cc"],
     hdrs = [
         "ecc_factory.h",
-        "he_buffer.h",
+        "he_types.h",
         "phe_kit.h",
     ],
     deps = [

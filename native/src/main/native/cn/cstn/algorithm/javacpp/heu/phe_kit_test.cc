@@ -129,6 +129,27 @@ void single_op(const SchemaType &schema, const std::string &curve_name = "") {
     std::cout << "[sub]real: " << a << ", res: " << res << std::endl;
     sw.PrettyPrint();
 
+    sw.Mark("mul");
+    const auto mulCt = pheKit.mul(*ct1, b);
+    sw.Stop();
+    sw.Mark("mulInplace");
+    pheKit.mulInplace(*mulCt, b);
+    sw.Stop();
+    sw.Mark("[mul]decrypt");
+    res = pheKit.decrypt(*mulCt);
+    sw.Stop();
+    std::cout << "[mul]real: " << a * b * b << ", res: " << res << std::endl;
+    sw.PrettyPrint();
+
+    sw.Mark("neg");
+    const auto negCt = pheKit.negate(*mulCt);
+    sw.Stop();
+    sw.Mark("[neg]decrypt");
+    res = pheKit.decrypt(*negCt);
+    sw.Stop();
+    std::cout << "[neg]real: " << -a * b * b << ", res: " << res << std::endl;
+    sw.PrettyPrint();
+
     deleteCiphertext(ct1);
     deleteCiphertext(ct2);
     deleteCiphertext(addCt);
@@ -164,12 +185,30 @@ void batch_op(const SchemaType &schema, const int len = 100000, const std::strin
             std::cout << "[sub]real: " << ms1[i] << ", res: " << res[i] << std::endl;
         }
     }
+
+    const auto mulCt = pheKit.muls(ct1, ms2, len);
+    pheKit.mulInplaces(mulCt, ms2, len);
+    res = pheKit.decrypts(mulCt, len, "[mul_p]decrypts");
+    for (int i = 0; i < len; ++i) {
+        if (constexpr int freq = 4; i % (len / freq) == 0) {
+            std::cout << "[mul_p]real: " << ms1[i] * ms2[i] * ms2[i] << ", res: " << res[i] << std::endl;
+        }
+    }
+    pheKit.negateInplaces(mulCt, len);
+    res = pheKit.decrypts(mulCt, len, "[negate]decrypts");
+    for (int i = 0; i < len; ++i) {
+        if (constexpr int freq = 4; i % (len / freq) == 0) {
+            std::cout << "[negate]real: " << -ms1[i] * ms2[i] * ms2[i] << ", res: " << res[i] << std::endl;
+        }
+    }
+
     pheKit.prettyPrint();
 
     deleteCiphertexts(ct1);
     deleteCiphertexts(ct2);
     deleteCiphertexts(addCt);
     deleteCiphertexts(subCt);
+    deleteCiphertexts(mulCt);
 }
 
 void pair_op(const SchemaType &schema, const std::string &curve_name = "", const bool unpack = false) {

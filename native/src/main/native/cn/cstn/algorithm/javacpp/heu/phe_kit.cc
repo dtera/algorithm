@@ -15,9 +15,218 @@ const std::string PheKit::secp256r1 = "secp256r1";
 const std::string PheKit::fourq = "fourq";
 
 
-//**************************************************PheKit Begin**************************************************
-PheKit::PheKit(const SchemaType schema, size_t key_size, const int64_t scale, const std::string &curve_name,
-               const bool register_ec_lib) {
+//**************************************************PheKit Protect Begin************************************************
+PheKit::PheKit(yacl::ByteContainerView pk_buffer, const int64_t scale, const int scale_cnt,
+               const bool register_ec_lib) : scale_cnt_(scale_cnt), has_secret_key(false) {
+    if (register_ec_lib) {
+        yacl::crypto::register_ec_lib();
+    }
+    dhe_kit_ = std::make_shared<heu::lib::phe::DestinationHeKit>(pk_buffer);
+    encryptor_ = dhe_kit_->GetEncryptor();
+    evaluator_ = dhe_kit_->GetEvaluator();
+    init(dhe_kit_, scale);
+}
+
+void PheKit::init(const std::shared_ptr<heu::lib::phe::HeKitPublicBase> &he_kit, int64_t scale) {
+    if (he_kit->GetSchemaType() == SchemaType::ElGamal) {
+        scale = 1e4;
+    }
+    for (int i = 1; i <= scale_cnt_; ++i) {
+        encoders_.insert({
+            i, std::make_shared<heu::lib::phe::PlainEncoder>(
+                he_kit->GetEncoder<heu::lib::phe::PlainEncoder>(std::pow(scale, i)))
+        });
+        batch_encoders_.insert({
+            i, std::make_shared<heu::lib::phe::BatchEncoder>(
+                he_kit->GetEncoder<heu::lib::phe::BatchEncoder>(std::pow(scale, i)))
+        });
+    }
+
+    encoder_f = [this](auto &&m) { return encoders_.at(1)->Encode(std::forward<decltype(m)>(m)); };
+    decoder_f = [&](const Plaintext &pt, double *out, const int scale_cnt = 1) {
+        if (encoders_.count(scale_cnt) == 0) {
+            throw std::invalid_argument("have no plain encoder for scale_cnt: " + std::to_string(scale_cnt));
+        }
+        *out = encoders_.at(scale_cnt)->Decode<double>(pt);
+    };
+    batch_encoder_f = [this](auto &&m1, auto &&m2) {
+        return batch_encoders_.at(1)->Encode(std::forward<decltype(m1)>(m1), std::forward<decltype(m2)>(m2));
+    };
+    batch_decoder_f = [&](const Plaintext &pt, double *out, const int scale_cnt = 1) {
+        if (batch_encoders_.count(scale_cnt) == 0) {
+            throw std::invalid_argument("have no batch encoder for scale_cnt: " + std::to_string(scale_cnt));
+        }
+        out[0] = batch_encoders_.at(scale_cnt)->Decode<double, 0>(pt);
+        out[1] = batch_encoders_.at(scale_cnt)->Decode<double, 1>(pt);
+    };
+
+    add_f = [&](const Ciphertext *res, const Ciphertext &b) { evaluator_->AddInplace(res->data(), b.c_data()); };
+    sub_f = [&](const Ciphertext *res, const Ciphertext &b) { evaluator_->SubInplace(res->data(), b.c_data()); };
+    add_p_f = [&](const Ciphertext *res, const Plaintext &b) { evaluator_->AddInplace(res->data(), b); };
+    sub_p_f = [&](const Ciphertext *res, const Plaintext &b) { evaluator_->SubInplace(res->data(), b); };
+    mul_p_f = [&](const Ciphertext *res, const Plaintext &b) { evaluator_->MulInplace(res->data(), b); };
+}
+
+bool PheKit::hasSecretKey() const { return has_secret_key; }
+
+const std::shared_ptr<heu::lib::phe::PublicKey> &PheKit::getPublicKey() const {
+    if (has_secret_key) {
+        return he_kit_->GetPublicKey();
+    }
+    return dhe_kit_->GetPublicKey();
+}
+
+const std::shared_ptr<heu::lib::phe::SecretKey> &PheKit::getSecretKey() const {
+    if (has_secret_key) {
+        return he_kit_->GetSecretKey();
+    }
+    throw std::invalid_argument("have no secret key");
+}
+
+template<typename... ARGS>
+Ciphertext *PheKit::encrypt(std::function<Plaintext(ARGS...)> encoder, ARGS... args) {
+    return new Ciphertext(encryptor_->Encrypt(encoder(std::forward<ARGS>(args)...)));
+}
+
+Ciphertext *PheKit::encrypts(const size_t size, const std::function<void(int, Ciphertext *)> &do_encrypt,
+                             const std::string &mark, const int repeats) {
+    sw.Mark(mark);
+    const auto res = new Ciphertext[size * repeats];
+    ParallelFor(size, [&](const int i) {
+        do_encrypt(i, res);
+    });
+    sw.Stop();
+
+    return res;
+}
+
+Ciphertext *PheKit::encrypts(const size_t size, const std::function<Plaintext(int)> &encoder,
+                             const std::string &mark) {
+    return encrypts(size, [&](const int i, Ciphertext *res) {
+        res[i] = encryptor_->Encrypt(encoder(i));
+    }, mark);
+}
+
+Ciphertext *PheKit::encryptPairUnpack(const double m1, const double m2) const {
+    const auto res = new Ciphertext[2];
+    res[0] = encryptor_->Encrypt(encoder_f(m1));
+    res[1] = encryptor_->Encrypt(encoder_f(m2));
+    return res;
+}
+
+Ciphertext *PheKit::encryptPairsUnpack(const double *ms1, const double *ms2, const size_t size,
+                                       const std::string &mark) {
+    return encrypts(size, [&](const int i, Ciphertext *res) {
+        res[i] = encryptor_->Encrypt(encoder_f(ms1[i]));
+        res[i + size] = encryptor_->Encrypt(encoder_f(ms2[i]));
+    }, mark, 2);
+}
+
+template<typename T>
+void PheKit::decrypt(const Ciphertext &ct, T *out, std::function<void(const Plaintext &, T *, int)> decoder) {
+    Plaintext pt;
+    decryptor_->Decrypt(ct.c_data(), &pt);
+    decoder(pt, out, ct.scale_cnt());
+}
+
+template<typename T>
+void PheKit::decrypts(const Ciphertext *cts,
+                      size_t size,
+                      T *out,
+                      std::function<void(const Plaintext &, T *, int)> decoder,
+                      const std::string &mark) {
+    sw.Mark(mark);
+    ParallelFor(size, [&](int i) {
+        this->decrypt(cts[i], &out[i], decoder);
+    });
+    sw.Stop();
+}
+
+template<typename T, int rescale_updater>
+Ciphertext *PheKit::op(const Ciphertext &a,
+                       const T &b,
+                       const std::function<void(Ciphertext *, const T &)> &op_f) {
+    const auto res = new Ciphertext();
+    res->copy_from(a);
+    op_f(res, b);
+    res->rescale(rescale_updater);
+    return res;
+}
+
+template<typename T, int rescale_updater>
+Ciphertext *PheKit::op(const Ciphertext *a,
+                       const T *b,
+                       const size_t size,
+                       const std::function<void(Ciphertext *, const T &)> &
+                       op_f,
+                       const std::string &mark) {
+    sw.Mark(mark);
+    auto *res = new Ciphertext[size];
+    ParallelFor(size, [&](const int i) {
+        res[i].copy_from(a[i]);
+        opInplace<T, rescale_updater>(&res[i], b[i], op_f);
+    });
+    sw.Stop();
+    return res;
+}
+
+template<typename T, int rescale_updater>
+void PheKit::opInplace(Ciphertext *a,
+                       const T &b,
+                       const std::function<void(Ciphertext *, const T &)> &
+                       op_f) {
+    op_f(a, b);
+    a->rescale(rescale_updater);
+}
+
+template<typename T, int rescale_updater>
+void PheKit::opInplace(Ciphertext *a,
+                       const T *b,
+                       const size_t size,
+                       const std::function<void(Ciphertext *, const T &)> &
+                       op_f,
+                       const std::string &mark) {
+    sw.Mark(mark);
+    ParallelFor(size, [&](const int i) {
+        opInplace<T, rescale_updater>(&a[i], b[i], op_f);
+    });
+    sw.Stop();
+}
+
+template<int rescale_updater>
+Ciphertext *PheKit::op_(const Ciphertext *a,
+                        const double *b,
+                        const size_t size,
+                        const std::function<void(Ciphertext *, const Plaintext &)> &op_f,
+                        const std::string &mark) {
+    auto *pts = new Plaintext[size];
+    ParallelFor(size, [&](const int i) {
+        pts[i] = encoder_f(b[i]);
+    });
+    auto res = op<Plaintext, rescale_updater>(a, pts, size, op_f, mark);
+    delete[] pts;
+    return res;
+}
+
+template<int rescale_updater>
+void PheKit::opInplace_(Ciphertext *a,
+                        const double *b,
+                        const size_t size,
+                        const std::function<void(Ciphertext *, const Plaintext &)> &op_f,
+                        const std::string &mark) {
+    auto *pts = new Plaintext[size];
+    ParallelFor(size, [&](const int i) {
+        pts[i] = encoder_f(b[i]);
+    });
+    opInplace<Plaintext, rescale_updater>(a, pts, size, op_f, mark);
+    delete[] pts;
+}
+
+//**************************************************PheKit Protect End**************************************************
+
+//**************************************************PheKit Public Begin*************************************************
+PheKit::PheKit(const SchemaType schema, size_t key_size, const int64_t scale, const int scale_cnt,
+               const std::string &curve_name, const bool register_ec_lib): scale_cnt_(scale_cnt) {
     if (register_ec_lib) {
         yacl::crypto::register_ec_lib();
     }
@@ -42,104 +251,12 @@ PheKit::PheKit(const SchemaType schema, size_t key_size, const int64_t scale, co
 }
 
 PheKit::PheKit(const SchemaType schema, const std::string &curve_name, const bool register_ec_lib): PheKit(
-    schema, 2048, 1e6, curve_name, register_ec_lib) {
+    schema, 2048, 1e6, 10, curve_name, register_ec_lib) {
 }
 
-PheKit::PheKit(yacl::ByteContainerView pk_buffer, const int64_t scale, const bool register_ec_lib) : has_secret_key(
-    false) {
-    if (register_ec_lib) {
-        yacl::crypto::register_ec_lib();
-    }
-    dhe_kit_ = std::make_shared<heu::lib::phe::DestinationHeKit>(pk_buffer);
-    encryptor_ = dhe_kit_->GetEncryptor();
-    evaluator_ = dhe_kit_->GetEvaluator();
-    init(dhe_kit_, scale);
-}
-
-PheKit::PheKit(const std::string &pk_buffer, const int64_t scale, const bool register_ec_lib) : PheKit(
-    yacl::ByteContainerView(pk_buffer.data(), pk_buffer.size()), scale, register_ec_lib) {
-}
-
-void PheKit::init(const std::shared_ptr<heu::lib::phe::HeKitPublicBase> &he_kit, int64_t scale) {
-    if (he_kit->GetSchemaType() == SchemaType::ElGamal) {
-        scale = 1e4;
-    }
-    encoder_ = std::make_shared<heu::lib::phe::PlainEncoder>(
-        he_kit->GetEncoder<heu::lib::phe::PlainEncoder>(scale));
-    batch_encoder_ = std::make_shared<heu::lib::phe::BatchEncoder>(
-        he_kit->GetEncoder<heu::lib::phe::BatchEncoder>(scale));
-
-    encoder_f = [this](auto &&m) { return encoder_->Encode(std::forward<decltype(m)>(m)); };
-    decoder_f = [&](const Plaintext &pt, double *out) {
-        *out = encoder_->Decode<double>(pt);
-    };
-    batch_encoder_f = [this](auto &&m1, auto &&m2) {
-        return batch_encoder_->Encode(std::forward<decltype(m1)>(m1), std::forward<decltype(m2)>(m2));
-    };
-    batch_decoder_f = [&](const Plaintext &pt, double *out) {
-        out[0] = batch_encoder_->Decode<double, 0>(pt);
-        out[1] = batch_encoder_->Decode<double, 1>(pt);
-    };
-    add_f = [&](Ciphertext *res, const Ciphertext &b) { evaluator_->AddInplace(res, b); };
-    sub_f = [&](Ciphertext *res, const Ciphertext &b) { evaluator_->SubInplace(res, b); };
-}
-
-bool PheKit::hasSecretKey() const { return has_secret_key; }
-
-const std::shared_ptr<heu::lib::phe::PublicKey> &PheKit::getPublicKey() const {
-    if (has_secret_key) {
-        return he_kit_->GetPublicKey();
-    }
-    return dhe_kit_->GetPublicKey();
-}
-
-const std::shared_ptr<heu::lib::phe::SecretKey> &PheKit::getSecretKey() const {
-    if (has_secret_key) {
-        return he_kit_->GetSecretKey();
-    }
-    throw std::invalid_argument("have no secret key");
-}
-
-inline Ciphertext *PheKit::op(const Ciphertext &a,
-                              const Ciphertext &b,
-                              const std::function<void(Ciphertext *, const Ciphertext &)> &op_f) {
-    const auto res = new Ciphertext();
-    *res = a;
-    op_f(res, b);
-    return res;
-}
-
-inline Ciphertext *PheKit::op(const Ciphertext *a,
-                              const Ciphertext *b,
-                              const size_t size,
-                              const std::function<void(Ciphertext *, const Ciphertext &)> &op_f,
-                              const std::string &mark) {
-    sw.Mark(mark);
-    auto *res = new Ciphertext[size];
-    ParallelFor(size, [&](const int i) {
-        res[i] = a[i];
-        opInplace(&res[i], b[i], op_f);
-    });
-    sw.Stop();
-    return res;
-}
-
-inline void PheKit::opInplace(Ciphertext *a,
-                              const Ciphertext &b,
-                              const std::function<void(Ciphertext *, const Ciphertext &)> &op_f) {
-    op_f(a, b);
-}
-
-inline void PheKit::opInplace(Ciphertext *a,
-                              const Ciphertext *b,
-                              const size_t size,
-                              const std::function<void(Ciphertext *, const Ciphertext &)> &op_f,
-                              const std::string &mark) {
-    sw.Mark(mark);
-    ParallelFor(size, [&](const int i) {
-        opInplace(&a[i], b[i], op_f);
-    });
-    sw.Stop();
+PheKit::PheKit(const std::string &pk_buffer, const int64_t scale, const int scale_cnt,
+               const bool register_ec_lib) : PheKit(
+    yacl::ByteContainerView(pk_buffer.data(), pk_buffer.size()), scale, scale_cnt, register_ec_lib) {
 }
 
 std::string PheKit::pubKey() const {
@@ -154,6 +271,19 @@ Ciphertext *PheKit::encrypts(const double *ms, const size_t size, const std::str
     return encrypts(size, [&](const int i) {
         return encoder_f(ms[i]);
     }, mark);
+}
+
+Ciphertext *PheKit::encryptPair(const double m1, const double m2, const bool unpack) {
+    return unpack ? encryptPairUnpack(m1, m2) : encrypt(batch_encoder_f, m1, m2);
+}
+
+Ciphertext *PheKit::encryptPairs(const double *ms1, const double *ms2, const size_t size, const bool unpack,
+                                 const std::string &mark) {
+    return unpack
+               ? encryptPairsUnpack(ms1, ms2, size, mark)
+               : encrypts(size, [&](const int i) {
+                   return batch_encoder_f(ms1[i], ms2[i]);
+               }, mark);
 }
 
 double PheKit::decrypt(const Ciphertext &ct) {
@@ -172,34 +302,6 @@ double *PheKit::decrypts(const Ciphertext *cts, const size_t size, const std::st
     return out;
 }
 
-Ciphertext *PheKit::encryptPair(const double m1, const double m2, const bool unpack) {
-    return unpack ? encryptPairUnpack(m1, m2) : encrypt(batch_encoder_f, m1, m2);
-}
-
-Ciphertext *PheKit::encryptPairs(const double *ms1, const double *ms2, const size_t size, const bool unpack,
-                                 const std::string &mark) {
-    return unpack
-               ? encryptPairsUnpack(ms1, ms2, size, mark)
-               : encrypts(size, [&](const int i) {
-                   return batch_encoder_f(ms1[i], ms2[i]);
-               }, mark);
-}
-
-Ciphertext *PheKit::encryptPairUnpack(const double m1, const double m2) const {
-    const auto res = new Ciphertext[2];
-    res[0] = encryptor_->Encrypt(encoder_f(m1));
-    res[1] = encryptor_->Encrypt(encoder_f(m2));
-    return res;
-}
-
-Ciphertext *PheKit::encryptPairsUnpack(const double *ms1, const double *ms2, const size_t size,
-                                       const std::string &mark) {
-    return encrypts(size, [&](const int i, Ciphertext *res) {
-        res[i] = encryptor_->Encrypt(encoder_f(ms1[i]));
-        res[i + size] = encryptor_->Encrypt(encoder_f(ms2[i]));
-    }, mark, 2);
-}
-
 void PheKit::decryptPair(const Ciphertext &ct, double *out, const bool unpack) {
     unpack ? decrypts(&ct, 2, out, "") : decrypt<double>(ct, out, batch_decoder_f);
     //std::cout << "[c++]out: [" << out[0] << ", " << out[1] << "]" << std::endl;
@@ -215,9 +317,9 @@ void PheKit::decryptPairs(const Ciphertext *cts, const size_t size, double *out,
                           const std::string &mark) {
     unpack
         ? decrypts(cts, size * 2, out, mark)
-        : decrypts<double>(cts, size, out, [&](const Plaintext &pt, double *o) {
-            o[0] = batch_encoder_->Decode<double, 0>(pt);
-            o[size] = batch_encoder_->Decode<double, 1>(pt);
+        : decrypts<double>(cts, size, out, [&](const Plaintext &pt, double *o, const int scale_cnt) {
+            o[0] = batch_encoders_.at(scale_cnt)->Decode<double, 0>(pt);
+            o[size] = batch_encoders_.at(scale_cnt)->Decode<double, 1>(pt);
         }, mark);
 }
 
@@ -231,41 +333,118 @@ Ciphertext *PheKit::add(const Ciphertext &ct1, const Ciphertext &ct2, const bool
     return unpack ? adds(&ct1, &ct2, 2, "") : op(ct1, ct2, add_f);
 }
 
+Ciphertext *PheKit::add(const Ciphertext &ct1, const double pt2, const bool unpack) {
+    return unpack ? adds(&ct1, &pt2, 2, "") : op<Plaintext>(ct1, encoder_f(pt2), add_p_f);
+}
+
 Ciphertext *PheKit::adds(const Ciphertext *cts1, const Ciphertext *cts2, const size_t size, const std::string &mark) {
     return op(cts1, cts2, size, add_f, mark);
+}
+
+Ciphertext *PheKit::adds(const Ciphertext *cts1, const double *pts2, const size_t size, const std::string &mark) {
+    return op_(cts1, pts2, size, add_p_f, mark);
 }
 
 void PheKit::addInplace(Ciphertext &ct1, const Ciphertext &ct2, const bool unpack) {
     unpack ? addInplaces(&ct1, &ct2, 2, "") : opInplace(&ct1, ct2, add_f);
 }
 
+void PheKit::addInplace(Ciphertext &ct1, const double pt2, const bool unpack) {
+    unpack ? addInplaces(&ct1, &pt2, 2, "") : opInplace<Plaintext>(&ct1, encoder_f(pt2), add_p_f);
+}
+
 void PheKit::addInplaces(Ciphertext *cts1, const Ciphertext *cts2, const size_t size, const std::string &mark) {
     opInplace(cts1, cts2, size, add_f, mark);
+}
+
+void PheKit::addInplaces(Ciphertext *cts1, const double *pts2, const size_t size, const std::string &mark) {
+    opInplace_(cts1, pts2, size, add_p_f, mark);
 }
 
 Ciphertext *PheKit::sub(const Ciphertext &ct1, const Ciphertext &ct2, const bool unpack) {
     return unpack ? subs(&ct1, &ct2, 2, "") : op(ct1, ct2, sub_f);
 }
 
+Ciphertext *PheKit::sub(const Ciphertext &ct1, const double pt2, const bool unpack) {
+    return unpack ? subs(&ct1, &pt2, 2, "") : op<Plaintext>(ct1, encoder_f(pt2), sub_p_f);
+}
+
 Ciphertext *PheKit::subs(const Ciphertext *cts1, const Ciphertext *cts2, const size_t size, const std::string &mark) {
     return op(cts1, cts2, size, sub_f, mark);
+}
+
+Ciphertext *PheKit::subs(const Ciphertext *cts1, const double *pts2, const size_t size, const std::string &mark) {
+    return op_(cts1, pts2, size, sub_p_f, mark);
 }
 
 void PheKit::subInplace(Ciphertext &ct1, const Ciphertext &ct2, const bool unpack) {
     unpack ? subInplaces(&ct1, &ct2, 2, "") : opInplace(&ct1, ct2, sub_f);
 }
 
+void PheKit::subInplace(Ciphertext &ct1, const double pt2, const bool unpack) {
+    unpack ? subInplaces(&ct1, &pt2, 2, "") : opInplace<Plaintext>(&ct1, encoder_f(pt2), sub_p_f);
+}
+
 void PheKit::subInplaces(Ciphertext *cts1, const Ciphertext *cts2, const size_t size, const std::string &mark) {
     opInplace(cts1, cts2, size, sub_f, mark);
+}
+
+void PheKit::subInplaces(Ciphertext *cts1, const double *pts2, const size_t size, const std::string &mark) {
+    opInplace_(cts1, pts2, size, sub_p_f, mark);
+}
+
+[[nodiscard]] Ciphertext *PheKit::mul(const Ciphertext &ct1, const double pt2, const bool unpack) {
+    return unpack ? muls(&ct1, &pt2, 2, "") : op<Plaintext, 1>(ct1, encoder_f(pt2), mul_p_f);
+}
+
+Ciphertext *PheKit::muls(const Ciphertext *cts1, const double *pts2, const size_t size, const std::string &mark) {
+    return op_<1>(cts1, pts2, size, mul_p_f, mark);
+}
+
+void PheKit::mulInplace(Ciphertext &ct1, const double pt2, const bool unpack) {
+    unpack ? mulInplaces(&ct1, &pt2, 2, "") : opInplace<Plaintext, 1>(&ct1, encoder_f(pt2), mul_p_f);
+}
+
+void PheKit::mulInplaces(Ciphertext *cts1, const double *pts2, const size_t size, const std::string &mark) {
+    opInplace_<1>(cts1, pts2, size, mul_p_f, mark);
+}
+
+Ciphertext *PheKit::negate(const Ciphertext &ct) const {
+    const auto res = new Ciphertext(evaluator_->Negate(ct.c_data()));
+    res->set_scale_cnt(ct.scale_cnt());
+    return res;
+}
+
+Ciphertext *PheKit::negates(const Ciphertext *cts, const size_t size, const std::string &mark) {
+    sw.Mark(mark);
+    auto *res = new Ciphertext[size];
+    ParallelFor(size, [&](const int i) {
+        res[i] = evaluator_->Negate(cts[i].c_data());
+        res[i].set_scale_cnt(cts[i].scale_cnt());
+    });
+    sw.Stop();
+    return res;
+}
+
+void PheKit::negateInplace(const Ciphertext &ct) const {
+    evaluator_->NegateInplace(ct.data());
+}
+
+void PheKit::negateInplaces(const Ciphertext *cts, const size_t size, const std::string &mark) {
+    sw.Mark(mark);
+    ParallelFor(size, [&](const int i) {
+        evaluator_->NegateInplace(cts[i].data());
+    });
+    sw.Stop();
 }
 
 void PheKit::prettyPrint(const uint8_t time_unit) const {
     sw.PrettyPrint(static_cast<TimeUnit>(time_unit));
 }
 
-//**************************************************PheKit End****************************************************
+//**************************************************PheKit Public End***************************************************
 
-//**************************************************Global Begin**************************************************
+//*****************************************************Global Begin*****************************************************
 void deletePheKit(const PheKit *pheKit) {
     delete pheKit;
 }
@@ -279,19 +458,19 @@ void deleteCiphertexts(const Ciphertext *ciphertext) {
 }
 
 std::string cipher2Bytes(const Ciphertext &ciphertext) {
-    return std::string(ciphertext.Serialize());
+    return std::string(ciphertext.c_data().Serialize());
 }
 
 Ciphertext *bytes2Cipher(const std::string &buffer) {
     auto *out = new Ciphertext();
-    out->Deserialize(yacl::ByteContainerView(buffer.data(), buffer.size()));
+    out->deserialize(yacl::ByteContainerView(buffer.data(), buffer.size()));
     return out;
 }
 
 HeBuffer *ciphers2Bytes(const Ciphertext *ciphertexts, const size_t size) {
     auto *out = new HeBuffer(size);
     ParallelFor(size, [&](const auto i) {
-        out->set(i, std::string(ciphertexts[i].Serialize()));
+        out->set(i, std::string(ciphertexts[i].c_data().Serialize()));
     });
     return out;
 }
@@ -299,9 +478,9 @@ HeBuffer *ciphers2Bytes(const Ciphertext *ciphertexts, const size_t size) {
 Ciphertext *bytes2Ciphers(const HeBuffer &buffers, const size_t size) {
     auto *out = new Ciphertext[size];
     ParallelFor(size, [&](const auto i) {
-        out[i].Deserialize(yacl::ByteContainerView(buffers[i].data(), buffers[i].size()));
+        out[i].deserialize(yacl::ByteContainerView(buffers[i].data(), buffers[i].size()));
     });
     return out;
 }
 
-//**************************************************Global End****************************************************
+//*****************************************************Global End*******************************************************
