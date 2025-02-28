@@ -19,10 +19,13 @@ limitations under the License.
 package cn.cstn.algorithm.javacpp.heu;
 
 import cn.cstn.algorithm.javacpp.global.heu;
+import lombok.SneakyThrows;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.annotation.Properties;
 
+import java.io.*;
+import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
 @Properties(inherit = cn.cstn.algorithm.javacpp.presets.heu.class)
@@ -36,6 +39,10 @@ public abstract class AbstractPheKit extends Pointer {
 
   public byte[] getPubKey() {
     return pheKit.pubKey().getStringBytes();
+  }
+
+  public byte[] getSecretKey() {
+    return pheKit.secretKey().getStringBytes();
   }
 
   public Ciphertext encrypts(double[] ms, String mark) {
@@ -186,6 +193,61 @@ public abstract class AbstractPheKit extends Pointer {
     return res;
   }
 
+  public static String getSchemeDirName(SchemaType schemaType, CurveName curveName) {
+    return schemaType.name() + (curveName == CurveName.empty ? "" : ("_" + curveName.name()));
+  }
+
+  @SneakyThrows
+  private static void saveKey(byte[] keyBuffer, String dirPath, boolean isPub, boolean overwrite) {
+    File dir = new File(dirPath);
+    if (!dir.exists()) {
+      if (!dir.mkdirs()) {
+        throw new RuntimeException(String.format("create dir %s failed", dirPath));
+      }
+    }
+    File fPath = new File(dir, "id_phe" + (isPub ? ".pub" : ""));
+    if (!fPath.exists() || overwrite) {
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter(fPath))) {
+        bw.write(Base64.getEncoder().encodeToString(keyBuffer));
+        bw.flush();
+        System.out.printf("save %s key to %s%n", isPub ? "public" : "secret", fPath.getAbsolutePath());
+      }
+    }
+  }
+
+  @SneakyThrows
+  private static byte[] readKey(String dirPath, boolean isPub) {
+    try (BufferedReader br = new BufferedReader(new FileReader(
+      new File(dirPath, "id_phe" + (isPub ? ".pub" : ""))
+    ))) {
+      return Base64.getDecoder().decode(br.readLine());
+    }
+  }
+
+  public static void savePubKey(byte[] keyBuffer, String dirPath) {
+    savePubKey(keyBuffer, dirPath, false);
+  }
+
+  public static void savePubKey(byte[] keyBuffer, String dirPath, boolean overwrite) {
+    saveKey(keyBuffer, dirPath, true, overwrite);
+  }
+
+  public static byte[] readPubKey(String dirPath) {
+    return readKey(dirPath, true);
+  }
+
+  public static void saveSecretKey(byte[] keyBuffer, String dirPath) {
+    saveSecretKey(keyBuffer, dirPath, false);
+  }
+
+  public static void saveSecretKey(byte[] keyBuffer, String dirPath, boolean overwrite) {
+    saveKey(keyBuffer, dirPath, false, overwrite);
+  }
+
+  public static byte[] readSecretKey(String dirPath) {
+    return readKey(dirPath, false);
+  }
+
   public static PheKit newInstance(SchemaType schemaType) {
     return new PheKit(schemaType);
   }
@@ -202,12 +264,28 @@ public abstract class AbstractPheKit extends Pointer {
     return new PheKit(schemaType, key_size, scale, scaleCnt, CurveName.empty.name(), false);
   }
 
+  public static PheKit newInstance(String pkDirPath) {
+    return newInstance(pkDirPath, false);
+  }
+
   public static PheKit newInstance(byte[] pkBuffer) {
     return new PheKit(new BytePointer(pkBuffer));
   }
 
   public static PheKit newInstance(BytePointer pkBuffer, long scale, int scaleCnt) {
     return new PheKit(pkBuffer, scale, scaleCnt, false);
+  }
+
+  public static PheKit newInstance(String kDirPath, boolean hasSecret) {
+    return hasSecret ? newInstance(readPubKey(kDirPath), readSecretKey(kDirPath)) : newInstance(readPubKey(kDirPath));
+  }
+
+  public static PheKit newInstance(byte[] pkBuffer, byte[] skBuffer) {
+    return new PheKit(new BytePointer(pkBuffer), new BytePointer(skBuffer));
+  }
+
+  public static PheKit newInstance(BytePointer pkBuffer, BytePointer skBuffer, long scale, int scaleCnt) {
+    return new PheKit(pkBuffer, skBuffer, scale, scaleCnt, false);
   }
 
 }

@@ -16,29 +16,40 @@ const std::string PheKit::fourq = "fourq";
 
 
 //**************************************************PheKit Protect Begin************************************************
-PheKit::PheKit(yacl::ByteContainerView pk_buffer, const int64_t scale, const int scale_cnt,
-               const bool register_ec_lib) : scale_cnt_(scale_cnt), has_secret_key(false) {
+PheKit::PheKit(const yacl::ByteContainerView &pk_buffer, const std::unique_ptr<yacl::ByteContainerView> &sk_buffer,
+               const int64_t scale, const int scale_cnt, const bool register_ec_lib) : scale_cnt_(scale_cnt) {
     if (register_ec_lib) {
         yacl::crypto::register_ec_lib();
     }
-    dhe_kit_ = std::make_shared<heu::lib::phe::DestinationHeKit>(pk_buffer);
-    encryptor_ = dhe_kit_->GetEncryptor();
-    evaluator_ = dhe_kit_->GetEvaluator();
-    init(dhe_kit_, scale);
+    if (sk_buffer == nullptr) {
+        has_secret_key = false;
+        dhe_kit_ = std::make_shared<heu::lib::phe::DestinationHeKit>(pk_buffer);
+        init<heu::lib::phe::DestinationHeKit>(dhe_kit_, scale);
+    } else {
+        has_secret_key = true;
+        he_kit_ = std::make_shared<heu::lib::phe::HeKit>(pk_buffer, *sk_buffer);
+
+        init<heu::lib::phe::HeKit>(he_kit_, scale);
+        decryptor_ = he_kit_->GetDecryptor();
+    }
 }
 
-void PheKit::init(const std::shared_ptr<heu::lib::phe::HeKitPublicBase> &he_kit, int64_t scale) {
-    if (he_kit->GetSchemaType() == SchemaType::ElGamal) {
+template<typename T>
+void PheKit::init(const std::shared_ptr<T> &kit, int64_t scale) {
+    encryptor_ = kit->GetEncryptor();
+    evaluator_ = kit->GetEvaluator();
+
+    if (kit->GetSchemaType() == SchemaType::ElGamal) {
         scale = 1e4;
     }
     for (int i = 1; i <= scale_cnt_; ++i) {
         encoders_.insert({
             i, std::make_shared<heu::lib::phe::PlainEncoder>(
-                he_kit->GetEncoder<heu::lib::phe::PlainEncoder>(std::pow(scale, i)))
+                kit->template GetEncoder<heu::lib::phe::PlainEncoder>(std::pow(scale, i)))
         });
         batch_encoders_.insert({
             i, std::make_shared<heu::lib::phe::BatchEncoder>(
-                he_kit->GetEncoder<heu::lib::phe::BatchEncoder>(std::pow(scale, i)))
+                kit->template GetEncoder<heu::lib::phe::BatchEncoder>(std::pow(scale, i)))
         });
     }
 
@@ -65,6 +76,10 @@ void PheKit::init(const std::shared_ptr<heu::lib::phe::HeKitPublicBase> &he_kit,
     add_p_f = [&](const Ciphertext *res, const Plaintext &b) { evaluator_->AddInplace(res->data(), b); };
     sub_p_f = [&](const Ciphertext *res, const Plaintext &b) { evaluator_->SubInplace(res->data(), b); };
     mul_p_f = [&](const Ciphertext *res, const Plaintext &b) { evaluator_->MulInplace(res->data(), b); };
+}
+
+std::unique_ptr<yacl::ByteContainerView> PheKit::getBuffer(const std::string &s_buffer) {
+    return s_buffer.empty() ? nullptr : std::make_unique<yacl::ByteContainerView>(s_buffer.data(), s_buffer.size());
 }
 
 bool PheKit::hasSecretKey() const { return has_secret_key; }
@@ -230,6 +245,7 @@ PheKit::PheKit(const SchemaType schema, size_t key_size, const int64_t scale, co
     if (register_ec_lib) {
         yacl::crypto::register_ec_lib();
     }
+
     sw.Mark("key_pair_gen");
     if (std::vector curve_schemas = {SchemaType::ElGamal};
         std::find(curve_schemas.begin(), curve_schemas.end(), schema) == curve_schemas.end() || curve_name.empty()) {
@@ -242,25 +258,32 @@ PheKit::PheKit(const SchemaType schema, size_t key_size, const int64_t scale, co
         he_kit_ = std::make_shared<heu::lib::phe::HeKit>(std::make_shared<heu::lib::phe::PublicKey>(std::move(pk)),
                                                          std::make_shared<heu::lib::phe::SecretKey>(std::move(sk)));
     }
-    decryptor_ = he_kit_->GetDecryptor();
-    encryptor_ = he_kit_->GetEncryptor();
-    evaluator_ = he_kit_->GetEvaluator();
-
-    init(he_kit_, scale);
     sw.Stop();
+
+    decryptor_ = he_kit_->GetDecryptor();
+    init(he_kit_, scale);
 }
 
 PheKit::PheKit(const SchemaType schema, const std::string &curve_name, const bool register_ec_lib): PheKit(
     schema, 2048, 1e6, 10, curve_name, register_ec_lib) {
 }
 
-PheKit::PheKit(const std::string &pk_buffer, const int64_t scale, const int scale_cnt,
+PheKit::PheKit(const std::string &pk_buffer, const std::string &sk_buffer, const int64_t scale, const int scale_cnt,
                const bool register_ec_lib) : PheKit(
-    yacl::ByteContainerView(pk_buffer.data(), pk_buffer.size()), scale, scale_cnt, register_ec_lib) {
+    yacl::ByteContainerView(pk_buffer.data(), pk_buffer.size()), getBuffer(sk_buffer),
+    scale, scale_cnt, register_ec_lib) {
+}
+
+PheKit::PheKit(const std::string &pk_buffer, const int64_t scale, const int scale_cnt,
+               const bool register_ec_lib) : PheKit(pk_buffer, "", scale, scale_cnt, register_ec_lib) {
 }
 
 std::string PheKit::pubKey() const {
     return std::string(getPublicKey()->Serialize());
+}
+
+std::string PheKit::secretKey() const {
+    return has_secret_key ? std::string(getSecretKey()->Serialize()) : "";
 }
 
 Ciphertext *PheKit::encrypt(const double m) {

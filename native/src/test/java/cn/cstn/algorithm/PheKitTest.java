@@ -36,18 +36,25 @@ public class PheKitTest extends TestCase {
    * PubKey
    */
   public void pubKey(SchemaType schemaType, CurveName curveName) {
-    try (PheKit pheKit = PheKit.newInstance(schemaType, curveName);
-         PheKit pheKit2 = PheKit.newInstance(pheKit.getPubKey())) {
+    try (PheKit pheKit = PheKit.newInstance(schemaType, curveName)) {
+      String idPath = ".phe/" + PheKit.getSchemeDirName(schemaType, curveName);
+      PheKit.savePubKey(pheKit.getPubKey(), idPath);
+      PheKit.saveSecretKey(pheKit.getSecretKey(), idPath);
+      PheKit pheKit2 = PheKit.newInstance(idPath);
+      PheKit pheKit3 = PheKit.newInstance(idPath, true);
       Ciphertext ct1 = pheKit2.encrypt(2);
       Ciphertext ct2 = pheKit2.encrypt(3);
       Ciphertext addRes = pheKit2.add(ct1, ct2);
-      System.out.printf("add: %f\n", pheKit.decrypt(addRes));
+      System.out.printf("add: %f\n", pheKit3.decrypt(addRes));
       pheKit2.addInplace(addRes, ct2);
-      System.out.printf("addInplace: %f\n", pheKit.decrypt(addRes));
+      System.out.printf("addInplace: %f\n", pheKit3.decrypt(addRes));
       Ciphertext subRes = pheKit2.sub(ct2, ct1);
-      System.out.printf("sub: %f\n", pheKit.decrypt(subRes));
+      System.out.printf("sub: %f\n", pheKit3.decrypt(subRes));
       pheKit2.subInplace(subRes, ct2);
-      System.out.printf("subInplace: %f\n", pheKit.decrypt(subRes));
+      System.out.printf("subInplace: %f\n", pheKit3.decrypt(subRes));
+
+      pheKit2.close();
+      pheKit3.close();
     }
   }
 

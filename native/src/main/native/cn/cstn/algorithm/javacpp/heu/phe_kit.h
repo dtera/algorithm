@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <type_traits>
+
 #include "heu/library/phe/encoding/encoding.h"
 
 #include "he_types.h"
@@ -34,10 +36,14 @@ protected:
     std::function<void(Ciphertext *, const Plaintext &)> sub_p_f;
     std::function<void(Ciphertext *, const Plaintext &)> mul_p_f;
 
-    explicit PheKit(yacl::ByteContainerView pk_buffer, int64_t scale = 1e6, int scale_cnt = 10,
-                    bool register_ec_lib = false);
+    explicit PheKit(const yacl::ByteContainerView &pk_buffer,
+                    const std::unique_ptr<yacl::ByteContainerView> &sk_buffer = nullptr,
+                    int64_t scale = 1e6, int scale_cnt = 10, bool register_ec_lib = false);
 
-    void init(const std::shared_ptr<heu::lib::phe::HeKitPublicBase> &he_kit, int64_t scale);
+    template<typename T>
+    void init(const std::shared_ptr<T> &kit, int64_t scale);
+
+    static std::unique_ptr<yacl::ByteContainerView> getBuffer(const std::string &s_buffer);
 
     [[nodiscard]] bool hasSecretKey() const;
 
@@ -123,10 +129,15 @@ public:
 
     explicit PheKit(SchemaType schema, const std::string &curve_name, bool register_ec_lib = false);
 
+    explicit PheKit(const std::string &pk_buffer, const std::string &sk_buffer, int64_t scale = 1e6,
+                    int scale_cnt = 10, bool register_ec_lib = false);
+
     explicit PheKit(const std::string &pk_buffer, int64_t scale = 1e6, int scale_cnt = 10,
                     bool register_ec_lib = false);
 
     [[nodiscard]] std::string pubKey() const;
+
+    [[nodiscard]] std::string secretKey() const;
 
     Ciphertext *encrypt(double m);
 
