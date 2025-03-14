@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@SuppressWarnings({"DataFlowIssue", "ConstantValue", "unused"})
+@SuppressWarnings({"ConstantValue", "unused"})
 public class App {
 
   public static void main(String[] args) {
