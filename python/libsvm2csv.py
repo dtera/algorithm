@@ -9,7 +9,9 @@ import numpy as np
 import pandas as pd
 
 
-def set_sample_ids_and_labels(f_path, mns, mxs, sizes, sample_ids, labels, has_label, need_example_id, is_neg_to_zero):
+def set_sample_ids_and_labels(f_path, mns, mxs, sizes, sample_ids, labels, has_label, need_example_id, is_neg_to_zero,
+                              limit):
+    pre_tatal = sum(sizes)
     with (open(f_path, 'rt') as f):
         line = f.readline()
         while line.lstrip().startswith('#'):
@@ -22,6 +24,8 @@ def set_sample_ids_and_labels(f_path, mns, mxs, sizes, sample_ids, labels, has_l
         f.seek(0)
         size = 0
         for line in f:
+            if size + pre_tatal >= limit:
+                break
             if not (line.lstrip().startswith('#') or line.strip() == ''):
                 tokens = line.split()
                 if need_example_id and has_sample_id:
@@ -45,10 +49,12 @@ def set_sample_ids_and_labels(f_path, mns, mxs, sizes, sample_ids, labels, has_l
         return label_index, has_sample_id
 
 
-def set_feats(f_path, feats, mn, offset, feat_offset):
+def set_feats(f_path, feats, mn, offset, feat_offset, limit):
     with (open(f_path, 'rt') as f):
         i = 0
         for line in f:
+            if offset + i >= limit:
+                break
             if not (line.lstrip().startswith('#') or line.strip() == ''):
                 kvs = line.split()[feat_offset:]
                 for kv in kvs:
@@ -83,13 +89,21 @@ def libsvm2csv(p, in_path, out_path):
         else:
             os.makedirs(out_path)
     if os.path.isdir(in_path):
+        overflow = False
         for root, dirs, files in os.walk(in_path):
             fs = sorted(filter(lambda f: not f.endswith('.csv'), files))
             # prepare min and max index and add sample_id and label
             for file in fs:
+                pre_tatal = sum(sizes)
+                if pre_tatal >= p.limit:
+                    overflow = True
+                    break
                 f_path = os.path.join(root, file)
                 label_index, has_sample_id = set_sample_ids_and_labels(f_path, mns, mxs, sizes, sample_ids, labels,
-                                                                       p.has_label, p.need_example_id, p.is_neg_to_zero)
+                                                                       p.has_label, p.need_example_id, p.is_neg_to_zero,
+                                                                       p.limit)
+            if overflow:
+                break
             # libsvm2csv
             mx, mn, size = max(mxs), min(mns), sum(sizes)
             feat_size = mx - mn + 1
@@ -99,7 +113,7 @@ def libsvm2csv(p, in_path, out_path):
                 f_path = os.path.join(root, file)
                 offset = sum(sizes[:i])
                 feat_offset = label_index + (0 if not has_sample_id and len(labels) == 0 else 1)
-                set_feats(f_path, feats, mn, offset, feat_offset)
+                set_feats(f_path, feats, mn, offset, feat_offset, p.limit)
             if p.is_out_merged or out_path.endswith('.csv'):
                 o_path = out_path if out_path.strip() != '' else f'{in_path}.csv'
                 df2csv(sample_ids, labels, feats, feat_names, o_path, p.is_label_before, p.label_name)
@@ -112,12 +126,13 @@ def libsvm2csv(p, in_path, out_path):
                     df2csv(ids, labels[offset:r], feats[offset:r], feat_names, o_path, p.is_label_before, p.label_name)
     else:
         label_index, has_sample_id = set_sample_ids_and_labels(in_path, mns, mxs, sizes, sample_ids, labels,
-                                                               p.has_label, p.need_example_id, p.is_neg_to_zero)
+                                                               p.has_label, p.need_example_id, p.is_neg_to_zero,
+                                                               p.limit)
         feat_size = mxs[0] - mns[0] + 1
         feat_names = [f'{p.feat_name_prefix}{p.feat_name_base_idx + i}' for i in range(feat_size)]
         feats = np.zeros((sizes[0], feat_size), dtype=np.float32)
         feat_offset = label_index + (0 if not has_sample_id and len(labels) == 0 else 1)
-        set_feats(in_path, feats, mns[0], 0, feat_offset)
+        set_feats(in_path, feats, mns[0], 0, feat_offset, p.limit)
         o_path = out_path if out_path.strip() != '' else f'{in_path}.csv'
         df2csv(sample_ids, labels, feats, feat_names, o_path, p.is_label_before, p.label_name)
 
@@ -134,5 +149,6 @@ if __name__ == '__main__':
     parser.add_argument("--is_out_merged", type=int, default=1, help="whether output is merged.")
     parser.add_argument("--has_label", type=int, default=1, help="whether has label.")
     parser.add_argument("--need_example_id", type=int, default=1, help="whether need example id.")
+    parser.add_argument("--limit", type=int, default=-1, help="limit.")
     params = parser.parse_args()
     libsvm2csv(params, params.in_path, params.out_path)
