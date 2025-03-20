@@ -1,4 +1,4 @@
 task: "text-generation"
-model: "Qwen/QwQ-32B"
+model: "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"  # "Qwen/QwQ-32B"
 trust_remote_code: true
-prompt: "Who are you?"
+prompt: "请问1+1等于多少"
