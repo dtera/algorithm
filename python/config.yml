@@ -1,0 +1,4 @@
+task: "text-generation"
+model: "Qwen/QwQ-32B"
+trust_remote_code: true
+prompt: "Who are you?"
