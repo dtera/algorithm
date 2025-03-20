@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <type_traits>
-
 #include "heu/library/phe/encoding/encoding.h"
 
 #include "he_types.h"
