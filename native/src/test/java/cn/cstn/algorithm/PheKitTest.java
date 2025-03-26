@@ -10,10 +10,10 @@ import junit.framework.TestSuite;
 import org.bytedeco.javacpp.DoublePointer;
 import org.springframework.util.StopWatch;
 
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static cn.cstn.algorithm.javacpp.heu.AbstractPheKit.genIndexes;
+import static cn.cstn.algorithm.javacpp.util.MockDataUtils.mockGrads;
+import static cn.cstn.algorithm.javacpp.util.MockDataUtils.mockHistIndexes;
 
 /**
  * Unit test for PheKit.
@@ -380,20 +380,19 @@ public class PheKitTest extends TestCase {
    */
   public void histogram(SchemaType schemaType, int n, int num_features, int num_bins) {
     try (PheKit pheKit = PheKit.newInstance(schemaType)) {
+      int total_bins = num_bins * num_features;
       StopWatch sw = new StopWatch();
-      sw.start("init");
-      Random rng = new Random();
-      double[] grads = new double[n];
-      for (int i = 0; i < n; ++i) {
-        grads[i] = rng.nextGaussian();
-      }
+
+      sw.start("mockGrads");
+      double[] grads = mockGrads(n);
       sw.stop();
 
       sw.start("encrypts");
       Ciphertext gradCts = pheKit.encrypts(grads, n);
       sw.stop();
-      int total_bins = num_bins * num_features;
-      int[][] indexes = genIndexes(n, num_features, num_bins);
+      sw.start("mockHistIndexes");
+      int[][] indexes = mockHistIndexes(n, num_features, num_bins);
+      sw.stop();
       sw.start("histogram");
       DoublePointer real = pheKit.histogram(grads, indexes, num_features);
       sw.stop();
