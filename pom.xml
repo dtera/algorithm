@@ -39,6 +39,7 @@
         <javacpp.version>1.5.11</javacpp.version>
         <nativelib.loader.version>2.5.0</nativelib.loader.version>
         <protobuf.version>4.28.2</protobuf.version>
+        <hutool.version>5.8.36</hutool.version>
 
         <shell.exe>bash</shell.exe>
         <shell.ext>sh</shell.ext>
@@ -102,6 +103,11 @@
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
                 <version>${protobuf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

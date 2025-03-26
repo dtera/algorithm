@@ -19,14 +19,17 @@ limitations under the License.
 package cn.cstn.algorithm.javacpp.heu;
 
 import cn.cstn.algorithm.javacpp.global.heu;
+import cn.hutool.core.lang.Pair;
 import lombok.SneakyThrows;
-import org.bytedeco.javacpp.BytePointer;
-import org.bytedeco.javacpp.Pointer;
+import org.bytedeco.javacpp.*;
 import org.bytedeco.javacpp.annotation.Properties;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 @Properties(inherit = cn.cstn.algorithm.javacpp.presets.heu.class)
 public abstract class AbstractPheKit extends Pointer {
@@ -152,6 +155,22 @@ public abstract class AbstractPheKit extends Pointer {
 
   public void negateInplaces(Ciphertext cts1) {
     pheKit.negateInplaces(cts1, cts1.capacity());
+  }
+
+  public DoublePointer histogram(double[] grads, int[][] indexes, int num_features) {
+    int num_bins = indexes.length / num_features;
+    int[] indexSize = Arrays.stream(indexes).mapToInt(v -> v.length).toArray();
+    DoublePointer res = pheKit.histogram(new DoublePointer(grads), new PointerPointer<IntPointer>(indexes),
+      new IntPointer(indexSize), num_bins, num_features, new BytePointer("histogram"));
+    res.capacity(indexes.length);
+    return res;
+  }
+
+  public Ciphertext histogram(Ciphertext grads, int[][] indexes, int num_features) {
+    int num_bins = indexes.length / num_features;
+    int[] indexSize = Arrays.stream(indexes).mapToInt(v -> v.length).toArray();
+    return pheKit.histogram(grads, new PointerPointer<IntPointer>(indexes), new IntPointer(indexSize),
+      num_bins, num_features, new BytePointer("cipher_histogram"));
   }
 
   public void prettyPrint(TimeUnit tm) {
@@ -286,6 +305,40 @@ public abstract class AbstractPheKit extends Pointer {
 
   public static PheKit newInstance(BytePointer pkBuffer, BytePointer skBuffer, long scale, int scaleCnt) {
     return new PheKit(pkBuffer, skBuffer, scale, scaleCnt, false);
+  }
+
+  public static int[][] genIndexes(final int n, final int num_features, final int num_bins) {
+    Random rng = new Random();
+    return genIndexes(n, num_features, num_bins, (Pair<Integer, Integer> p) -> rng.nextInt(num_bins));
+  }
+
+  public static int[][] genIndexes(final int n, final int num_features, final int num_bins,
+                                   Function<Pair<Integer, Integer>, Integer> binAllocator) {
+    int total_bins = num_features * num_bins;
+    int[][] indexes = new int[total_bins][];
+    int[] indexSize = new int[total_bins];
+
+    for (int j = 0; j < num_features; ++j) {
+      int[] flag = new int[n];
+      for (int i = 0; i < n; ++i) {
+        flag[i] = binAllocator.apply(Pair.of(i, j));
+        indexSize[j * num_bins + flag[i]]++;
+      }
+
+      for (int i = 0; i < num_bins; ++i) {
+        int k = j * num_bins + i;
+        indexes[k] = new int[indexSize[k]];
+        indexSize[k] = 0;
+      }
+
+      for (int i = 0; i < n; ++i) {
+        int k = j * num_bins + flag[i];
+        indexes[k][indexSize[k]] = i;
+        indexSize[k]++;
+      }
+    }
+
+    return indexes;
   }
 
 }

@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <random>
+
 #include "heu/library/phe/encoding/encoding.h"
 
 #include "he_types.h"
@@ -21,6 +23,7 @@ class PheKit {
     std::unordered_map<int, std::shared_ptr<heu::lib::phe::BatchEncoder> > batch_encoders_;
     int scale_cnt_ = 10;
     bool has_secret_key = true;
+    Ciphertext zero;
     StopWatch sw;
 
 protected:
@@ -111,6 +114,11 @@ protected:
                     size_t size,
                     const std::function<void(Ciphertext *, const Plaintext &)> &op_f,
                     const std::string &mark);
+
+    template<typename T=double>
+    T *histogram(const T *grad_pairs, int **indexes, const int *index_size, int num_bins, int num_features,
+                 std::function<void(T &, const T &)> op_fun, std::function<void(T &)> init_fun,
+                 const std::string &mark = "histogram");
 
 public:
     static const std::string empty;
@@ -210,6 +218,12 @@ public:
 
     void negateInplaces(const Ciphertext *cts, size_t size, const std::string &mark = "negateInplaces");
 
+    Ciphertext *histogram(const Ciphertext *grad_pairs, int **indexes, const int *index_size, int num_bins,
+                          int num_features, const std::string &mark = "cipher_histogram");
+
+    double *histogram(const double *grad_pairs, int **indexes, const int *index_size, int num_bins,
+                      int num_features, const std::string &mark = "histogram");
+
     void prettyPrint(uint8_t time_unit = MILLISECONDS) const;
 };
 
@@ -229,5 +243,7 @@ Ciphertext *bytes2Cipher(const std::string &buffer);
 HeBuffer *ciphers2Bytes(const Ciphertext *ciphertexts, size_t size);
 
 Ciphertext *bytes2Ciphers(const HeBuffer &buffers, size_t size);
+
+std::pair<int **, const int *> genIndexes(int n = 100000, int num_features = 1000, int num_bins = 40);
 
 //**************************************************Global End****************************************************

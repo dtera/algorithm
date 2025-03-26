@@ -31,7 +31,7 @@ public class heu implements InfoMapper {
     infoMap
       .put(
         new Info("PheKit::decryptPair_", "PheKit::empty", "PheKit::ed25519", "PheKit::curve25519",
-          "PheKit::secp256k1", "PheKit::secp256r1", "PheKit::secp192r1", "PheKit::fourq", "PheKit::sm2",
+          "PheKit::secp256k1", "PheKit::secp256r1", "PheKit::secp192r1", "PheKit::fourq", "PheKit::sm2", "genIndexes",
           "Ciphertext::data", "Ciphertext::c_data", "yacl::ByteContainerView")
           .skip()
       )

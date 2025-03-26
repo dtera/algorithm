@@ -76,6 +76,8 @@ void PheKit::init(const std::shared_ptr<T> &kit, int64_t scale) {
     add_p_f = [&](const Ciphertext *res, const Plaintext &b) { evaluator_->AddInplace(res->data(), b); };
     sub_p_f = [&](const Ciphertext *res, const Plaintext &b) { evaluator_->SubInplace(res->data(), b); };
     mul_p_f = [&](const Ciphertext *res, const Plaintext &b) { evaluator_->MulInplace(res->data(), b); };
+
+    zero = encryptor_->EncryptZero();
 }
 
 std::unique_ptr<yacl::ByteContainerView> PheKit::getBuffer(const std::string &s_buffer) {
@@ -235,6 +237,34 @@ void PheKit::opInplace_(Ciphertext *a,
     });
     opInplace<Plaintext, rescale_updater>(a, pts, size, op_f, mark);
     delete[] pts;
+}
+
+template<typename T>
+T *PheKit::histogram(const T *grad_pairs, int **indexes, const int *index_size, const int num_bins,
+                     const int num_features, std::function<void(T &, const T &)> op_fun,
+                     std::function<void(T &)> init_fun, const std::string &mark) {
+    sw.Mark(mark);
+    const auto total_bins = num_bins * num_features;
+    auto *res = new T[total_bins];
+
+    ParallelFor(num_features, [&](const size_t fidx) {
+        for (int i = 0; i < num_bins; ++i) {
+            const auto k = fidx * num_bins + i;
+            init_fun(res[k]);
+            for (int j = 0; j < index_size[k]; ++j) {
+                op_fun(res[k], grad_pairs[indexes[k][j]]);
+            }
+        }
+    });
+    /*for (size_t i = 0; i < total_bins; ++i) {
+        init_fun(res[i]);
+        for (int j = 0; j < index_size[i]; ++j) {
+            op_fun(res[i], grad_pairs[indexes[i][j]]);
+        }
+    }*/
+    sw.Stop();
+
+    return res;
 }
 
 //**************************************************PheKit Protect End**************************************************
@@ -461,6 +491,26 @@ void PheKit::negateInplaces(const Ciphertext *cts, const size_t size, const std:
     sw.Stop();
 }
 
+Ciphertext *PheKit::histogram(const Ciphertext *grad_pairs, int **indexes, const int *index_size,
+                              const int num_bins, int const num_features, const std::string &mark) {
+    return histogram<Ciphertext>(grad_pairs, indexes, index_size, num_bins, num_features,
+                                 [&](Ciphertext &res, const Ciphertext &grad_pair) {
+                                     addInplace(res, grad_pair);
+                                 }, [&](Ciphertext &res) {
+                                     res.copy_from(zero);
+                                 }, mark);
+}
+
+double *PheKit::histogram(const double *grad_pairs, int **indexes, const int *index_size,
+                          const int num_bins, const int num_features, const std::string &mark) {
+    return histogram<double>(grad_pairs, indexes, index_size, num_bins, num_features,
+                             [&](double &res, const double &grad_pair) {
+                                 res += grad_pair;
+                             }, [&](double &res) {
+                                 res = 0;
+                             }, mark);
+}
+
 void PheKit::prettyPrint(const uint8_t time_unit) const {
     sw.PrettyPrint(static_cast<TimeUnit>(time_unit));
 }
@@ -504,6 +554,37 @@ Ciphertext *bytes2Ciphers(const HeBuffer &buffers, const size_t size) {
         out[i].deserialize(yacl::ByteContainerView(buffers[i].data(), buffers[i].size()));
     });
     return out;
+}
+
+std::pair<int **, const int *> genIndexes(const int n, const int num_features, const int num_bins) {
+    std::mt19937 rng(std::random_device{}());
+    std::uniform_int_distribution dist(0, num_bins - 1);
+
+    const auto total_bins = num_features * num_bins;
+    auto indexes = new int *[total_bins];
+    auto index_size = new int[total_bins]{};
+
+    for (int j = 0; j < num_features; ++j) {
+        int flag[n];
+        for (int i = 0; i < n; ++i) {
+            flag[i] = dist(rng);
+            index_size[j * num_bins + flag[i]]++;
+        }
+
+        for (int i = 0; i < num_bins; ++i) {
+            const auto k = j * num_bins + i;
+            indexes[k] = new int[index_size[k]];
+            index_size[k] = 0;
+        }
+
+        for (int i = 0; i < n; ++i) {
+            const int k = j * num_bins + flag[i];
+            indexes[k][index_size[k]] = i;
+            index_size[k]++;
+        }
+    }
+
+    return std::pair{indexes, index_size};
 }
 
 //*****************************************************Global End*******************************************************

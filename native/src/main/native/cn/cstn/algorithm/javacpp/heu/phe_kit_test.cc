@@ -303,6 +303,38 @@ void batch_pair_op(const SchemaType &schema, const int len = 100000, const std::
     deleteCiphertexts(subCt);
 }
 
+void histogram(const SchemaType &schema, const int n = 100000, const int num_features = 1000, const int num_bins = 40) {
+    PheKit pheKit(schema);
+
+    std::mt19937 rng(std::random_device{}());
+    std::uniform_real_distribution dist(0.0, 100.01);
+    auto *grads = new double[n];
+    for (int i = 0; i < n; ++i) {
+        grads[i] = dist(rng);
+    }
+
+    const auto gradCts = pheKit.encrypts(grads, n);
+    const auto total_bins = num_bins * num_features;
+    auto [indexes, index_size] = genIndexes(n, num_features, num_bins);
+    const auto real = pheKit.histogram(grads, indexes, index_size, num_bins, num_features);
+    const auto resCts = pheKit.histogram(gradCts, indexes, index_size, num_bins, num_features);
+    const auto res = pheKit.decrypts(resCts, total_bins);
+    std::cout << "[histogram]: ";
+    for (int i = 0; i < total_bins; ++i) {
+        if (constexpr int freq = 5; i % (total_bins / freq) == 0) {
+            std::cout << "[" << real[i] << "," << res[i] << "] ";
+        }
+    }
+    std::cout << std::endl;
+
+    pheKit.prettyPrint();
+
+    delete [] indexes;
+    delete [] index_size;
+    deleteCiphertexts(gradCts);
+    //deleteCiphertexts(resCts);
+}
+
 TEST(phe_kit, ou_pub_key_t) {
     pub_key_t(SchemaType::OU);
 }
@@ -325,6 +357,10 @@ TEST(phe_kit, ou_pair_op) {
 
 TEST(phe_kit, ou_batch_pair_op) {
     batch_pair_op(SchemaType::OU);
+}
+
+TEST(phe_kit, ou_histogram) {
+    histogram(SchemaType::OU, 100000, 1000, 40);
 }
 
 TEST(phe_kit, elgamal_ed25519_pub_key_t) {
