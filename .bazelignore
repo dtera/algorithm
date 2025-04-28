@@ -1,5 +1,4 @@
 # ignore non-bazel module
-.clwb/
 .fleet/
 .github/
 .git/
