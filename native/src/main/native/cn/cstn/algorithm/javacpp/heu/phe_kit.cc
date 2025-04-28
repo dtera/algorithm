@@ -491,14 +491,41 @@ void PheKit::negateInplaces(const Ciphertext *cts, const size_t size, const std:
     sw.Stop();
 }
 
-Ciphertext *PheKit::histogram(const Ciphertext *grad_pairs, int **indexes, const int *index_size,
-                              const int num_bins, int const num_features, const std::string &mark) {
-    return histogram<Ciphertext>(grad_pairs, indexes, index_size, num_bins, num_features,
-                                 [&](Ciphertext &res, const Ciphertext &grad_pair) {
-                                     addInplace(res, grad_pair);
-                                 }, [&](Ciphertext &res) {
-                                     res.copy_from(zero);
-                                 }, mark);
+Ciphertext *PheKit::histogram(const Ciphertext *grad_pairs, int **indexes, const int *index_size, const int num_bins,
+                              int const num_features, const int num_procs,
+                              const std::function<void(int, const Ciphertext *)> &process_res,
+                              const std::string &mark) {
+    if (num_procs < 1) {
+        return histogram<Ciphertext>(grad_pairs, indexes, index_size, num_bins, num_features,
+                                     [&](Ciphertext &res, const Ciphertext &grad_pair) {
+                                         addInplace(res, grad_pair);
+                                     }, [&](Ciphertext &res) {
+                                         res.copy_from(zero);
+                                     }, mark);
+    }
+
+    sw.Mark(mark);
+    for (int i = 0; i < num_procs; ++i) {
+        if (const pid_t pid = fork(); pid == 0) {
+            const auto result = histogram<Ciphertext>(grad_pairs, indexes, index_size, num_bins,
+                                                      num_features / num_procs,
+                                                      [&](Ciphertext &res, const Ciphertext &grad_pair) {
+                                                          addInplace(res, grad_pair);
+                                                      }, [&](Ciphertext &res) {
+                                                          res.copy_from(zero);
+                                                      }, "");
+            if (process_res != nullptr) {
+                process_res(i, result);
+            }
+            exit(EXIT_SUCCESS);
+        }
+    }
+
+    for (int i = 0; i < num_procs; ++i) {
+        wait(nullptr);
+    }
+    sw.Stop();
+    return nullptr;
 }
 
 double *PheKit::histogram(const double *grad_pairs, int **indexes, const int *index_size,
@@ -527,6 +554,10 @@ void deleteCiphertext(const Ciphertext *ciphertext) {
 }
 
 void deleteCiphertexts(const Ciphertext *ciphertext) {
+    delete[] ciphertext;
+}
+
+void deleteCiphertexts(Ciphertext **ciphertext) {
     delete[] ciphertext;
 }
 

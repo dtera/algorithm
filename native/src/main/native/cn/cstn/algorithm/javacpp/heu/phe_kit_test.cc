@@ -317,6 +317,9 @@ void histogram(const SchemaType &schema, const int n = 100000, const int num_fea
     const auto total_bins = num_bins * num_features;
     auto [indexes, index_size] = genIndexes(n, num_features, num_bins);
     const auto real = pheKit.histogram(grads, indexes, index_size, num_bins, num_features);
+    const auto *cts = pheKit.histogram(gradCts, indexes, index_size, num_bins, num_features,
+                                       100, nullptr, "m_cipher_histogram");
+    deleteCiphertexts(cts);
     const auto resCts = pheKit.histogram(gradCts, indexes, index_size, num_bins, num_features);
     const auto res = pheKit.decrypts(resCts, total_bins);
     std::cout << "[histogram]: ";
@@ -332,7 +335,7 @@ void histogram(const SchemaType &schema, const int n = 100000, const int num_fea
     delete [] indexes;
     delete [] index_size;
     deleteCiphertexts(gradCts);
-    //deleteCiphertexts(resCts);
+    deleteCiphertexts(resCts);
 }
 
 TEST(phe_kit, ou_pub_key_t) {
@@ -360,7 +363,7 @@ TEST(phe_kit, ou_batch_pair_op) {
 }
 
 TEST(phe_kit, ou_histogram) {
-    histogram(SchemaType::OU, 100000, 1000, 40);
+    histogram(SchemaType::OU, 100000, 3000, 40);
 }
 
 TEST(phe_kit, elgamal_ed25519_pub_key_t) {

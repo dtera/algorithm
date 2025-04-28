@@ -219,7 +219,9 @@ public:
     void negateInplaces(const Ciphertext *cts, size_t size, const std::string &mark = "negateInplaces");
 
     Ciphertext *histogram(const Ciphertext *grad_pairs, int **indexes, const int *index_size, int num_bins,
-                          int num_features, const std::string &mark = "cipher_histogram");
+                          int num_features, int num_procs = 0,
+                          const std::function<void(int, const Ciphertext *)> &process_res = nullptr,
+                          const std::string &mark = "cipher_histogram");
 
     double *histogram(const double *grad_pairs, int **indexes, const int *index_size, int num_bins,
                       int num_features, const std::string &mark = "histogram");
@@ -235,6 +237,8 @@ void deletePheKit(const PheKit *pheKit);
 void deleteCiphertext(const Ciphertext *ciphertext);
 
 void deleteCiphertexts(const Ciphertext *ciphertext);
+
+void deleteCiphertexts(Ciphertext **ciphertext);
 
 std::string cipher2Bytes(const Ciphertext &ciphertext);
 
