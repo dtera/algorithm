@@ -4,3 +4,4 @@ transformers
 torch
 torchvision
 accelerate
+pulsar-client
