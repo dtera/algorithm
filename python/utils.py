@@ -65,6 +65,13 @@ def http_req(url: str, payload: dict = None, method: str = "get", api_key: str =
     return resp
 
 
+def download_url(url, save_path, chunk_size=128):
+    r = requests.get(url, stream=True)
+    with open(save_path, 'wb') as fd:
+        for chunk in r.iter_content(chunk_size=chunk_size):
+            fd.write(chunk)
+
+
 if __name__ == "__main__":
     print(is_empty('    '))
     print(is_empty(' aaa'))
