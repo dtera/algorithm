@@ -45,7 +45,7 @@ def http_req(url: str, payload: dict = None, method: str = "get", api_key: str =
         _headers.update(headers)
 
     tries = 0
-    resp = {"errcode": -1, 'errmsg': None, 'data': None}
+    resp = {"errcode": -1, "errmsg": "", "data": None}
     retry_interval = max(retry_interval, 5)
     while tries <= max_retry:
         tries += 1
