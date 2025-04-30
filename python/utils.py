@@ -34,8 +34,10 @@ def is_not_empty(a):
     return not is_empty(a)
 
 
+# noinspection PyBroadException
 def http_req(url: str, payload: dict = None, method: str = "get", api_key: str = None, headers: dict = None,
-             out_format: str = 'json', timeout: int = 300, max_retry=0, retry_interval=5, stream=False):
+             out_format: str = 'json', timeout: int = 300, max_retry=0, retry_interval=5, stream=False,
+             save_path=None, chunk_size=128):
     _headers = {
         "Content-Type": "application/json"
     }
@@ -48,20 +50,28 @@ def http_req(url: str, payload: dict = None, method: str = "get", api_key: str =
     resp = {"errcode": -1, "errmsg": "", "data": None}
     retry_interval = max(retry_interval, 5)
     while tries <= max_retry:
-        tries += 1
-        if tries > 1:
-            time.sleep(retry_interval)
-        response = requests.get(url, headers=_headers, timeout=timeout,
-                                stream=stream) if payload is None and method == "get" else (
-            requests.post(url, headers=_headers, json=payload, timeout=timeout, stream=stream))
-        if response.status_code == 200:
-            out_format = "raw" if stream else out_format
-            return response.json() if out_format == "json" else (response.text if out_format == "text" else response)
-        else:
-            logging.warning(f"ERROR status_code={response.status_code}: RESPONSE = {response.text}")
-            resp["errcode"] = response.status_code
-            resp["errmsg"] = response.reason
-            # raise ValueError(f"Error response with http_code={http_code}: RESPONSE = {response.text}.")
+        try:
+            tries += 1
+            if tries > 1:
+                time.sleep(retry_interval)
+            if save_path:
+                download_url(url, save_path, chunk_size=chunk_size)
+                return {"errcode": 200, "errmsg": "download sucess", "data": save_path}
+
+            response = requests.get(url, headers=_headers, timeout=timeout,
+                                    stream=stream) if payload is None and method == "get" else (
+                requests.post(url, headers=_headers, json=payload, timeout=timeout, stream=stream))
+            if response.status_code == 200:
+                out_format = "raw" if stream else out_format
+                return response.json() if out_format == "json" else (
+                    response.text if out_format == "text" else response)
+            else:
+                logging.warning(f"ERROR status_code={response.status_code}: RESPONSE = {response.text}")
+                resp["errcode"] = response.status_code
+                resp["errmsg"] = response.reason
+                # raise ValueError(f"Error response with http_code={http_code}: RESPONSE = {response.text}.")
+        except Exception:
+            pass
     return resp
 
 
