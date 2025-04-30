@@ -73,17 +73,19 @@ def get_books_by_grade(grade_id: str, semester_id: str, base_path: str):
                 # print(f"\t\t\t\t\t{b_id}@{b_assemble_name}: {zip_download_url}")
 
 
-def main(base_dir, multi_thread=True):
+def main(base_dir, filter_period=None, filter_grade=None, multi_thread=False):
     learning_periods, semester_list = find_learning_period_grade()
     threads = []
     for learning_period in learning_periods:
         p_id, p_name = learning_period["id"], learning_period["name"]
         # print(p_name)
-        if p_name == "小学":
+        if filter_period and filter_period(p_name):
             continue
         for grade in learning_period["gradeList"]:
             g_id, g_name = grade["id"], grade["name"]
             # print(f"\t{g_name}")
+            if filter_grade and filter_grade(g_name):
+                continue
             for semester in semester_list:
                 s_id, s_name = semester["id"], semester["name"]
                 # print(f"\t\t{s_name}")
@@ -100,7 +102,9 @@ def main(base_dir, multi_thread=True):
 
 if __name__ == "__main__":
     base_path = "/Users/zhaohuiqiang/Documents/api_tester/53banxue"
-    main(base_path, multi_thread=False)
+    main(base_path, filter_period=lambda p_name: p_name == "小学"
+         # , filter_grade=lambda g_name: g_name == "七年级" or g_name == "八年级"
+         )
     # zip_file_name, zip_download_url, _, _ = get_download_book_zip_info("1481578009605177346")
     # print(zip_file_name, zip_download_url)
     # zip_file_name, zip_download_url, _, _ = get_download_book_zip_info("1723228089669939201")
