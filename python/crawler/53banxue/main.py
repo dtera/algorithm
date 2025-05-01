@@ -18,7 +18,7 @@ def req_53banxue(path: str, payload: dict = None, base_url: str = "https://gatew
 ################################### 53banxue http api ########################################
 def find_learning_period_grade():
     resp = req_53banxue("home/findLearningPeriodGrade")
-    if resp and resp["code"] == "200":
+    if resp and "code" in resp and resp["code"] == "200":
         data = resp["data"]
         return data["learningPeriods"], data["semesterList"]
     return [], []
@@ -44,7 +44,7 @@ def get_download_book_zip_info(book_id: str):
         "packageId": ""
     }
     resp = req_53banxue("bs/getDownloadBookZipInfo", payload)
-    if resp and resp["code"] == "200":
+    if resp and "code" in resp and resp["code"] == "200":
         data = resp["data"]
         zip_download_url = data["zipDownloadUrl"]
         zip_file_name = re.search("([^/]+\\.zip)", zip_download_url).group(1) if zip_download_url else None
@@ -59,7 +59,7 @@ def e_book_list(book_id: str):
         "bookId": book_id
     }
     resp = req_53banxue("bs/eBookList", payload)
-    if resp and resp["code"] == "200":
+    if resp and "code" in resp and resp["code"] == "200":
         e_book_infos = resp["data"]["ebookInfos"]
         return [{
             "name": info["name"],
@@ -74,7 +74,7 @@ def e_book_detail(shelf_id: str):
         "shelf_id": shelf_id
     }
     resp = req_53banxue("ebook/book/detail", payload, base_url="https://res.53zaixian.com/api")
-    if resp and resp["code"] == "200":
+    if resp and "code" in resp and resp["code"] == "200":
         book = resp["data"]["book"]
         if type(book) != dict:
             return None, []
