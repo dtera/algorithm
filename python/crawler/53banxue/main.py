@@ -105,7 +105,7 @@ def download_ebook(book_id, save_dir):
             print(f"\tpage {i} is saved to {save_path}")
 
 
-def download_book(book_id, save_dir):
+def download_zip(book_id, save_dir):
     zip_file_name, zip_download_url, img_file_name, img_download_url = get_download_book_zip_info(book_id)
     if img_download_url:
         req_53banxue(img_download_url, save_path=f"{save_dir}/{img_file_name}")
@@ -132,7 +132,7 @@ def get_books_by_grade(grade_id: str, semester_id: str, base_path: str, only_ebo
                 # print(f"\t\t\t\t\t{b_id}@{b_assemble_name}: {zip_download_url}")
                 download_ebook(b_id, save_dir)
                 if not only_ebook:
-                    download_book(b_id, save_dir)
+                    download_zip(b_id, save_dir)
 
 
 def main(base_dir, filter_period=None, filter_grade=None, multi_thread=False, only_ebook=False):
