@@ -177,7 +177,7 @@ if __name__ == "__main__":
     if len(sys.argv) == 2 and sys.argv[1] == "test":
         api_test()
         exit(1)
-    base_dir = "/Users/zhaohuiqiang/Documents/api_tester/53banxue_ebook" if len(sys.argv) < 2 else sys.argv[1]
-    main(base_dir  # , filter_period=lambda p_name: p_name == "小学"
+    basedir = "/Users/zhaohuiqiang/Documents/api_tester/53banxue_ebook" if len(sys.argv) < 2 else sys.argv[1]
+    main(basedir  # , filter_period=lambda p_name: p_name == "小学"
          # , filter_grade=lambda g_name: g_name == "七年级" or g_name == "八年级"
-         , multi_thread=True, only_ebook=True)
+         , multi_thread=True, only_ebook=False)
