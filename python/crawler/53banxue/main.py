@@ -34,7 +34,13 @@ def recommend_book_page(grade_id: str, semester_id: str, subject_id: str = ""):
         # "size": 20
     }
     resp = req_53banxue("home/recommendBookPage", payload)
-    return resp["data"]["versionBooks" if subject_id else "subject"] if resp and "data" in resp else []
+    if resp and "code" in resp and resp["code"] == "200":
+        data = resp["data"]
+        if subject_id and "versionBooks" in data:
+            return data["versionBooks"]
+        if "subject" in data:
+            return data["subject"]
+    return []
 
 
 def get_download_book_zip_info(book_id: str):
