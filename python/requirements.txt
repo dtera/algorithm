@@ -5,3 +5,4 @@ torch
 torchvision
 accelerate
 pulsar-client
+img2pdf

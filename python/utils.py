@@ -1,9 +1,14 @@
 # coding:utf-8
 import json
 import logging
+import re
+
 import time
 
 import requests
+
+import os
+import img2pdf
 
 
 def read_line(f_name):
@@ -80,6 +85,14 @@ def download_url(url, save_path, chunk_size=128):
     with open(save_path, 'wb') as fd:
         for chunk in r.iter_content(chunk_size=chunk_size):
             fd.write(chunk)
+
+
+def imgs_to_pdf(img_dir, out_pdf_path=None, suffix=".jpg"):
+    img_dir = img_dir.rstrip("/")
+    if out_pdf_path is None:
+        out_pdf_path = os.path.join(img_dir, f"{re.sub(r".*/", "", img_dir)}.pdf")
+    with open(out_pdf_path, "wb") as f:
+        f.write(img2pdf.convert([f"{img_dir}/{i}" for i in os.listdir(img_dir) if i.endswith(suffix)]))
 
 
 if __name__ == "__main__":
