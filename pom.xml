@@ -30,10 +30,10 @@
 
         <junit.version>4.13.1</junit.version>
         <lombok.version>1.18.34</lombok.version>
-        <logback.version>1.4.12</logback.version>
+        <logback.version>1.5.16</logback.version>
         <commons.lang3.version>3.9</commons.lang3.version>
         <javatuples.version>1.2</javatuples.version>
-        <fastjson.version>2.0.41</fastjson.version>
+        <fastjson.version>2.0.57</fastjson.version>
         <jackson.annotations.version>2.11.0</jackson.annotations.version>
         <spring.context.version>6.2.0</spring.context.version>
         <javacpp.version>1.5.11</javacpp.version>
