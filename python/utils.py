@@ -19,10 +19,10 @@ def read_line(f_name):
 def print_time(f):
     def inner(*arg, **kwarg):
         s_time = time.time()
-        res = f(*arg, **kwarg)
+        result = f(*arg, **kwarg)
         e_time = time.time()
         print(f'{f.__name__}调用耗时：{e_time - s_time}秒')
-        return res
+        return result
 
     return inner
 
