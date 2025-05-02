@@ -318,7 +318,7 @@ void histogram(const SchemaType &schema, const int n = 100000, const int num_fea
     auto [indexes, index_size] = genIndexes(n, num_features, num_bins);
     const auto real = pheKit.histogram(grads, indexes, index_size, num_bins, num_features);
     const auto *cts = pheKit.histogram(gradCts, indexes, index_size, num_bins, num_features,
-                                       100, nullptr, "m_cipher_histogram");
+                                       nullptr, 100, "m_cipher_histogram");
     deleteCiphertexts(cts);
     const auto resCts = pheKit.histogram(gradCts, indexes, index_size, num_bins, num_features);
     const auto res = pheKit.decrypts(resCts, total_bins);

@@ -492,9 +492,8 @@ void PheKit::negateInplaces(const Ciphertext *cts, const size_t size, const std:
 }
 
 Ciphertext *PheKit::histogram(const Ciphertext *grad_pairs, int **indexes, const int *index_size, const int num_bins,
-                              int const num_features, const int num_procs,
-                              const std::function<void(int, const Ciphertext *)> &process_res,
-                              const std::string &mark) {
+                              int const num_features, const std::function<void(int, const Ciphertext *)> &process_res,
+                              const int num_procs, const std::string &mark) {
     if (num_procs < 1) {
         return histogram<Ciphertext>(grad_pairs, indexes, index_size, num_bins, num_features,
                                      [&](Ciphertext &res, const Ciphertext &grad_pair) {
@@ -526,6 +525,11 @@ Ciphertext *PheKit::histogram(const Ciphertext *grad_pairs, int **indexes, const
     }
     sw.Stop();
     return nullptr;
+}
+
+Ciphertext *PheKit::histogram(const Ciphertext *grad_pairs, int **indexes, const int *index_size, const int num_bins,
+                              int const num_features, const int num_procs, const std::string &mark) {
+  return  histogram(grad_pairs, indexes, index_size, num_bins, num_features, nullptr, num_procs, mark);
 }
 
 double *PheKit::histogram(const double *grad_pairs, int **indexes, const int *index_size,

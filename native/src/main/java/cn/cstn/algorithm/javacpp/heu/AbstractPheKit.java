@@ -167,7 +167,7 @@ public abstract class AbstractPheKit extends Pointer {
     int num_bins = indexes.length / num_features;
     int[] indexSize = Arrays.stream(indexes).mapToInt(v -> v.length).toArray();
     return pheKit.histogram(grads, new PointerPointer<IntPointer>(indexes), new IntPointer(indexSize),
-      num_bins, num_features, new BytePointer("cipher_histogram"));
+      num_bins, num_features, 0, new BytePointer("cipher_histogram"));
   }
 
   public void prettyPrint(TimeUnit tm) {
