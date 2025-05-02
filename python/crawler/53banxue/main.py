@@ -4,7 +4,7 @@ import sys
 import threading
 from pathlib import Path
 
-from python.utils import http_req
+from python.utils import http_req, imgs_to_pdf
 
 
 def req_53banxue(path: str, payload: dict = None, base_url: str = "https://gateway.53zaixian.com/resource-bs-api/res",
@@ -95,20 +95,29 @@ def e_book_detail(shelf_id: str):
 
 
 ################################### 53banxue parse ########################################
-def download_ebook(book_id, save_dir):
+# noinspection PyBroadException
+def download_ebook(book_id, save_dir, to_pdf=False):
     for book_info in e_book_list(book_id):
         book_name, book_pages = e_book_detail(book_info["shelf_id"])
         base_path = save_dir
         if book_name:
             base_path = f"{save_dir}/{book_name}"
             Path(base_path).mkdir(parents=True, exist_ok=True)
-            print(f"{book_name} is downloading...")
+            if not to_pdf:
+                print(f"{book_name} is downloading...")
         i = 0
-        for b_page in book_pages:
-            i += 1
-            save_path = f"{base_path}/{b_page["res_id"]}_{b_page["img_name"]}"
-            req_53banxue(b_page["img_thumb_url"], save_path=save_path)
-            print(f"\tpage {i} is saved to {save_path}")
+        if not to_pdf:
+            for b_page in book_pages:
+                i += 1
+                save_path = f"{base_path}/{b_page["res_id"]}_{b_page["img_name"]}"
+                req_53banxue(b_page["img_thumb_url"], save_path=save_path)
+                print(f"\tpage {i} is saved to {save_path}")
+        if book_name:
+            try:
+                imgs_to_pdf(base_path)
+                print(f" {book_name}.pdf is saved to {base_path}")
+            except Exception:
+                pass
 
 
 def download_zip(book_id, save_dir):
@@ -121,7 +130,7 @@ def download_zip(book_id, save_dir):
         print(f"{zip_file_name} is saved to {save_dir}")
 
 
-def get_books_by_grade(grade_id: str, semester_id: str, base_path: str, only_ebook=False):
+def get_books_by_grade(grade_id: str, semester_id: str, base_path: str, only_ebook=False, to_pdf=False):
     subjects = recommend_book_page(grade_id, semester_id)
     for subject in subjects:
         subject_id, subject_name = subject["id"], subject["name"]
@@ -136,12 +145,12 @@ def get_books_by_grade(grade_id: str, semester_id: str, base_path: str, only_ebo
             for book_info in book_infos:
                 b_id, b_assemble_name = book_info["id"], book_info["assembleName"]
                 # print(f"\t\t\t\t\t{b_id}@{b_assemble_name}: {zip_download_url}")
-                download_ebook(b_id, save_dir)
+                download_ebook(b_id, save_dir, to_pdf)
                 if not only_ebook:
                     download_zip(b_id, save_dir)
 
 
-def main(base_dir, filter_period=None, filter_grade=None, multi_thread=False, only_ebook=False):
+def main(base_dir, filter_period=None, filter_grade=None, multi_thread=False, only_ebook=False, to_pdf=False):
     learning_periods, semester_list = find_learning_period_grade()
     threads = []
     for learning_period in learning_periods:
@@ -159,9 +168,9 @@ def main(base_dir, filter_period=None, filter_grade=None, multi_thread=False, on
                 # print(f"\t\t{s_name}")
                 base_path = f"{base_dir}/{p_name}/{g_name}/{s_name}"
                 if not multi_thread:
-                    get_books_by_grade(g_id, s_id, base_path, only_ebook)
+                    get_books_by_grade(g_id, s_id, base_path, only_ebook, to_pdf)
                     continue
-                thread = threading.Thread(target=get_books_by_grade, args=(g_id, s_id, base_path, only_ebook))
+                thread = threading.Thread(target=get_books_by_grade, args=(g_id, s_id, base_path, only_ebook, to_pdf))
                 threads.append(thread)
                 thread.start()
     for thread in threads:
@@ -186,4 +195,4 @@ if __name__ == "__main__":
     basedir = "/Users/zhaohuiqiang/Documents/api_tester/53banxue_ebook" if len(sys.argv) < 2 else sys.argv[1]
     main(basedir  # , filter_period=lambda p_name: p_name == "小学"
          # , filter_grade=lambda g_name: g_name == "七年级" or g_name == "八年级"
-         , multi_thread=True, only_ebook=False)
+         , multi_thread=True, only_ebook=True, to_pdf=True)
