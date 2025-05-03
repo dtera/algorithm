@@ -87,12 +87,13 @@ def download_url(url, save_path, chunk_size=128):
             fd.write(chunk)
 
 
-def imgs_to_pdf(img_dir, out_pdf_path=None, suffix=".jpg"):
+def imgs_to_pdf(img_dir, out_pdf_path=None, suffix=".jpg", sort=True):
     img_dir = img_dir.rstrip("/")
     if out_pdf_path is None:
         out_pdf_path = os.path.join(img_dir, f"{re.sub(r".*/", "", img_dir)}.pdf")
     with open(out_pdf_path, "wb") as f:
-        f.write(img2pdf.convert([f"{img_dir}/{i}" for i in os.listdir(img_dir) if i.endswith(suffix)]))
+        imgs = [f"{img_dir}/{i}" for i in os.listdir(img_dir) if i.endswith(suffix)]
+        f.write(img2pdf.convert(sorted(imgs) if sort else imgs))
 
 
 if __name__ == "__main__":
