@@ -6,3 +6,4 @@ torchvision
 accelerate
 pulsar-client
 img2pdf
+pyspark
