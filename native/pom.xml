@@ -210,6 +210,7 @@
                         <includePath>${lib.external.dir}/com_dtera_gmp~/gmp/include</includePath>
                         <includePath>${lib.external.dir}/fmt~/_virtual_includes/fmt</includePath>
                         <includePath>${lib.external.dir}/libtommath~/libtommath/include</includePath>
+                        <includePath>${lib.external.dir}/openssl~/openssl/include</includePath>
                         <includePath>/usr/local/opt/libomp/include</includePath>
                     </includePaths>
                     <linkPaths>
