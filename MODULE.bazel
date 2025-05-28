@@ -22,7 +22,7 @@ bazel_dep(name = "spdlog", version = "1.14.1")
 
 # --registry=https://raw.githubusercontent.com/dtera/bazel-registry/main
 bazel_dep(name = "com_dtera_gmp", version = "6.3.0")
-bazel_dep(name = "com_dtera_heu", version = "0.5.1")
+bazel_dep(name = "com_dtera_heu", version = "0.6.0")
 bazel_dep(name = "com_dtera_libtommath", version = "20250114-42b3fb0")
 
 # test
