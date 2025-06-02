@@ -35,7 +35,7 @@
         <javatuples.version>1.2</javatuples.version>
         <fastjson.version>2.0.57</fastjson.version>
         <jackson.annotations.version>2.11.0</jackson.annotations.version>
-        <spring.context.version>6.2.0</spring.context.version>
+        <spring.context.version>6.2.7</spring.context.version>
         <javacpp.version>1.5.11</javacpp.version>
         <nativelib.loader.version>2.5.0</nativelib.loader.version>
         <protobuf.version>4.28.2</protobuf.version>
