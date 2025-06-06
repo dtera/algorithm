@@ -465,12 +465,67 @@ public class PheKitTest extends TestCase {
     batchPairOp(SchemaType.OU, 100000, CurveName.empty, false);
   }
 
-
   /**
    * Histogram Test For OU
    */
   public void testOUHistogram() {
     histogram(SchemaType.OU, 100000, 100, 40);
+  }
+
+  /**
+   * PubKey Test For ZPaillier
+   */
+  public void testZPaillierPubKey() {
+    pubKey(SchemaType.ZPaillier, CurveName.empty);
+  }
+
+  /**
+   * Cipher serial and deserialize Test For ZPaillier
+   */
+  public void testZPaillierCipherSerialDeserial() {
+    cipherSerialDeserialize(SchemaType.ZPaillier, CurveName.empty);
+  }
+
+  /**
+   * Ciphers serial and deserialize Test For ZPaillier
+   */
+  public void testZPaillierCiphersSerialDeserial() {
+    ciphersSerialDeserialize(SchemaType.ZPaillier, 10000, CurveName.empty);
+  }
+
+  /**
+   * Single Op Test For ZPaillier
+   */
+  public void testZPaillierSingleOp() {
+    singleOp(SchemaType.ZPaillier, CurveName.empty);
+  }
+
+  /**
+   * Batch Op Test For ZPaillier
+   */
+  public void testZPaillierBatchOp() {
+    batchOp(SchemaType.ZPaillier, 100000, CurveName.empty);
+  }
+
+  /**
+   * Single Pair Op Test For ZPaillier
+   */
+  public void testZPaillierSinglePairOp() {
+    singlePairOp(SchemaType.ZPaillier, CurveName.empty, false);
+  }
+
+  /**
+   * Batch Pair Op Test For ZPaillier
+   */
+  public void testZPaillierBatchPairOp() {
+    batchPairOp(SchemaType.ZPaillier, 100000, CurveName.empty, false);
+  }
+
+  /**
+   * Histogram Test For ZPaillier
+   */
+  public void testZPaillierHistogram() {
+    histogram(SchemaType.ZPaillier, 100000, 100, 40);
   }
 
   /**
