@@ -1,14 +1,18 @@
 # coding:utf-8
+import asyncio
 import json
 import logging
+import os
 import re
-
 import time
 
-import requests
-
-import os
 import img2pdf
+
+try:
+    import requests
+except ImportError:
+    pass
+import aiohttp
 
 
 def read_line(f_name):
@@ -28,7 +32,7 @@ def print_time(f):
 
 
 def json_format(s):
-    return json.dumps(s, sort_keys=True, indent=2)
+    return json.dumps(s, sort_keys=True, ensure_ascii=False, indent=2)
 
 
 def is_empty(a):
@@ -40,9 +44,21 @@ def is_not_empty(a):
 
 
 # noinspection PyBroadException
-def http_req(url: str, payload: dict = None, method: str = "get", api_key: str = None, headers: dict = None,
-             out_format: str = 'json', timeout: int = 300, max_retry=0, retry_interval=5, stream=False,
-             save_path=None, chunk_size=128):
+def download_url(url, save_path, chunk_size=128):
+    try:
+        r = requests.get(url, stream=True)
+        with open(save_path, 'wb') as fd:
+            for chunk in r.iter_content(chunk_size=chunk_size):
+                fd.write(chunk)
+        return True
+    except Exception:
+        return False
+
+
+# noinspection PyBroadException
+async def ahttp_req(url: str, payload: dict = None, method: str = "get", api_key: str = None, headers: dict = None,
+                    out_format: str = 'json', timeout: int = 300, max_retry=0, retry_interval=5, stream=False,
+                    save_path=None, chunk_size=128, aio_mode=True):
     _headers = {
         "Content-Type": "application/json"
     }
@@ -54,37 +70,48 @@ def http_req(url: str, payload: dict = None, method: str = "get", api_key: str =
     tries = 0
     resp = {"errcode": -1, "errmsg": "", "data": None}
     retry_interval = max(retry_interval, 5)
-    while tries <= max_retry:
-        try:
-            tries += 1
-            if tries > 1:
-                time.sleep(retry_interval)
-            if save_path:
-                download_url(url, save_path, chunk_size=chunk_size)
-                return {"errcode": 200, "errmsg": "download sucess", "data": save_path}
+    out_format = "raw" if stream else out_format
 
-            response = requests.get(url, headers=_headers, timeout=timeout,
-                                    stream=stream) if payload is None and method == "get" else (
-                requests.post(url, headers=_headers, json=payload, timeout=timeout, stream=stream))
-            if response.status_code == 200:
-                out_format = "raw" if stream else out_format
-                return response.json() if out_format == "json" else (
-                    response.text if out_format == "text" else response)
+    def requests_():
+        response = requests.get(url, headers=_headers, timeout=timeout,
+                                stream=stream) if payload is None and method == "get" else (
+            requests.post(url, headers=_headers, json=payload, timeout=timeout, stream=stream))
+        return response.status_code, response.json() if out_format == "json" else (
+            response.text if out_format == "text" else response)
+
+    async def aio_requests_():
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=_headers, timeout=timeout) if payload is None and method == "get" else (
+                    session.post(url, headers=_headers, json=payload, timeout=timeout)) as resp:
+                return resp.status, (await resp.json() if out_format == "json" else (
+                    resp.text() if out_format == "text" else resp))
+
+    while tries <= max_retry:
+        tries += 1
+        if tries > 1:
+            time.sleep(retry_interval)
+        if save_path:
+            if download_url(url, save_path, chunk_size=chunk_size):
+                return {"errcode": 200, "errmsg": "download sucess", "data": save_path}
             else:
-                logging.warning(f"ERROR status_code={response.status_code}: RESPONSE = {response.text}")
-                resp["errcode"] = response.status_code
-                resp["errmsg"] = response.reason
-                # raise ValueError(f"Error response with http_code={http_code}: RESPONSE = {response.text}.")
-        except Exception:
-            pass
+                continue
+        status_code, data = (await aio_requests_()) if aio_mode else requests_()
+        if status_code == 200:
+            return data
+        else:
+            logging.warning(f"ERROR status_code={response.status_code}: RESPONSE = {response.text}")
+            resp["errcode"] = response.status_code
+            resp["errmsg"] = response.reason
+            # raise ValueError(f"Error response with http_code={http_code}: RESPONSE = {response.text}.")
     return resp
 
 
-def download_url(url, save_path, chunk_size=128):
-    r = requests.get(url, stream=True)
-    with open(save_path, 'wb') as fd:
-        for chunk in r.iter_content(chunk_size=chunk_size):
-            fd.write(chunk)
+@print_time
+def http_req(url: str, payload: dict = None, method: str = "get", api_key: str = None, headers: dict = None,
+             out_format: str = 'json', timeout: int = 300, max_retry=0, retry_interval=5, stream=False,
+             save_path=None, chunk_size=128, aio_mode=True):
+    return asyncio.run(ahttp_req(url, payload, method, api_key, headers, out_format, timeout, max_retry, retry_interval,
+                                 stream, save_path, chunk_size, aio_mode))
 
 
 def imgs_to_pdf(img_dir, out_pdf_path=None, suffix=".jpg", sort=True):
