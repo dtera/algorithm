@@ -364,7 +364,7 @@
                 </executions>
             </plugin>
             <!-- GPG signed components: http://central.sonatype.org/pages/apache-maven.html#gpg-signed-components -->
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>3.1.0</version>
@@ -379,11 +379,11 @@
                 </executions>
                 <configuration>
                     <gpgArguments>
-                        <arg>--pinentry-mode</arg>
+                        <arg>&#45;&#45;pinentry-mode</arg>
                         <arg>loopback</arg>
                     </gpgArguments>
                 </configuration>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.3.0</version>
