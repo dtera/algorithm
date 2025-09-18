@@ -37,12 +37,12 @@ public class IsNumber {
                 {-1, -1, -1, -1, 9, -1},
         };
 
-        List<Integer> legalStates = new ArrayList<Integer>() {{
-            add(2);
-            add(4);
-            add(5);
-            add(8);
-            add(9);
+        List<Integer> legalStates = new ArrayList<>() {{
+          add(2);
+          add(4);
+          add(5);
+          add(8);
+          add(9);
         }};
 
         /*Map<String, Integer> columns = new HashMap<String, Integer>() {{
