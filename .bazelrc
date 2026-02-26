@@ -18,6 +18,7 @@ common --enable_bzlmod
 
 common --registry=https://bcr.bazel.build
 common --registry=https://baidu.github.io/babylon/registry
+common --registry=file://%workspace%/bazel-registry
 common --registry=https://raw.githubusercontent.com/dtera/bazel-registry/main
 
 build --verbose_failures
@@ -54,6 +55,8 @@ build:macos --action_env=PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bi
 build:macos --features=-supports_dynamic_linker
 build:macos --cxxopt -Wno-error=unused-const-variable
 build:macos --cxxopt -Wno-error=sign-compare  # for eigen 3.4
+build:macos --cxxopt -Wno-error=vla-cxx-extension  # for macOS 26 new clang
+build:macos --cxxopt -Wno-error=missing-template-arg-list-after-template-kw  # for macOS 26 new clang
 build:macos --macos_minimum_os=12.0
 
 # static link libstdc++ & libgcc
