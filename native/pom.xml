@@ -237,6 +237,7 @@
                     </environmentVariables>
                     <compilerOptions>
                         <compilerOption>-DENABLE_IPCL=false</compilerOption>
+                        <compilerOption>-Wno-missing-template-arg-list-after-template-kw</compilerOption>
                     </compilerOptions>
                 </configuration>
                 <executions>
