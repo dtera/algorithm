@@ -31,7 +31,7 @@
         <junit.version>4.13.1</junit.version>
         <lombok.version>1.18.34</lombok.version>
         <logback.version>1.5.16</logback.version>
-        <commons.lang3.version>3.9</commons.lang3.version>
+        <commons.lang3.version>3.18.0</commons.lang3.version>
         <javatuples.version>1.2</javatuples.version>
         <fastjson.version>2.0.57</fastjson.version>
         <jackson.annotations.version>2.11.0</jackson.annotations.version>
