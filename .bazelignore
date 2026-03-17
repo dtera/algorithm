@@ -17,4 +17,5 @@ security/
 shell/
 tests/
 tmp/
+agent-mcp/
 

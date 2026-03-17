@@ -17,6 +17,7 @@
         <module>offer</module>
         <!--<module>security</module>-->
         <module>tests</module>
+        <module>agent-mcp</module>
     </modules>
 
     <properties>
@@ -27,15 +28,18 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.release>21</maven.compiler.release>
+        <spring-boot.version>4.0.3</spring-boot.version>
+        <spring-ai.version>1.1.3</spring-ai.version>
+        <spring-ai-alibaba.version>1.1.2.2</spring-ai-alibaba.version>
 
         <junit.version>4.13.1</junit.version>
-        <lombok.version>1.18.34</lombok.version>
-        <logback.version>1.5.16</logback.version>
+        <lombok.version>1.18.38</lombok.version>
+        <logback.version>1.5.32</logback.version>
         <commons.lang3.version>3.9</commons.lang3.version>
         <javatuples.version>1.2</javatuples.version>
         <fastjson.version>2.0.57</fastjson.version>
-        <jackson.annotations.version>2.11.0</jackson.annotations.version>
-        <spring.context.version>6.2.0</spring.context.version>
+        <jackson.annotations.version>2.21</jackson.annotations.version>
+        <swagger.annotations.version>2.2.38</swagger.annotations.version>
         <javacpp.version>1.5.11</javacpp.version>
         <nativelib.loader.version>2.5.0</nativelib.loader.version>
         <protobuf.version>4.28.2</protobuf.version>
@@ -45,8 +49,52 @@
         <shell.ext>sh</shell.ext>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Boot BOM（替代继承 spring-boot-starter-parent） -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Spring AI BOM -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Spring AI Alibaba BOM -->
+            <dependency>
+                <groupId>com.alibaba.cloud.ai</groupId>
+                <artifactId>spring-ai-alibaba-bom</artifactId>
+                <version>${spring-ai-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
@@ -62,6 +110,11 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
                 <version>${logback.version}</version>
             </dependency>
             <dependency>
@@ -84,10 +137,11 @@
                 <artifactId>jackson-annotations</artifactId>
                 <version>${jackson.annotations.version}</version>
             </dependency>
+            <!-- 锁定 swagger-annotations-jakarta 版本，解决依赖收敛冲突 -->
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${spring.context.version}</version>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations-jakarta</artifactId>
+                <version>${swagger.annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.bytedeco</groupId>

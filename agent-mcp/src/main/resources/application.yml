@@ -1,0 +1,56 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: agent-mcp-server
+  autoconfigure:
+      exclude: org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
+
+
+  # MCP Server 配置
+  ai:
+    mcp:
+      server:
+        name: mysql-mcp-server
+        version: 1.0.0
+        type: SYNC
+        # 使用 Streamable-HTTP 协议（Spring AI 1.1.0+）
+        protocol: STREAMABLE
+        streamable-http:
+          # MCP 端点路径，客户端通过此路径连接
+          mcp-endpoint: /mcp
+        # 启用MCP服务器
+        enabled: true
+        # 服务器描述
+        description: "MySQL MCP Server with header-based authentication"
+
+# MCP 自定义配置
+mcp:
+  mysql:
+    # 是否开启只读模式（安全起见，默认只读）
+    read-only: true
+    # 查询结果最大行数
+    max-rows: 1000
+    # 查询超时时间（秒）
+    query-timeout: 300
+    # 允许的数据库列表（为空表示全部允许）
+    allowed-databases: []
+    # 禁止的表列表
+    blocked-tables: []
+    # headers配置
+    default-url: jdbc:mysql://127.0.0.1:3306/agent-mcp
+    default-username: root
+    default-password: root
+
+# Actuator配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      enabled: true
+    info:
+      enabled: true
