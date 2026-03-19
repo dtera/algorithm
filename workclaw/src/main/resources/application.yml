@@ -1,0 +1,32 @@
+server:
+  port: 8089
+
+spring:
+  application:
+    name: workclaw
+
+  # Spring AI 默认模型配置（通过 OpenAI 兼容协议调用 DashScope/通义千问）
+  ai:
+    openai:
+      api-key: ${DASHSCOPE_API_KEY}
+      base-url: https://dashscope.aliyuncs.com/compatible-mode
+      chat:
+        options:
+          model: qwen-plus
+          temperature: 0.7
+    # 禁用 MCP Client 的自动配置（我们手动管理 MCP 连接）
+    mcp:
+      client:
+        enabled: false
+
+# WorkClaw 配置
+workclaw:
+  # 配置文件持久化目录
+  config-dir: ./.workclaw
+
+# Actuator 配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
