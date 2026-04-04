@@ -506,8 +506,8 @@ onUnmounted(() => {
 
 /* 代码块 */
 .markdown-body :deep(pre) {
-  background: #0d1117;
-  border: 1px solid #30363d;
+  background: var(--code-bg, #0d1117);
+  border: 1px solid var(--code-border, #30363d);
   border-radius: 8px;
   padding: 16px;
   overflow-x: auto;
@@ -519,7 +519,7 @@ onUnmounted(() => {
   font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
   font-size: 13px;
   line-height: 1.6;
-  color: #c9d1d9;
+  color: var(--code-text, #c9d1d9);
   background: none;
   padding: 0;
   border: none;

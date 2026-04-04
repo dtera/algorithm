@@ -135,6 +135,9 @@ public class McpClientManager {
   private McpClientTransport createTransport(McpServerConfig config) {
     String type = config.getType() != null ? config.getType() : "sse";
     Map<String, String> headers = config.getHeaders();
+    
+    // 注意：DNS 解析问题已通过 NettyDnsConfig 的 JVM 系统属性配置解决
+    // MCP SDK 内部会使用配置好的 Netty DNS 解析器
 
     if ("streamable-http".equalsIgnoreCase(type)) {
       // 使用 Streamable HTTP 传输

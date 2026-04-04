@@ -7,6 +7,9 @@
         <button class="toggle-btn" @click="sidebarCollapsed = !sidebarCollapsed">
           {{ sidebarCollapsed ? '→' : '←' }}
         </button>
+        <button v-if="!sidebarCollapsed" class="theme-toggle" @click="toggleTheme" :title="isLightTheme ? '切换到暗色主题' : '切换到亮色主题'">
+          {{ isLightTheme ? '🌙' : '☀️' }}
+        </button>
       </div>
 
       <div v-if="!sidebarCollapsed" class="sidebar-content">
@@ -104,6 +107,7 @@ const currentSkillId = ref('default')
 const currentModelId = ref('')
 const conversationId = ref('')
 const chatViewRef = ref(null)
+const isLightTheme = ref(false) // 默认暗色主题
 
 const currentSkillName = computed(() => {
   const skill = skills.value.find(s => s.id === currentSkillId.value)
@@ -181,7 +185,25 @@ async function loadData() {
   }
 }
 
+function toggleTheme() {
+  isLightTheme.value = !isLightTheme.value
+  // 应用主题到html元素
+  if (isLightTheme.value) {
+    document.documentElement.classList.add('light-theme')
+  } else {
+    document.documentElement.classList.remove('light-theme')
+  }
+  // 保存主题偏好到localStorage
+  localStorage.setItem('theme', isLightTheme.value ? 'light' : 'dark')
+}
+
+// 初始化时检查保存的主题偏好
 onMounted(async () => {
+  const savedTheme = localStorage.getItem('theme')
+  if (savedTheme === 'light') {
+    isLightTheme.value = true
+    document.documentElement.classList.add('light-theme')
+  }
   await loadData()
   await loadConversationList()
 })
@@ -196,6 +218,7 @@ onMounted(async () => {
 }
 
 :root {
+  /* 暗色主题变量 (默认) */
   --bg-primary: #1a1a2e;
   --bg-secondary: #16213e;
   --bg-tertiary: #0f3460;
@@ -212,6 +235,32 @@ onMounted(async () => {
   --shadow: rgba(0, 0, 0, 0.3);
   --radius: 12px;
   --radius-sm: 8px;
+  /* 代码块暗色主题 */
+  --code-bg: #0d1117;
+  --code-border: #30363d;
+  --code-text: #c9d1d9;
+}
+
+:root.light-theme {
+  /* 亮色主题变量 */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --bg-card: #ffffff;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --accent: #6c63ff;
+  --accent-hover: #5a52d5;
+  --accent-light: rgba(108, 99, 255, 0.1);
+  --success: #28a745;
+  --danger: #dc3545;
+  --warning: #ffc107;
+  --border: #dee2e6;
+  --shadow: rgba(0, 0, 0, 0.1);
+  /* 代码块亮色主题 */
+  --code-bg: #f6f8fa;
+  --code-border: #e1e4e8;
+  --code-text: #24292e;
 }
 
 body {
@@ -219,12 +268,30 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   overflow: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .app {
   display: flex;
   height: 100vh;
   width: 100vw;
+}
+
+/* 主题切换按钮 */
+.theme-toggle {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+  background: var(--accent-light);
+  color: var(--accent);
 }
 
 /* ==================== 侧边栏 ==================== */

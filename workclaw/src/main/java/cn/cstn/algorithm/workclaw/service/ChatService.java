@@ -169,60 +169,58 @@ public class ChatService {
       if (!toolCallbacks.isEmpty()) {
         // === 有工具时：在异步线程中用 call() 完成工具调用，再逐字符推送给前端 ===
         log.info("检测到 {} 个 MCP 工具，使用非流式 call() 确保工具正确调用", toolCallbacks.size());
-        contentEvents = Flux.create(sink -> {
-          Thread.ofVirtual().name("mcp-call-" + conversationId).start(() -> {
-            try {
-              // 先发送一个"思考中"的提示
+        contentEvents = Flux.create(sink -> Thread.ofVirtual().name("mcp-call-" + conversationId).start(() -> {
+          try {
+            // 先发送一个"思考中"的提示
+            sink.next(ServerSentEvent.<String>builder()
+              .event("delta")
+              .data("🔧 正在调用工具，请稍候...\n\n")
+              .build());
+
+            String response = client.prompt()
+              .user(fullPrompt)
+              .advisors(advisor -> advisor.param("chat_memory_conversation_id", conversationId))
+              .call()
+              .content();
+
+            log.info("工具调用完成，响应长度: {}", response != null ? response.length() : 0);
+
+            if (response != null && !response.isEmpty()) {
+              // 先发送一个清除"思考中"提示的特殊事件
               sink.next(ServerSentEvent.<String>builder()
-                .event("delta")
-                .data("🔧 正在调用工具，请稍候...\n\n")
+                .event("clear")
+                .data("")
                 .build());
 
-              String response = client.prompt()
-                .user(fullPrompt)
-                .advisors(advisor -> advisor.param("chat_memory_conversation_id", conversationId))
-                .call()
-                .content();
-
-              log.info("工具调用完成，响应长度: {}", response != null ? response.length() : 0);
-
-              if (response != null && !response.isEmpty()) {
-                // 先发送一个清除"思考中"提示的特殊事件
+              // 逐字符推送，模拟真正的流式效果
+              int chunkSize = 8; // 每次推送 8 个字符
+              for (int i = 0; i < response.length(); i += chunkSize) {
+                String chunk = response.substring(i, Math.min(i + chunkSize, response.length()));
                 sink.next(ServerSentEvent.<String>builder()
-                  .event("clear")
-                  .data("")
+                  .event("delta")
+                  .data(chunk)
                   .build());
-
-                // 逐字符推送，模拟真正的流式效果
-                int chunkSize = 8; // 每次推送 8 个字符
-                for (int i = 0; i < response.length(); i += chunkSize) {
-                  String chunk = response.substring(i, Math.min(i + chunkSize, response.length()));
-                  sink.next(ServerSentEvent.<String>builder()
-                    .event("delta")
-                    .data(chunk)
-                    .build());
-                  // 每块之间短暂停顿，让前端有时间渲染
-                  try { Thread.sleep(10); } catch (InterruptedException ignored) {}
-                }
+                // 每块之间短暂停顿，让前端有时间渲染
+                try { Thread.sleep(10); } catch (InterruptedException ignored) {}
               }
-
-              // 保存会话记忆
-              history.add(new ChatMessage("user", request.getMessage()));
-              history.add(new ChatMessage("assistant", response != null ? response : ""));
-              trimHistory(history);
-              saveConversations();
-
-              sink.complete();
-            } catch (Exception e) {
-              log.error("工具调用过程异常", e);
-              sink.next(ServerSentEvent.<String>builder()
-                .event("error")
-                .data(e.getMessage() != null ? e.getMessage() : "工具调用失败")
-                .build());
-              sink.complete();
             }
-          });
-        });
+
+            // 保存会话记忆
+            history.add(new ChatMessage("user", request.getMessage()));
+            history.add(new ChatMessage("assistant", response != null ? response : ""));
+            trimHistory(history);
+            saveConversations();
+
+            sink.complete();
+          } catch (Exception e) {
+            log.error("工具调用过程异常", e);
+            sink.next(ServerSentEvent.<String>builder()
+              .event("error")
+              .data(e.getMessage() != null ? e.getMessage() : "工具调用失败")
+              .build());
+            sink.complete();
+          }
+        }));
       } else {
         // === 无工具时：使用原生流式输出 ===
         StringBuilder fullResponse = new StringBuilder();
@@ -347,7 +345,10 @@ public class ChatService {
     }
 
     // 配置自定义 RestClient，设置更长的超时时间（MCP 工具调用涉及多轮交互，耗时较长）
-    ReactorClientHttpRequestFactory requestFactory = new ReactorClientHttpRequestFactory();
+    // 使用配置好的 HttpClient，避免 macOS 上的 UDP DNS 解析问题
+    ReactorClientHttpRequestFactory requestFactory = new ReactorClientHttpRequestFactory(
+      cn.cstn.algorithm.workclaw.config.NettyDnsConfig.createHttpClient()
+    );
     requestFactory.setReadTimeout(Duration.ofMinutes(5));
     requestFactory.setConnectTimeout(Duration.ofSeconds(30));
 
