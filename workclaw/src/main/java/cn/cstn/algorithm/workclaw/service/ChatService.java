@@ -81,45 +81,28 @@ public class ChatService {
    * 非流式聊天
    */
   public ChatResponse chat(ChatRequest request) {
-    String conversationId = resolveConversationId(request.getConversationId());
-    String skillId = request.getSkillId() != null ? request.getSkillId() : "default";
-
-    SkillConfig skill = configService.getSkill(skillId)
-      .orElseThrow(() -> new IllegalArgumentException("Skill 不存在: " + skillId));
-
-    List<ToolCallback> toolCallbacks = mcpClientManager.getToolCallbacksForSkill(skillId);
-    List<ChatMessage> history = conversationMemory.computeIfAbsent(conversationId, k -> new ArrayList<>());
-    ChatModel chatModel = resolveModel(request.getModelId());
-
-    ChatClient.Builder clientBuilder = ChatClient.builder(chatModel);
-    if (skill.getSystemPrompt() != null && !skill.getSystemPrompt().isBlank()) {
-      clientBuilder.defaultSystem(skill.getSystemPrompt());
-    }
-    if (!toolCallbacks.isEmpty()) {
-      clientBuilder.defaultToolCallbacks(toolCallbacks.toArray(new ToolCallback[0]));
-    }
-
-    ChatClient client = clientBuilder.build();
+    ChatContext ctx = prepareChatContext(request);
+    ChatClient client = buildChatClient(ctx);
 
     // 构建包含历史消息的用户 prompt
-    String fullPrompt = buildPromptWithHistory(history, request.getMessage());
+    String fullPrompt = buildPromptWithHistory(ctx.history(), request.getMessage());
 
     String response = client.prompt()
       .user(fullPrompt)
-      .advisors(advisor -> advisor.param("chat_memory_conversation_id", conversationId))
+      .advisors(advisor -> advisor.param("chat_memory_conversation_id", ctx.conversationId()))
       .call()
       .content();
 
     // 保存到会话记忆
-    history.add(new ChatMessage("user", request.getMessage()));
-    history.add(new ChatMessage("assistant", response));
-    trimHistory(history);
+    ctx.history().add(new ChatMessage("user", request.getMessage()));
+    ctx.history().add(new ChatMessage("assistant", response));
+    trimHistory(ctx.history());
     saveConversations();
 
     return ChatResponse.builder()
       .content(response)
-      .conversationId(conversationId)
-      .skillId(skillId)
+      .conversationId(ctx.conversationId())
+      .skillId(ctx.skillId())
       .build();
   }
 
@@ -132,44 +115,28 @@ public class ChatService {
    */
   public Flux<ServerSentEvent<String>> chatStreamSSE(ChatRequest request) {
     return Flux.defer(() -> {
-      String conversationId = resolveConversationId(request.getConversationId());
-      String skillId = request.getSkillId() != null ? request.getSkillId() : "default";
+      ChatContext ctx = prepareChatContext(request);
+      ChatClient client = buildChatClient(ctx);
 
-      SkillConfig skill = configService.getSkill(skillId)
-        .orElseThrow(() -> new IllegalArgumentException("Skill 不存在: " + skillId));
-
-      List<ToolCallback> toolCallbacks = mcpClientManager.getToolCallbacksForSkill(skillId);
-      List<ChatMessage> history = conversationMemory.computeIfAbsent(conversationId, k -> new ArrayList<>());
-      ChatModel chatModel = resolveModel(request.getModelId());
-
-      log.info("流式聊天: skill={}, 工具数={}, model={}", skillId, toolCallbacks.size(),
+      log.info("流式聊天: skill={}, 工具数={}, model={}", ctx.skillId(), ctx.toolCallbacks().size(),
         request.getModelId() != null ? request.getModelId() : "default");
 
-      ChatClient.Builder clientBuilder = ChatClient.builder(chatModel);
-      if (skill.getSystemPrompt() != null && !skill.getSystemPrompt().isBlank()) {
-        clientBuilder.defaultSystem(skill.getSystemPrompt());
-      }
-      if (!toolCallbacks.isEmpty()) {
-        clientBuilder.defaultToolCallbacks(toolCallbacks.toArray(new ToolCallback[0]));
-      }
-
-      ChatClient client = clientBuilder.build();
-      String fullPrompt = buildPromptWithHistory(history, request.getMessage());
+      String fullPrompt = buildPromptWithHistory(ctx.history(), request.getMessage());
 
       // 1. 先发送 meta 事件（包含 conversationId）
       Flux<ServerSentEvent<String>> metaEvent = Flux.just(
         ServerSentEvent.<String>builder()
           .event("meta")
-          .data("{\"conversationId\":\"" + conversationId + "\"}")
+          .data("{\"conversationId\":\"" + ctx.conversationId() + "\"}")
           .build()
       );
 
       Flux<ServerSentEvent<String>> contentEvents;
 
-      if (!toolCallbacks.isEmpty()) {
+      if (!ctx.toolCallbacks().isEmpty()) {
         // === 有工具时：在异步线程中用 call() 完成工具调用，再逐字符推送给前端 ===
-        log.info("检测到 {} 个 MCP 工具，使用非流式 call() 确保工具正确调用", toolCallbacks.size());
-        contentEvents = Flux.create(sink -> Thread.ofVirtual().name("mcp-call-" + conversationId).start(() -> {
+        log.info("检测到 {} 个 MCP 工具，使用非流式 call() 确保工具正确调用", ctx.toolCallbacks().size());
+        contentEvents = Flux.create(sink -> Thread.ofVirtual().name("mcp-call-" + ctx.conversationId()).start(() -> {
           try {
             // 先发送一个"思考中"的提示
             sink.next(ServerSentEvent.<String>builder()
@@ -179,7 +146,7 @@ public class ChatService {
 
             String response = client.prompt()
               .user(fullPrompt)
-              .advisors(advisor -> advisor.param("chat_memory_conversation_id", conversationId))
+              .advisors(advisor -> advisor.param("chat_memory_conversation_id", ctx.conversationId()))
               .call()
               .content();
 
@@ -206,9 +173,9 @@ public class ChatService {
             }
 
             // 保存会话记忆
-            history.add(new ChatMessage("user", request.getMessage()));
-            history.add(new ChatMessage("assistant", response != null ? response : ""));
-            trimHistory(history);
+            ctx.history().add(new ChatMessage("user", request.getMessage()));
+            ctx.history().add(new ChatMessage("assistant", response != null ? response : ""));
+            trimHistory(ctx.history());
             saveConversations();
 
             sink.complete();
@@ -226,7 +193,7 @@ public class ChatService {
         StringBuilder fullResponse = new StringBuilder();
         contentEvents = client.prompt()
           .user(fullPrompt)
-          .advisors(advisor -> advisor.param("chat_memory_conversation_id", conversationId))
+          .advisors(advisor -> advisor.param("chat_memory_conversation_id", ctx.conversationId()))
           .stream()
           .content()
           .map(chunk -> {
@@ -237,9 +204,9 @@ public class ChatService {
               .build();
           })
           .doOnComplete(() -> {
-            history.add(new ChatMessage("user", request.getMessage()));
-            history.add(new ChatMessage("assistant", fullResponse.toString()));
-            trimHistory(history);
+            ctx.history().add(new ChatMessage("user", request.getMessage()));
+            ctx.history().add(new ChatMessage("assistant", fullResponse.toString()));
+            trimHistory(ctx.history());
             saveConversations();
           });
       }
@@ -312,13 +279,6 @@ public class ChatService {
   public void clearConversation(String conversationId) {
     conversationMemory.remove(conversationId);
     saveConversations();
-  }
-
-  /**
-   * 获取所有会话 ID 列表
-   */
-  public Set<String> listConversations() {
-    return conversationMemory.keySet();
   }
 
   /**
@@ -456,6 +416,50 @@ public class ChatService {
   }
 
   record ChatMessage(String role, String content) {
+  }
+
+  /**
+   * 聊天上下文，封装了聊天所需的公共数据
+   */
+  private record ChatContext(
+    String conversationId,
+    String skillId,
+    SkillConfig skill,
+    List<ToolCallback> toolCallbacks,
+    List<ChatMessage> history,
+    ChatModel chatModel
+  ) {
+  }
+
+  /**
+   * 准备聊天上下文（提取公共逻辑）
+   */
+  private ChatContext prepareChatContext(ChatRequest request) {
+    String conversationId = resolveConversationId(request.getConversationId());
+    String skillId = request.getSkillId() != null ? request.getSkillId() : "default";
+
+    SkillConfig skill = configService.getSkill(skillId)
+      .orElseThrow(() -> new IllegalArgumentException("Skill 不存在: " + skillId));
+
+    List<ToolCallback> toolCallbacks = mcpClientManager.getToolCallbacksForSkill(skillId);
+    List<ChatMessage> history = conversationMemory.computeIfAbsent(conversationId, k -> new ArrayList<>());
+    ChatModel chatModel = resolveModel(request.getModelId());
+
+    return new ChatContext(conversationId, skillId, skill, toolCallbacks, history, chatModel);
+  }
+
+  /**
+   * 构建 ChatClient（提取公共逻辑）
+   */
+  private ChatClient buildChatClient(ChatContext ctx) {
+    ChatClient.Builder clientBuilder = ChatClient.builder(ctx.chatModel());
+    if (ctx.skill().getSystemPrompt() != null && !ctx.skill().getSystemPrompt().isBlank()) {
+      clientBuilder.defaultSystem(ctx.skill().getSystemPrompt());
+    }
+    if (!ctx.toolCallbacks().isEmpty()) {
+      clientBuilder.defaultToolCallbacks(ctx.toolCallbacks().toArray(new ToolCallback[0]));
+    }
+    return clientBuilder.build();
   }
 
 }

@@ -145,14 +145,6 @@ public class ConfigService {
     return Optional.ofNullable(models.get(id));
   }
 
-  /**
-   * 获取默认模型配置
-   */
-  public Optional<ModelConfig> getDefaultModel() {
-    // 优先返回第一个启用的模型
-    return models.values().stream().filter(ModelConfig::isEnabled).findFirst();
-  }
-
   public ModelConfig saveModel(ModelConfig model) {
     if (model.getId() == null || model.getId().isBlank()) {
       model.setId(UUID.randomUUID().toString().replace("-", "").substring(0, 12));
@@ -162,13 +154,11 @@ public class ConfigService {
     return model;
   }
 
-  public boolean deleteModel(String id) {
+  public void deleteModel(String id) {
     ModelConfig removed = models.remove(id);
     if (removed != null) {
       saveModels();
-      return true;
     }
-    return false;
   }
 
   /**
