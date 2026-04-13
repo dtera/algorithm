@@ -5,6 +5,26 @@ const api = axios.create({
   timeout: 60000
 })
 
+// 响应拦截器：自动解包 ApiResult {code, message, data}
+api.interceptors.response.use(
+  (response) => {
+    const result = response.data
+    // 如果后端返回 ApiResult 格式，解包 data
+    if (result && typeof result === 'object' && 'code' in result && 'data' in result) {
+      if (result.code === 200) {
+        return result.data
+      } else {
+        return Promise.reject(new Error(result.message || '请求失败'))
+      }
+    }
+    // 非 ApiResult 格式，直接返回
+    return result
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
+
 // ==================== Chat API ====================
 
 export function chat(data) {
@@ -195,20 +215,21 @@ export function listModels() {
   return api.get('/models')
 }
 
-export function getModel(id) {
-  return api.get(`/models/${id}`)
-}
+// ==================== 便捷函数别名 ====================
 
-export function saveModel(model) {
-  return api.post('/models', model)
-}
-
-export function updateModel(id, model) {
-  return api.put(`/models/${id}`, model)
-}
-
-export function deleteModel(id) {
-  return api.delete(`/models/${id}`)
+export const getSkills = listSkills
+export const createSkill = saveSkill
+export const getConversations = listConversations
+export const getConversation = getConversationMessages
+export const deleteConversation = clearConversation
+export const getMcpServers = listMcpServers
+export const createMcpServer = saveMcpServer
+export const getModels = listModels
+export const testMcpServerConnection = (data) => {
+  // 如果传入的是已有 id，使用原接口；否则先创建再测试
+  if (data.id) return testMcpConnection(data.id)
+  // 新建时先测试 URL 连通性
+  return api.post('/mcp-servers/test', data)
 }
 
 export default api

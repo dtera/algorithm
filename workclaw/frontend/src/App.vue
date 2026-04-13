@@ -1,519 +1,155 @@
 <template>
-  <div class="app">
-    <!-- 侧边栏 -->
-    <aside class="sidebar" :class="{ collapsed: sidebarCollapsed }">
-      <div class="sidebar-header">
-        <h1 v-if="!sidebarCollapsed" class="logo">🐾 WorkClaw</h1>
-        <button class="toggle-btn" @click="sidebarCollapsed = !sidebarCollapsed">
-          {{ sidebarCollapsed ? '→' : '←' }}
-        </button>
-        <button v-if="!sidebarCollapsed" class="theme-toggle" @click="toggleTheme" :title="isLightTheme ? '切换到暗色主题' : '切换到亮色主题'">
-          {{ isLightTheme ? '🌙' : '☀️' }}
-        </button>
+  <div class="flex h-svh w-full overflow-hidden bg-background text-foreground">
+    <!-- Sidebar -->
+    <AppSidebar
+      :conversations="conversations"
+      :skills="skills"
+      :current-skill-id="currentSkillId"
+      :conversation-id="currentConversationId"
+      :current-route="currentRouteName"
+      :open="sidebarOpen"
+      @new-conversation="handleNewConversation"
+      @select-conversation="handleSelectConversation"
+      @delete-conversation="handleDeleteConversation"
+      @select-skill="handleSelectSkill"
+      @toggle="toggleSidebar"
+    />
+
+    <!-- 主内容区 (SidebarInset) -->
+    <main class="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <!-- 统一 Header (与 cowork-fe 一致) -->
+      <header class="relative flex h-14 shrink-0 items-center gap-2 border-b border-border/50 px-4">
+        <Button variant="ghost" size="icon" class="-ml-1 size-8" @click="toggleSidebar">
+          <PanelLeft class="size-4" />
+        </Button>
+        <div class="ml-auto flex items-center gap-2">
+          <span class="text-xs text-muted-foreground">{{ currentSkillName }}</span>
+        </div>
+      </header>
+
+      <!-- 内容区 -->
+      <div class="min-h-0 flex-1 overflow-hidden">
+        <router-view
+          :skill-id="currentSkillId"
+          :skill-name="currentSkillName"
+          :conversation-id="currentConversationId"
+          :models="models"
+          :model-id="selectedModelId"
+          @update:conversation-id="handleUpdateConversationId"
+          @update:model-id="handleUpdateModelId"
+          @conversation-updated="handleConversationUpdated"
+        />
       </div>
-
-      <div v-if="!sidebarCollapsed" class="sidebar-content">
-        <!-- 新建对话 -->
-        <button class="new-chat-btn" @click="newConversation">
-          ✨ 新建对话
-        </button>
-
-        <!-- 历史会话列表 -->
-        <div class="section" v-if="conversations.length > 0">
-          <div class="section-title">💬 历史会话</div>
-          <div
-            v-for="conv in conversations"
-            :key="conv.id"
-            class="conv-item"
-            :class="{ active: conversationId === conv.id }"
-            @click="selectConversation(conv)"
-          >
-            <span class="conv-title">{{ conv.title }}</span>
-            <button class="conv-delete" @click.stop="deleteConversation(conv.id)" title="删除会话">×</button>
-          </div>
-        </div>
-
-        <!-- Skill 选择 -->
-        <div class="section">
-          <div class="section-title">🎯 技能 (Skill)</div>
-          <div
-            v-for="skill in skills"
-            :key="skill.id"
-            class="skill-item"
-            :class="{ active: currentSkillId === skill.id }"
-            @click="selectSkill(skill.id)"
-          >
-            <span class="skill-name">{{ skill.name }}</span>
-            <span v-if="skill.mcpServerIds?.length" class="badge">{{ skill.mcpServerIds.length }} MCP</span>
-          </div>
-        </div>
-
-        <!-- 导航 -->
-        <div class="section nav-section">
-          <button class="nav-btn" :class="{ active: currentView === 'chat' }" @click="currentView = 'chat'">
-            💬 对话
-          </button>
-          <button class="nav-btn" :class="{ active: currentView === 'skills' }" @click="currentView = 'skills'">
-            ⚙️ 技能配置
-          </button>
-          <button class="nav-btn" :class="{ active: currentView === 'mcp' }" @click="currentView = 'mcp'">
-            🔌 MCP 配置
-          </button>
-        </div>
-      </div>
-    </aside>
-
-    <!-- 主内容区 -->
-    <main class="main-content">
-      <ChatView
-        v-if="currentView === 'chat'"
-        ref="chatViewRef"
-        :skill-id="currentSkillId"
-        :skill-name="currentSkillName"
-        :conversation-id="conversationId"
-        :models="models"
-        :model-id="currentModelId"
-        @update:conversation-id="onConversationIdChange"
-        @update:model-id="currentModelId = $event"
-        @conversationUpdated="loadConversationList"
-      />
-      <SkillConfigView
-        v-if="currentView === 'skills'"
-        :mcp-servers="mcpServers"
-        @refresh="loadData"
-      />
-      <McpConfigView
-        v-if="currentView === 'mcp'"
-        @refresh="loadData"
-      />
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
-import { listSkills, listMcpServers, listModels, listConversations, getConversationMessages, clearConversation } from './api.js'
-import ChatView from './components/ChatView.vue'
-import SkillConfigView from './components/SkillConfigView.vue'
-import McpConfigView from './components/McpConfigView.vue'
+import { ref, onMounted, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import AppSidebar from '@/components/app-sidebar.vue'
+import Button from '@/components/ui/button.vue'
+import { PanelLeft, Loader2 } from 'lucide-vue-next'
+import { getSkills, getConversations, getConversation, getModels, clearConversation } from '@/api.js'
 
-const currentView = ref('chat')
-const sidebarCollapsed = ref(false)
+const router = useRouter()
+const route = useRoute()
+
+// ==================== 全局状态 ====================
 const skills = ref([])
-const mcpServers = ref([])
-const models = ref([])
 const conversations = ref([])
 const currentSkillId = ref('default')
-const currentModelId = ref('')
-const conversationId = ref('')
-const chatViewRef = ref(null)
-const isLightTheme = ref(false) // 默认暗色主题
+const currentConversationId = ref('')
+const models = ref([])
+const selectedModelId = ref('')
+const sidebarOpen = ref(true)
 
-const currentSkillName = computed(() => {
-  const skill = skills.value.find(s => s.id === currentSkillId.value)
-  return skill ? skill.name : '默认助手'
+const currentSkill = computed(() => {
+  return skills.value.find(s => s.id === currentSkillId.value) || { id: 'default', name: '默认助手' }
 })
 
-function selectSkill(id) {
-  currentSkillId.value = id
-  currentView.value = 'chat'
-}
+const currentSkillName = computed(() => currentSkill.value.name)
+const currentRouteName = computed(() => route.name || 'chat')
 
-function newConversation() {
-  conversationId.value = ''
-  currentView.value = 'chat'
-  // ChatView 会因 conversationId 变化自动清空消息
-}
-
-function onConversationIdChange(newId) {
-  conversationId.value = newId
-}
-
-async function selectConversation(conv) {
-  conversationId.value = conv.id
-  currentView.value = 'chat'
-  // 加载会话历史消息
+// ==================== 数据加载 ====================
+async function loadSkills() {
   try {
-    const res = await getConversationMessages(conv.id)
-    const msgs = res.data.data || []
-    await nextTick()
-    if (chatViewRef.value) {
-      chatViewRef.value.loadMessages(msgs)
-    }
+    const data = await getSkills()
+    skills.value = data || []
   } catch (e) {
-    console.error('加载会话消息失败:', e)
+    console.error('加载技能失败:', e)
   }
 }
 
-async function deleteConversation(id) {
+async function loadConversations() {
   try {
-    await clearConversation(id)
-    conversations.value = conversations.value.filter(c => c.id !== id)
-    if (conversationId.value === id) {
-      conversationId.value = ''
-    }
-  } catch (e) {
-    console.error('删除会话失败:', e)
-  }
-}
-
-async function loadConversationList() {
-  try {
-    const res = await listConversations()
-    conversations.value = res.data.data || []
+    const data = await getConversations()
+    conversations.value = data || []
   } catch (e) {
     console.error('加载会话列表失败:', e)
   }
 }
 
-async function loadData() {
+async function loadModels() {
   try {
-    const [skillsRes, mcpRes, modelsRes] = await Promise.all([
-      listSkills(),
-      listMcpServers(),
-      listModels()
-    ])
-    skills.value = skillsRes.data.data || []
-    mcpServers.value = mcpRes.data.data || []
-    models.value = modelsRes.data.data || []
-    if (!currentModelId.value && models.value.length > 0) {
-      const first = models.value.find(m => m.enabled)
-      if (first) currentModelId.value = first.id
-    }
+    const data = await getModels()
+    models.value = data || []
   } catch (e) {
-    console.error('加载配置失败:', e)
+    console.error('加载模型列表失败:', e)
   }
 }
 
-function toggleTheme() {
-  isLightTheme.value = !isLightTheme.value
-  // 应用主题到html元素
-  if (isLightTheme.value) {
-    document.documentElement.classList.add('light-theme')
-  } else {
-    document.documentElement.classList.remove('light-theme')
-  }
-  // 保存主题偏好到localStorage
-  localStorage.setItem('theme', isLightTheme.value ? 'light' : 'dark')
-}
-
-// 初始化时检查保存的主题偏好
-onMounted(async () => {
-  const savedTheme = localStorage.getItem('theme')
-  if (savedTheme === 'light') {
-    isLightTheme.value = true
-    document.documentElement.classList.add('light-theme')
-  }
-  await loadData()
-  await loadConversationList()
+onMounted(() => {
+  loadSkills()
+  loadConversations()
+  loadModels()
 })
+
+// ==================== 事件处理 ====================
+function handleNewConversation() {
+  currentConversationId.value = ''
+  router.push('/chat')
+}
+
+async function handleSelectConversation(conv) {
+  currentConversationId.value = conv.id
+  currentSkillId.value = conv.skillId || 'default'
+  if (route.path !== '/chat') {
+    router.push('/chat')
+  }
+}
+
+async function handleDeleteConversation(id) {
+  try {
+    await clearConversation(id)
+    if (currentConversationId.value === id) {
+      currentConversationId.value = ''
+    }
+    await loadConversations()
+  } catch (e) {
+    console.error('删除会话失败:', e)
+  }
+}
+
+function handleSelectSkill(id) {
+  currentSkillId.value = id
+  currentConversationId.value = ''
+  router.push('/chat')
+}
+
+async function handleConversationUpdated() {
+  await loadConversations()
+}
+
+function handleUpdateConversationId(id) {
+  currentConversationId.value = id
+}
+
+function handleUpdateModelId(id) {
+  selectedModelId.value = id
+}
+
+function toggleSidebar() {
+  sidebarOpen.value = !sidebarOpen.value
+}
 </script>
-
-<style>
-/* ==================== 全局样式 ==================== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-:root {
-  /* 暗色主题变量 (默认) */
-  --bg-primary: #1a1a2e;
-  --bg-secondary: #16213e;
-  --bg-tertiary: #0f3460;
-  --bg-card: #1e2746;
-  --text-primary: #e8e8e8;
-  --text-secondary: #a0a0b8;
-  --accent: #6c63ff;
-  --accent-hover: #5a52d5;
-  --accent-light: rgba(108, 99, 255, 0.15);
-  --success: #4caf50;
-  --danger: #f44336;
-  --warning: #ff9800;
-  --border: #2a2f4a;
-  --shadow: rgba(0, 0, 0, 0.3);
-  --radius: 12px;
-  --radius-sm: 8px;
-  /* 代码块暗色主题 */
-  --code-bg: #0d1117;
-  --code-border: #30363d;
-  --code-text: #c9d1d9;
-}
-
-:root.light-theme {
-  /* 亮色主题变量 */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --bg-tertiary: #e9ecef;
-  --bg-card: #ffffff;
-  --text-primary: #212529;
-  --text-secondary: #6c757d;
-  --accent: #6c63ff;
-  --accent-hover: #5a52d5;
-  --accent-light: rgba(108, 99, 255, 0.1);
-  --success: #28a745;
-  --danger: #dc3545;
-  --warning: #ffc107;
-  --border: #dee2e6;
-  --shadow: rgba(0, 0, 0, 0.1);
-  /* 代码块亮色主题 */
-  --code-bg: #f6f8fa;
-  --code-border: #e1e4e8;
-  --code-text: #24292e;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  overflow: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.app {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-}
-
-/* 主题切换按钮 */
-.theme-toggle {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  font-size: 16px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: all 0.2s;
-}
-
-.theme-toggle:hover {
-  background: var(--accent-light);
-  color: var(--accent);
-}
-
-/* ==================== 侧边栏 ==================== */
-.sidebar {
-  width: 280px;
-  background: var(--bg-secondary);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  transition: width 0.3s ease;
-}
-
-.sidebar.collapsed {
-  width: 50px;
-}
-
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.logo {
-  font-size: 18px;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--accent), #e040fb);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.toggle-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  font-size: 16px;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-
-.toggle-btn:hover {
-  background: var(--accent-light);
-  color: var(--accent);
-}
-
-.sidebar-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px;
-}
-
-.new-chat-btn {
-  width: 100%;
-  padding: 10px;
-  background: linear-gradient(135deg, var(--accent), #7c4dff);
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.2s;
-  margin-bottom: 16px;
-}
-
-.new-chat-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.4);
-}
-
-.section {
-  margin-bottom: 20px;
-}
-
-.section-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 8px;
-  padding: 0 4px;
-}
-
-/* 历史会话列表 */
-.conv-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 2px;
-}
-
-.conv-item:hover {
-  background: var(--accent-light);
-}
-
-.conv-item.active {
-  background: var(--accent-light);
-  border-left: 3px solid var(--accent);
-}
-
-.conv-title {
-  font-size: 13px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
-}
-
-.conv-delete {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  font-size: 16px;
-  padding: 0 4px;
-  opacity: 0;
-  transition: all 0.2s;
-}
-
-.conv-item:hover .conv-delete {
-  opacity: 1;
-}
-
-.conv-delete:hover {
-  color: var(--danger);
-}
-
-/* Skill 列表 */
-.skill-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 2px;
-}
-
-.skill-item:hover {
-  background: var(--accent-light);
-}
-
-.skill-item.active {
-  background: var(--accent-light);
-  border-left: 3px solid var(--accent);
-}
-
-.skill-name {
-  font-size: 14px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.badge {
-  font-size: 10px;
-  background: var(--accent);
-  color: white;
-  padding: 2px 6px;
-  border-radius: 10px;
-}
-
-.nav-section {
-  margin-top: auto;
-}
-
-.nav-btn {
-  width: 100%;
-  padding: 10px 12px;
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  font-size: 14px;
-  text-align: left;
-  border-radius: var(--radius-sm);
-  transition: all 0.2s;
-  margin-bottom: 2px;
-}
-
-.nav-btn:hover {
-  background: var(--accent-light);
-  color: var(--text-primary);
-}
-
-.nav-btn.active {
-  background: var(--accent-light);
-  color: var(--accent);
-  font-weight: 600;
-}
-
-/* ==================== 主内容区 ==================== */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* ==================== 滚动条 ==================== */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
-}
-</style>

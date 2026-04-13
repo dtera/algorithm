@@ -56,6 +56,6 @@ public class SkillConfig {
    * 是否启用
    */
   @Builder.Default
-  private boolean enabled = true;
+  private Boolean enabled = true;
 
 }

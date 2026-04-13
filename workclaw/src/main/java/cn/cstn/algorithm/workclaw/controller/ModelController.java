@@ -34,7 +34,7 @@ public class ModelController {
      * 获取指定模型配置
      */
     @GetMapping("/{id}")
-    public ApiResult<ModelConfig> getModel(@PathVariable("id") String id) {
+    public ApiResult<ModelConfig> getModel(@PathVariable String id) {
         return ApiResult.ok(configService.getModel(id)
                 .orElseThrow(() -> new IllegalArgumentException("模型不存在: " + id)));
     }
@@ -51,7 +51,7 @@ public class ModelController {
      * 更新模型配置
      */
     @PutMapping("/{id}")
-    public ApiResult<ModelConfig> updateModel(@PathVariable("id") String id, @RequestBody ModelConfig model) {
+    public ApiResult<ModelConfig> updateModel(@PathVariable String id, @RequestBody ModelConfig model) {
         model.setId(id);
         chatService.evictModelCache(id);
         return ApiResult.ok(configService.saveModel(model));
@@ -61,7 +61,7 @@ public class ModelController {
      * 删除模型配置
      */
     @DeleteMapping("/{id}")
-    public ApiResult<Void> deleteModel(@PathVariable("id") String id) {
+    public ApiResult<Void> deleteModel(@PathVariable String id) {
         chatService.evictModelCache(id);
         configService.deleteModel(id);
         return ApiResult.ok();
