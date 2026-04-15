@@ -11,7 +11,6 @@
         <div class="model-selector">
           <label class="model-label">🧠 模型</label>
           <select v-model="selectedModelId" class="model-select" @change="onModelChange">
-            <option value="">默认模型</option>
             <option v-for="m in enabledModels" :key="m.id" :value="m.id">
               {{ m.name }}
             </option>
@@ -45,16 +44,23 @@
       </div>
 
       <!-- 流式输出中：实时 Markdown 渲染 -->
-      <div v-if="loading && streamingContent" class="message assistant">
+      <div v-if="loading && isStreaming" class="message assistant">
         <div class="message-avatar">🤖</div>
         <div class="message-body">
-          <div class="markdown-body" v-html="renderedStreamingHtml"></div>
-          <span class="streaming-cursor"></span>
+          <template v-if="streamingHtml">
+            <div class="markdown-body" v-html="streamingHtml"></div>
+            <span class="streaming-cursor"></span>
+          </template>
+          <template v-else>
+            <div class="typing-indicator">
+              <span></span><span></span><span></span>
+            </div>
+          </template>
         </div>
       </div>
 
       <!-- 等待响应中的光标指示 -->
-      <div v-if="loading && !streamingContent" class="message assistant">
+      <div v-if="loading && !isStreaming" class="message assistant">
         <div class="message-avatar">🤖</div>
         <div class="message-body">
           <div class="typing-indicator">
@@ -87,7 +93,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick, watch, computed, onUnmounted } from 'vue'
+import { ref, reactive, nextTick, watch, computed, onUnmounted } from 'vue'
 import { chatStream, clearConversation } from '../api.js'
 import { Marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
@@ -126,40 +132,20 @@ const selectedModelId = ref(props.modelId || '')
 const messages = ref([])
 const inputMessage = ref('')
 const loading = ref(false)
-const streamingContent = ref('')
-const renderedStreamingHtml = ref('')
+const isStreaming = ref(false)
+const streamingHtml = ref('')
 const messagesRef = ref(null)
 const inputRef = ref(null)
-let currentRequest = null // 用于取消当前请求
-let renderTimer = null // Markdown 渲染节流计时器
+let currentRequest = null
 
-// 显示消息列表：流式输出期间隐藏最后一条（由流式渲染区域替代）
+// 显示消息列表
 const displayMessages = computed(() => {
-  if (loading.value && streamingContent.value && messages.value.length > 0) {
-    return messages.value.slice(0, -1)
-  }
   return messages.value
 })
 
-// 节流渲染流式内容的 Markdown
-let lastRenderedContent = ''
-function throttledRenderStreaming(content) {
-  // 如果内容和上次渲染一致，跳过
-  if (content === lastRenderedContent) return
-
-  if (!renderTimer) {
-    // 立即渲染一次
-    lastRenderedContent = content
-    renderedStreamingHtml.value = renderMarkdown(content)
-    renderTimer = setTimeout(() => {
-      renderTimer = null
-      // 如果 timer 期间内容有更新，再渲染一次最新的
-      if (streamingContent.value && streamingContent.value !== lastRenderedContent) {
-        lastRenderedContent = streamingContent.value
-        renderedStreamingHtml.value = renderMarkdown(streamingContent.value)
-      }
-    }, 100) // 每 100ms 最多渲染一次
-  }
+// 实时渲染流式内容
+function renderStreamingContent(content) {
+  streamingHtml.value = renderMarkdown(content)
 }
 
 // 计算启用的模型列表
@@ -169,7 +155,21 @@ const enabledModels = computed(() => {
 
 // 同步父组件传入的 modelId
 watch(() => props.modelId, (newVal) => {
-  selectedModelId.value = newVal || ''
+  if (newVal) {
+    selectedModelId.value = newVal
+  } else {
+    // 当父组件未指定modelId时，默认选中第一个启用的模型
+    const firstEnabled = enabledModels.value[0]
+    selectedModelId.value = firstEnabled ? firstEnabled.id : ''
+  }
+})
+
+// 当模型列表变化时，如果当前没有选中模型，默认选中第一个
+watch(enabledModels, (models) => {
+  if (!selectedModelId.value && models.length > 0) {
+    selectedModelId.value = models[0].id
+    emit('update:modelId', selectedModelId.value)
+  }
 })
 
 function onModelChange() {
@@ -179,7 +179,8 @@ function onModelChange() {
 // 监听 skillId 变化
 watch(() => props.skillId, () => {
   messages.value = []
-  streamingContent.value = ''
+  isStreaming.value = false
+  streamingHtml.value = ''
   emit('update:conversationId', '')
 })
 
@@ -213,6 +214,8 @@ function stopGeneration() {
     currentRequest.abort()
     currentRequest = null
   }
+  isStreaming.value = false
+  streamingHtml.value = ''
   loading.value = false
 }
 
@@ -223,83 +226,60 @@ async function sendMessage() {
   messages.value.push({ role: 'user', content: text })
   inputMessage.value = ''
   loading.value = true
-  streamingContent.value = ''
+  isStreaming.value = true
+  streamingHtml.value = ''
   scrollToBottom()
 
-  // 准备助手消息占位
-  const assistantMsg = { role: 'assistant', content: '' }
+  // 创建assistant消息，使用reactive确保Vue追踪属性变化
+  const assistantMsg = reactive({ role: 'assistant', content: '' })
   messages.value.push(assistantMsg)
 
   const convId = props.conversationId || ''
 
   try {
     currentRequest = chatStream(
-      {
-        message: text,
-        conversationId: convId,
-        skillId: props.skillId,
-        modelId: selectedModelId.value || undefined,
-        stream: true
-      },
-      // onMessage (delta)
+      { message: text, conversationId: convId, skillId: props.skillId, modelId: selectedModelId.value || undefined, stream: true },
       (chunk) => {
         assistantMsg.content += chunk
-        streamingContent.value = assistantMsg.content
-        throttledRenderStreaming(assistantMsg.content)
+        renderStreamingContent(assistantMsg.content)
         scrollToBottom()
       },
-      // onDone
       () => {
-        // 最终渲染一次完整内容，确保 messages 中最后一条内容是最新的
-        if (renderTimer) {
-          clearTimeout(renderTimer)
-          renderTimer = null
-        }
+        // 流式完成：关闭流式状态
+        isStreaming.value = false
+        streamingHtml.value = ''
         loading.value = false
-        streamingContent.value = ''
-        renderedStreamingHtml.value = ''
-        lastRenderedContent = ''
         currentRequest = null
         scrollToBottom()
-        // 通知父组件会话已更新
         emit('conversationUpdated')
       },
-      // onError
       (err) => {
         console.error('流式消息错误:', err)
         if (!assistantMsg.content) {
           assistantMsg.content = '⚠️ 消息接收失败: ' + (err.message || '未知错误')
         }
-        if (renderTimer) {
-          clearTimeout(renderTimer)
-          renderTimer = null
-        }
+        isStreaming.value = false
+        streamingHtml.value = ''
         loading.value = false
-        streamingContent.value = ''
-        renderedStreamingHtml.value = ''
-        lastRenderedContent = ''
         currentRequest = null
       },
-      // onMeta
       (meta) => {
         if (meta.conversationId && !props.conversationId) {
           emit('update:conversationId', meta.conversationId)
         }
       },
-      // onClear - 清除之前的内容（如"思考中"提示）
       () => {
+        // clear事件
         assistantMsg.content = ''
-        streamingContent.value = ''
-        renderedStreamingHtml.value = ''
-        lastRenderedContent = ''
+        streamingHtml.value = ''
       }
     )
   } catch (e) {
     console.error('发送失败:', e)
     assistantMsg.content = '⚠️ 发送失败: ' + (e.message || '未知错误')
-  loading.value = false
-    streamingContent.value = ''
-    lastRenderedContent = ''
+    isStreaming.value = false
+    streamingHtml.value = ''
+    loading.value = false
   }
 }
 
@@ -312,7 +292,8 @@ async function clearChat() {
     }
   }
   messages.value = []
-  streamingContent.value = ''
+  isStreaming.value = false
+  streamingHtml.value = ''
   emit('update:conversationId', '')
   emit('conversationUpdated')
 }
@@ -328,10 +309,6 @@ function scrollToBottom() {
 onUnmounted(() => {
   if (currentRequest) {
     currentRequest.abort()
-  }
-  if (renderTimer) {
-    clearTimeout(renderTimer)
-    renderTimer = null
   }
 })
 </script>

@@ -57,7 +57,7 @@ export function chatStream(data, onMessage, onDone, onError, onMeta, onClear) {
     let doneHandled = false
 
     /**
-     * 处理一个完整的 SSE 事件块（由空行 \n\n 分隔）
+     * 处理一个完整的 SSE 事件块（由空行 \n\n 分隔)
      * 格式示例: event:delta\ndata:some text
      */
     function processEvent(block) {
@@ -94,7 +94,7 @@ export function chatStream(data, onMessage, onDone, onError, onMeta, onClear) {
           onDone && onDone()
         }
       } else if (eventType === 'clear') {
-        // 清除之前的内容（如"思考中"提示）
+        // 清除之前的内容（如"思考中"提示)
         onClear && onClear()
       } else if (eventType === 'delta' || eventType === '') {
         // delta 事件或无类型事件，作为内容处理
@@ -119,7 +119,7 @@ export function chatStream(data, onMessage, onDone, onError, onMeta, onClear) {
         }
         textBuffer += decoder.decode(value, { stream: true })
 
-        // SSE 事件由空行（\n\n）分隔
+        // SSE 事件由空行(\n\n)分隔
         const parts = textBuffer.split('\n\n')
         // 最后一段可能是不完整的事件，留在 buffer 中
         textBuffer = parts.pop() || ''

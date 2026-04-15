@@ -94,6 +94,11 @@ async function loadModels() {
   try {
     const data = await getModels()
     models.value = data || []
+    // 默认选中第一个启用的模型
+    const enabledModels = models.value.filter(m => m.enabled)
+    if (enabledModels.length > 0 && !selectedModelId.value) {
+      selectedModelId.value = enabledModels[0].id
+    }
   } catch (e) {
     console.error('加载模型列表失败:', e)
   }
